@@ -1408,11 +1408,25 @@ img { max-width: 100%; height: auto; display: block; }
 
 .comparison-table th,
 .comparison-table td {
-    padding: 12px 8px;
+    padding: 10px 6px;
     text-align: center;
     border-bottom: 1px solid var(--border);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     white-space: nowrap;
+}
+
+.comparison-table th {
+    font-size: 0.7rem;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -16px;
+    padding: 0 16px;
+    width: calc(100% + 32px);
+    max-width: calc(100% + 32px);
+    box-sizing: border-box;
 }
 
 .comparison-table th:first-child,
