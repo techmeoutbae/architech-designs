@@ -3002,7 +3002,26 @@ img { max-width: 100%; height: auto; display: block; }
     
     .testimonials-slider { padding: 0 16px; }
     
-    .contact-form { padding: 24px 16px; }
+    .contact-form { 
+        padding: 24px 16px; 
+        border-radius: var(--radius-lg);
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .form-group {
+        margin-bottom: 16px;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
     
     .checkbox-group { flex-direction: column; gap: 8px; }
 }
