@@ -225,8 +225,13 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 .logo img {
-    height: 56px;
+    height: 64px;
     width: auto;
+}
+
+.header-logo {
+    height: 64px !important;
+    width: auto !important;
 }
 
 .logo-text {
@@ -298,7 +303,7 @@ img { max-width: 100%; height: auto; display: block; }
     background: var(--white);
     position: relative;
     overflow: hidden;
-    padding-top: 80px;
+    padding-top: 100px;
 }
 
 .hero::before {
@@ -1748,7 +1753,7 @@ img { max-width: 100%; height: auto; display: block; }
     }
     
     .trust-items {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
     }
     
     .services-grid,
@@ -1756,8 +1761,15 @@ img { max-width: 100%; height: auto; display: block; }
     .portfolio-grid,
     .testimonials-grid,
     .values-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
+    
+    .service-card, .package-card, .portfolio-card {
+        padding: 20px;
+    }
+    
+    .service-card h3 { font-size: 1rem; }
+    .service-card p { font-size: 0.85rem; }
     
     .package-card.featured {
         transform: none;
@@ -1766,6 +1778,9 @@ img { max-width: 100%; height: auto; display: block; }
     .process-steps {
         grid-template-columns: repeat(2, 1fr);
     }
+    
+    .process-step { padding-left: 0; }
+    .process-step-number { position: static; margin-bottom: 12px; }
     
     .process-steps::before {
         display: none;
@@ -2835,7 +2850,8 @@ img { max-width: 100%; height: auto; display: block; }
     .navbar { padding: 10px 0; }
     .navbar-inner { position: relative; }
     
-    .logo img { height: 44px; }
+    .logo img { height: 52px; }
+    .header-logo { height: 52px !important; }
     
     .mobile-toggle { 
         display: flex; 
@@ -2907,13 +2923,17 @@ img { max-width: 100%; height: auto; display: block; }
     .hero { min-height: auto; padding: 100px 0 60px; }
     .hero-content { text-align: center; }
     
-    .trust-items { grid-template-columns: 1fr; }
+    .trust-items { grid-template-columns: repeat(3, 1fr); }
     
     .services-grid,
     .packages-grid,
     .portfolio-grid,
     .testimonials-grid,
-    .values-grid { grid-template-columns: 1fr; }
+    .values-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    
+    .service-card, .package-card, .portfolio-card { padding: 20px; }
+    .service-card h3 { font-size: 1rem; }
+    .service-card p { font-size: 0.85rem; }
     
     .package-card.featured { transform: none; }
     
