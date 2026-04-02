@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Architech Designs | Strategic Web Design for Growing Businesses</title>
     <meta name="description" content="Architech Designs builds premium, conversion-focused websites for local businesses. Get more leads, trust, and growth with a strategic website built to perform.">
+    <meta name="keywords" content="web design, website development, local business website, conversion optimization, lead generation, SEO friendly website">
+    <meta name="author" content="Architech Designs">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Architech Designs | Strategic Web Design">
+    <meta property="og:description" content="Premium, conversion-focused websites for local businesses. Get more leads and grow your business.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.architechdesigns.net">
+    <meta property="og:image" content="https://www.architechdesigns.net/images/logo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Architech Designs | Strategic Web Design">
+    <meta name="twitter:description" content="Premium websites for local businesses that convert visitors into customers.">
+    <link rel="canonical" href="https://www.architechdesigns.net">
+    <link rel="icon" type="image/png" href="images/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
@@ -289,30 +302,38 @@
                 </div>
                 <div class="interactive-widget reveal">
                     <div class="widget-header">
-                        <h3>Website ROI Calculator</h3>
-                        <p>Estimate your potential revenue increase</p>
+                        <h3>What's Your Website Worth?</h3>
+                        <p>Calculate the annual value of a professional website</p>
                     </div>
-                    <div class="widget-slider">
-                        <div class="slider-label">
-                            <span>Monthly Website Traffic</span>
-                            <span class="slider-value" id="traffic-value">1,000</span>
+                    <div class="simple-calc">
+                        <div class="calc-input-group">
+                            <label>Monthly website traffic</label>
+                            <select id="traffic-select" class="calc-select">
+                                <option value="500">500 visitors</option>
+                                <option value="1000" selected>1,000 visitors</option>
+                                <option value="2500">2,500 visitors</option>
+                                <option value="5000">5,000 visitors</option>
+                                <option value="10000">10,000 visitors</option>
+                            </select>
                         </div>
-                        <input type="range" min="100" max="10000" value="1000" class="slider-input" id="traffic-slider">
-                    </div>
-                    <div class="widget-slider">
-                        <div class="slider-label">
-                            <span>Current Conversion Rate</span>
-                            <span class="slider-value" id="conv-value">2%</span>
+                        <div class="calc-input-group">
+                            <label>Average lead value</label>
+                            <select id="lead-value-select" class="calc-select">
+                                <option value="100">$100 per lead</option>
+                                <option value="250" selected>$250 per lead</option>
+                                <option value="500">$500 per lead</option>
+                                <option value="1000">$1,000 per lead</option>
+                                <option value="2500">$2,500 per lead</option>
+                            </select>
                         </div>
-                        <input type="range" min="1" max="10" value="2" class="slider-input" id="conv-slider">
                     </div>
                     <div class="widget-result">
-                        <div class="result-label">Potential Monthly Leads</div>
-                        <div class="result-value" id="leads-result">20</div>
-                        <div class="result-note">With a professionally designed website</div>
+                        <div class="result-label">Your Website's Annual Value</div>
+                        <div class="result-value" id="calc-result">$7,500</div>
+                        <div class="result-note">Based on 2.5% conversion rate</div>
                     </div>
                     <div class="widget-cta">
-                        <a href="contact.html" class="btn btn-primary btn-block">Get Your Free Analysis</a>
+                        <a href="contact.html" class="btn btn-primary btn-block">Maximize Your ROI</a>
                     </div>
                 </div>
             </div>

@@ -335,31 +335,30 @@ document.addEventListener('DOMContentLoaded', function() {
         Logger.error('LazyLoad', 'Failed to initialize lazy loading', e);
     }
 
-    // ========== ROI CALCULATOR WIDGET ==========
+    // ========== SIMPLE VALUE CALCULATOR ==========
     try {
-        const trafficSlider = document.getElementById('traffic-slider');
-        const convSlider = document.getElementById('conv-slider');
-        const trafficValue = document.getElementById('traffic-value');
-        const convValue = document.getElementById('conv-value');
-        const leadsResult = document.getElementById('leads-result');
+        const trafficSelect = document.getElementById('traffic-select');
+        const leadValueSelect = document.getElementById('lead-value-select');
+        const calcResult = document.getElementById('calc-result');
 
-        if (trafficSlider && convSlider) {
+        if (trafficSelect && leadValueSelect && calcResult) {
             function updateCalculator() {
-                const traffic = parseInt(trafficSlider.value);
-                const convRate = parseInt(convSlider.value);
-                const leads = Math.round(traffic * (convRate / 100) * 1.5);
+                const traffic = parseInt(trafficSelect.value);
+                const leadValue = parseInt(leadValueSelect.value);
+                const conversionRate = 0.025;
+                const leadsPerMonth = Math.round(traffic * conversionRate);
+                const annualValue = leadsPerMonth * leadValue * 12;
 
-                trafficValue.textContent = traffic.toLocaleString();
-                convValue.textContent = convRate + '%';
-                leadsResult.textContent = leads.toLocaleString();
+                calcResult.textContent = '$' + annualValue.toLocaleString();
             }
 
-            trafficSlider.addEventListener('input', updateCalculator);
-            convSlider.addEventListener('input', updateCalculator);
-            Logger.info('ROICalculator', 'ROI Calculator initialized');
+            trafficSelect.addEventListener('change', updateCalculator);
+            leadValueSelect.addEventListener('change', updateCalculator);
+            updateCalculator();
+            Logger.info('ValueCalculator', 'Simple website value calculator initialized');
         }
     } catch (e) {
-        Logger.error('ROICalculator', 'Failed to initialize ROI calculator', e);
+        Logger.error('ValueCalculator', 'Failed to initialize value calculator', e);
     }
 
     // ========== MOCKUP TAB NAVIGATION ==========
