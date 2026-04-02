@@ -1397,6 +1397,41 @@ img { max-width: 100%; height: auto; display: block; }
     border-top: 1px solid rgba(255,255,255,0.1);
 }
 
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    min-width: 600px;
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: 16px 12px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+}
+
+.comparison-table th:first-child,
+.comparison-table td:first-child {
+    text-align: left;
+    font-weight: 600;
+}
+
+.comparison-table th {
+    background: var(--gray-100);
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.comparison-table .check {
+    color: var(--success);
+    font-size: 1.2rem;
+}
+
 .footer-grid {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1fr;
