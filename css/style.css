@@ -1635,6 +1635,12 @@ img { max-width: 100%; height: auto; display: block; }
     max-width: 100%;
 }
 
+.contact-intro {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+}
+
 .next-steps > div > div {
     max-width: 100%;
     overflow-wrap: break-word;
