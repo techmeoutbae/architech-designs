@@ -1404,15 +1404,15 @@ img { max-width: 100%; height: auto; display: block; }
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow-sm);
-    min-width: 600px;
 }
 
 .comparison-table th,
 .comparison-table td {
-    padding: 16px 12px;
+    padding: 12px 8px;
     text-align: center;
     border-bottom: 1px solid var(--border);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
 }
 
 .comparison-table th:first-child,
@@ -1430,6 +1430,13 @@ img { max-width: 100%; height: auto; display: block; }
 .comparison-table .check {
     color: var(--success);
     font-size: 1.2rem;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -16px;
+    padding: 0 16px;
 }
 
 .footer-grid {
@@ -1654,6 +1661,10 @@ img { max-width: 100%; height: auto; display: block; }
     background: var(--gray-100);
     border-radius: var(--radius-xl);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .about-image-placeholder {
