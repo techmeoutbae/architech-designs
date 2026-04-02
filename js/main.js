@@ -36,7 +36,29 @@ document.addEventListener('DOMContentLoaded', function() {
             mobileToggle.addEventListener('click', function() {
                 navLinks?.classList.toggle('active');
                 mobileToggle.classList.toggle('active');
+                document.body.style.overflow = navLinks?.classList.contains('active') ? 'hidden' : '';
             });
+            
+            // Close menu when clicking a link
+            navLinks?.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
+                    mobileToggle.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (navLinks?.classList.contains('active') && 
+                    !navLinks.contains(e.target) && 
+                    !mobileToggle.contains(e.target)) {
+                    navLinks.classList.remove('active');
+                    mobileToggle.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+            
             Logger.info('Navigation', 'Mobile toggle initialized');
         }
     } catch (e) {

@@ -1784,6 +1784,11 @@ img { max-width: 100%; height: auto; display: block; }
     .cta-buttons { flex-direction: column; gap: 12px; }
     .cta-buttons .btn { width: 100%; max-width: 280px; }
     
+    .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+    
     .form-row { grid-template-columns: 1fr; }
     .contact-form { 
         padding: 20px 16px; 
@@ -3069,6 +3074,22 @@ img { max-width: 100%; height: auto; display: block; }
         font-size: 1rem;
     }
     
+    .mobile-only-cta {
+        display: block;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+    }
+    
+    .mobile-only-cta .btn {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .nav-cta {
+        display: none;
+    }
+    
     .nav-links {
         position: fixed;
         top: 0;
@@ -3102,28 +3123,12 @@ img { max-width: 100%; height: auto; display: block; }
         font-size: 1.1rem;
     }
     
-    .nav-cta {
+    .mobile-only-cta {
         display: none;
     }
     
-    .nav-links.active + .nav-cta,
-    .nav-links.active ~ .nav-cta {
-        display: flex;
-        position: fixed;
-        bottom: 24px;
-        left: 24px;
-        right: 24px;
-        z-index: 1001;
-    }
-    
-    .nav-links.active + .nav-cta,
-    .nav-links.active ~ .nav-cta {
-        display: flex;
-        position: fixed;
-        bottom: 24px;
-        left: 24px;
-        right: 24px;
-        z-index: 1001;
+    .nav-cta {
+        display: none;
     }
 }
 
