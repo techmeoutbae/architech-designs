@@ -1635,10 +1635,20 @@ img { max-width: 100%; height: auto; display: block; }
     max-width: 100%;
 }
 
-.contact-intro {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    max-width: 100%;
+    .contact-intro {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 100%;
+    }
+    
+    .trust-grid {
+        grid-template-columns: 1fr;
+    }
+
+.trust-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
 }
 
 .next-steps > div > div {
