@@ -1595,6 +1595,8 @@ img { max-width: 100%; height: auto; display: block; }
 .contact-details {
     list-style: none;
     margin-bottom: 32px;
+    max-width: 100%;
+    overflow-wrap: break-word;
 }
 
 .contact-detail {
@@ -1603,6 +1605,7 @@ img { max-width: 100%; height: auto; display: block; }
     gap: 16px;
     padding: 16px 0;
     border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
 }
 
 .contact-detail svg {
@@ -1853,6 +1856,9 @@ img { max-width: 100%; height: auto; display: block; }
     .contact-grid {
         grid-template-columns: 1fr;
         gap: 32px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
     
     .form-row { grid-template-columns: 1fr; }
@@ -1862,6 +1868,7 @@ img { max-width: 100%; height: auto; display: block; }
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
+        overflow-x: hidden;
     }
     .form-group { margin-bottom: 14px; }
     .form-group input, .form-group select, .form-group textarea { 
@@ -1869,6 +1876,7 @@ img { max-width: 100%; height: auto; display: block; }
         font-size: 0.9rem; 
         width: 100%;
         box-sizing: border-box;
+        max-width: 100%;
     }
     .contact-form .btn {
         width: 100%;
