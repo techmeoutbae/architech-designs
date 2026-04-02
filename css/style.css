@@ -3045,6 +3045,39 @@ img { max-width: 100%; height: auto; display: block; }
         font-size: 1rem;
     }
     
+    .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        max-width: 320px;
+        height: 100vh;
+        background: var(--white);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 100px 24px 120px;
+        gap: 0;
+        box-shadow: var(--shadow-xl);
+        transition: right 0.3s ease;
+        z-index: 1000;
+        overflow-y: auto;
+    }
+    
+    .nav-links.active {
+        right: 0;
+    }
+    
+    .nav-links li {
+        width: 100%;
+        border-bottom: 1px solid var(--border);
+    }
+    
+    .nav-links a {
+        display: block;
+        padding: 16px 0;
+        font-size: 1.1rem;
+    }
+    
     .nav-cta {
         display: none;
     }
@@ -3059,10 +3092,32 @@ img { max-width: 100%; height: auto; display: block; }
         z-index: 1001;
     }
     
-    .nav-links.active + .nav-cta .btn {
-        width: 100%;
-        justify-content: center;
+    .nav-links.active + .nav-cta,
+    .nav-links.active ~ .nav-cta {
+        display: flex;
+        position: fixed;
+        bottom: 24px;
+        left: 24px;
+        right: 24px;
+        z-index: 1001;
     }
+}
+
+.nav-links.active + .nav-cta .btn {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Mobile nav toggle - outside media query so it works */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+    
+    .nav-links.active {
+        display: flex;
+    }
+}
     
     .page-header { padding: 120px 0 60px; }
     .page-header-content { text-align: center; }
