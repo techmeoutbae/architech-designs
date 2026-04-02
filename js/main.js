@@ -195,8 +195,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const contactForm = document.querySelector('.contact-form form');
         
         if (contactForm) {
-            contactForm.addEventListener('submit', function(e) {
-                e.preventDefault();
+            contactForm.addEventListener('submit', async function(e) {
+                const submitBtn = contactForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn ? submitBtn.textContent : 'Submit';
                 
                 let isValid = true;
                 const requiredFields = contactForm.querySelectorAll('[required]');
@@ -210,22 +211,40 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
                 
-                if (isValid) {
-                    const submitBtn = contactForm.querySelector('button[type="submit"]');
-                    if (submitBtn) {
-                        const originalText = submitBtn.textContent;
-                        submitBtn.textContent = 'Message Sent!';
-                        submitBtn.style.background = 'var(--success)';
-                        submitBtn.style.color = 'var(--white)';
+                if (isValid && submitBtn) {
+                    submitBtn.textContent = 'Sending...';
+                    submitBtn.disabled = true;
+                    
+                    try {
+                        const response = await fetch(contactForm.action, {
+                            method: 'POST',
+                            body: new FormData(contactForm),
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
                         
-                        setTimeout(() => {
-                            submitBtn.textContent = originalText;
-                            submitBtn.style.background = '';
-                            submitBtn.style.color = '';
+                        if (response.ok) {
+                            submitBtn.textContent = 'Message Sent!';
+                            submitBtn.style.background = 'var(--success)';
+                            submitBtn.style.color = 'var(--white)';
                             contactForm.reset();
-                        }, 3000);
-                        Logger.info('ContactForm', 'Form submitted successfully');
+                            Logger.info('ContactForm', 'Form submitted successfully to Formspree');
+                        } else {
+                            submitBtn.textContent = 'Error - Try Again';
+                            Logger.error('ContactForm', 'Formspree submission failed');
+                        }
+                    } catch (error) {
+                        submitBtn.textContent = 'Error - Try Again';
+                        Logger.error('ContactForm', 'Form submission error: ' + error.message);
                     }
+                    
+                    setTimeout(() => {
+                        submitBtn.textContent = originalText;
+                        submitBtn.style.background = '';
+                        submitBtn.style.color = '';
+                        submitBtn.disabled = false;
+                    }, 5000);
                 } else {
                     Logger.warn('ContactForm', 'Form validation failed');
                 }
