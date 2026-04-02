@@ -1614,6 +1614,32 @@ img { max-width: 100%; height: auto; display: block; }
     color: var(--accent);
 }
 
+.next-steps {
+    max-width: 100%;
+}
+
+.next-steps > div {
+    max-width: 100%;
+}
+
+.next-steps > div > div {
+    max-width: 100%;
+}
+
+.next-steps h4 {
+    word-wrap: break-word;
+}
+
+.next-steps p {
+    word-wrap: break-word;
+    max-width: 100%;
+}
+
+.next-steps > div > div {
+    max-width: 100%;
+    overflow-wrap: break-word;
+}
+
 .contact-detail span {
     font-size: 1rem;
     color: var(--text);
