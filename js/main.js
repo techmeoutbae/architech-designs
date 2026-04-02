@@ -345,7 +345,7 @@ document.addEventListener('DOMContentLoaded', function() {
             function updateCalculator() {
                 const traffic = parseInt(trafficSelect.value);
                 const leadValue = parseInt(leadValueSelect.value);
-                const conversionRate = 0.025;
+                const conversionRate = 0.03;
                 const leadsPerMonth = Math.round(traffic * conversionRate);
                 const annualValue = leadsPerMonth * leadValue * 12;
 
