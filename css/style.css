@@ -2904,12 +2904,15 @@ img { max-width: 100%; height: auto; display: block; }
         display: none;
     }
     
-    .nav-links.active + .nav-cta {
+    .nav-links.active + .nav-cta,
+    .nav-links.active ~ .nav-cta {
         display: flex;
         position: fixed;
         bottom: 24px;
         left: 24px;
         right: 24px;
+        z-index: 1001;
+    }
         z-index: 1001;
     }
     
