@@ -1003,9 +1003,10 @@ img { max-width: 100%; height: auto; display: block; }
     min-height: 50px;
 }
 
-.mini-mockup-hero.luxe { background: linear-gradient(135deg, #1a1a1a, #3d3d3d); }
+/* Mini mockup hero - unique per concept */
+.mini-mockup-hero.luxe { background: linear-gradient(180deg, #fce7f3, #fbcfe8); }
 .mini-mockup-hero.apex { background: linear-gradient(135deg, #1e3a8a, #3b82f6); }
-.mini-mockup-hero.sterling { background: linear-gradient(135deg, #0f172a, #1e293b); }
+.mini-mockup-hero.sterling { background: linear-gradient(135deg, #0f172a, #292524); }
 
 .mini-mockup-hero h4 {
     font-size: 0.6rem;
@@ -1014,11 +1015,19 @@ img { max-width: 100%; height: auto; display: block; }
     line-height: 1.2;
 }
 
+.mini-mockup-hero.luxe h4 { color: #be185d; }
+.mini-mockup-hero.apex h4 { color: #fff; }
+.mini-mockup-hero.sterling h4 { color: #fff; }
+
 .mini-mockup-hero p {
     font-size: 0.4rem;
     color: rgba(255,255,255,0.7);
     margin: 0;
 }
+
+.mini-mockup-hero.luxe p { color: #9d174d; }
+.mini-mockup-hero.apex p { color: rgba(255,255,255,0.8); }
+.mini-mockup-hero.sterling p { color: rgba(255,255,255,0.7); }
 
 .mini-mockup-cta {
     display: inline-block;
@@ -1028,6 +1037,11 @@ img { max-width: 100%; height: auto; display: block; }
     font-size: 0.35rem;
     font-weight: 600;
     border-radius: 2px;
+}
+
+.mini-mockup-hero.luxe .mini-mockup-cta { background: #ec4899; color: #fff; }
+.mini-mockup-hero.apex .mini-mockup-cta { background: #f59e0b; color: #0f172a; }
+.mini-mockup-hero.sterling .mini-mockup-cta { background: #C9A227; color: #1a1a1a; }
     margin-top: 4px;
 }
 
@@ -2525,6 +2539,24 @@ img { max-width: 100%; height: auto; display: block; }
     background: var(--white);
 }
 
+/* Unique nav styling per concept */
+.mockup-hero.luxe + .mockup-services + .mockup-trust-badges + .mockup-testimonial-compact + .mockup-nav,
+.mockup-nav:has(+ .mockup-hero.luxe) { background: #fdf2f8; }
+
+.mockup-hero.luxe ~ .mockup-nav { background: #fdf2f8; border-bottom-color: #fce7f3; }
+
+.mockup-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+/* Unique logo colors per concept */
+.mockup-hero.luxe ~ .mockup-content .mockup-logo { color: #be185d; }
+.mockup-hero.apex ~ .mockup-content .mockup-logo { color: #1e3a8a; }
+.mockup-hero.sterling ~ .mockup-content .mockup-logo { color: #C9A227; }
+
 .mockup-logo {
     font-family: 'Playfair Display', serif;
     font-size: 1.4rem;
@@ -2568,16 +2600,19 @@ img { max-width: 100%; height: auto; display: block; }
     inset: 0;
 }
 
+/* LUXE MED SPA - Light, feminine, elegant */
 .mockup-hero.luxe::before {
-    background: linear-gradient(135deg, #1a1a1a 0%, #3d3d3d 50%, #1a1a1a 100%);
+    background: linear-gradient(180deg, #fdf2f8 0%, #fce7f3 50%, #fbcfe8 100%);
 }
 
+/* APEX HVAC - Sleek blue, professional, trust */
 .mockup-hero.apex::before {
-    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1e40af 100%);
 }
 
+/* STERLING LAW - Dark premium, authoritative */
 .mockup-hero.sterling::before {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    background: linear-gradient(180deg, #0f172a 0%, #1c1917 50%, #0f172a 100%);
 }
 
 .mockup-hero-content {
@@ -2591,7 +2626,7 @@ img { max-width: 100%; height: auto; display: block; }
     line-height: 1.2;
 }
 
-.mockup-hero.luxe .mockup-hero-content h1 { color: #fff; }
+.mockup-hero.luxe .mockup-hero-content h1 { color: #be185d; }
 .mockup-hero.apex .mockup-hero-content h1 { color: #fff; }
 .mockup-hero.sterling .mockup-hero-content h1 { color: #fff; }
 
@@ -2600,8 +2635,8 @@ img { max-width: 100%; height: auto; display: block; }
     margin-bottom: 18px;
 }
 
-.mockup-hero.luxe .mockup-hero-content p { color: rgba(255,255,255,0.75); }
-.mockup-hero.apex .mockup-hero-content p { color: rgba(255,255,255,0.75); }
+.mockup-hero.luxe .mockup-hero-content p { color: #9d174d; }
+.mockup-hero.apex .mockup-hero-content p { color: rgba(255,255,255,0.8); }
 .mockup-hero.sterling .mockup-hero-content p { color: rgba(255,255,255,0.75); }
 
 .mockup-cta {
@@ -2613,9 +2648,15 @@ img { max-width: 100%; height: auto; display: block; }
     cursor: pointer;
 }
 
-.mockup-hero.luxe .mockup-cta { background: #C9A227; color: #1a1a1a; }
-.mockup-hero.apex .mockup-cta { background: #C9A227; color: #1a1a1a; }
+/* Each concept has unique CTA color */
+.mockup-hero.luxe .mockup-cta { background: #ec4899; color: #fff; box-shadow: 0 4px 14px rgba(236, 72, 153, 0.4); }
+.mockup-hero.apex .mockup-cta { background: #f59e0b; color: #0f172a; }
 .mockup-hero.sterling .mockup-cta { background: #C9A227; color: #1a1a1a; }
+
+/* Different services section styles per concept */
+.mockup-hero.luxe + .mockup-services { background: linear-gradient(180deg, #fff 0%, #fdf2f8 100%); }
+.mockup-hero.apex + .mockup-services { background: linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%); }
+.mockup-hero.sterling + .mockup-services { background: linear-gradient(180deg, #fff 0%, #1e1e1e 100%); }
 
 /* Mock Services */
 .mockup-services {
