@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Concept: Apex Heating & Cooling | Architech Designs</title>
+    <meta name="description" content="HVAC website concept by Architech Designs. Strategic lead generation design approach.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .case-study-header {
+            background: var(--white);
+            padding: 180px 0 80px;
+            border-bottom: 1px solid var(--border);
+        }
+        .case-study-badge {
+            display: inline-block;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 6px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+        .case-study-title {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            margin-bottom: 16px;
+        }
+        .case-study-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            max-width: 600px;
+        }
+        .case-study-section {
+            padding: 80px 0;
+        }
+        .case-study-section h2 {
+            font-size: 1.75rem;
+            margin-bottom: 24px;
+        }
+        .case-study-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+        }
+        .case-study-list {
+            list-style: none;
+        }
+        .case-study-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .case-study-list li svg {
+            width: 20px;
+            height: 20px;
+            color: var(--accent);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .case-study-sidebar {
+            background: var(--off-white);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+        }
+        .case-study-sidebar h3 {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+        .sidebar-item {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .sidebar-item:last-child {
+            border-bottom: none;
+        }
+        .sidebar-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .sidebar-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .cta-banner {
+            background: var(--primary);
+            padding: 80px 0;
+            text-align: center;
+        }
+        .cta-banner h2 {
+            color: var(--white);
+            margin-bottom: 16px;
+        }
+        .cta-banner p {
+            color: rgba(255,255,255,0.7);
+            max-width: 500px;
+            margin: 0 auto 32px;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 32px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        .back-link:hover {
+            color: var(--accent);
+        }
+        .concept-note {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            padding: 20px 24px;
+            margin-bottom: 32px;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+        }
+        .concept-note p {
+            margin: 0;
+            color: var(--text);
+        }
+        @media (max-width: 768px) {
+            .case-study-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar scrolled">
+        <div class="container">
+            <div class="navbar-inner">
+                <a href="index.html" class="logo">
+                    <img src="images/logo.png" alt="Architech Designs">
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="packages.html">Packages</a></li>
+                    <li><a href="portfolio.html">Portfolio</a></li>
+                    <li><a href="process.html">Process</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+                <div class="nav-cta">
+                    <a href="contact.html" class="btn btn-primary btn-sm">Book Consultation</a>
+                </div>
+                <button class="mobile-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="case-study-header">
+        <div class="container">
+            <a href="portfolio.html" class="back-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Portfolio
+            </a>
+            <span class="case-study-badge">Project Concept</span>
+            <h1 class="case-study-title">Apex Heating & Cooling</h1>
+            <p class="case-study-subtitle">A strategic website concept designed to help an established HVAC company dominate local search and generate more quality leads.</p>
+            
+            <div class="concept-note">
+                <p><strong>Note:</strong> This is a strategic concept project demonstrating our approach to home services websites. The design and strategy are ready for implementation.</p>
+            </div>
+            <div class="concept-preview-links">
+                <a href="#preview-apex" class="btn btn-primary">View Website Mockup</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Mock Preview -->
+    <section id="preview-apex" class="concept-mockup-section">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Website Preview</span>
+                <h2 class="section-title">Apex HVAC - Interactive Demo</h2>
+                <p class="section-subtitle">Click the tabs below to explore different pages and features.</p>
+            </div>
+            
+            <div class="mockup-tabs">
+                <button class="mockup-tab active" data-page="apex-home">Homepage</button>
+                <button class="mockup-tab" data-page="apex-quote">Get Quote</button>
+                <button class="mockup-tab" data-page="apex-service">Services</button>
+                <button class="mockup-tab" data-page="apex-areas">Service Areas</button>
+            </div>
+
+            <div class="mockup-browser">
+                <div class="mockup-browser-bar">
+                    <div class="mockup-dots"><span></span><span></span><span></span></div>
+                    <div class="mockup-url">apexhvaccharlotte.com</div>
+                </div>
+                <div class="mockup-content">
+                    <!-- Homepage -->
+                    <div class="mockup-page active" id="apex-home">
+                        <div class="mockup-nav">
+                            <div class="mockup-logo">Apex HVAC</div>
+                            <div class="mockup-menu">
+                                <span>Services</span><span>Maintenance</span><span>About</span><span>Reviews</span><span>Contact</span>
+                            </div>
+                        </div>
+                        <div class="mockup-hero apex">
+                            <div class="mockup-hero-content">
+                                <h1>Fast & Reliable HVAC Services</h1>
+                                <p>Charlotte's Trusted Heating & Cooling Experts</p>
+                                <div class="mockup-cta">Get Free Quote</div>
+                            </div>
+                        </div>
+                        <div class="mockup-services">
+                            <div class="mockup-service"><div class="mockup-service-icon">AC</div><h4>AC Repair</h4><p>Same-day service</p></div>
+                            <div class="mockup-service"><div class="mockup-service-icon">HT</div><h4>Heating</h4><p>Fast repairs</p></div>
+                            <div class="mockup-service"><div class="mockup-service-icon">IN</div><h4>Installation</h4><p>Professional setup</p></div>
+                        </div>
+                        <div class="mockup-trust-badges">
+                            <span>📞 24/7 Emergency</span>
+                            <span>✓ Licensed & Insured</span>
+                            <span>⭐ 4.8 Rating</span>
+                        </div>
+                        <div class="mockup-testimonial-compact" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);">
+                            <p>"Same day service when my AC broke. Very professional!"</p>
+                            <span>— Michael T., Charlotte</span>
+                        </div>
+                    </div>
+
+                    <!-- Quote Generator -->
+                    <div class="mockup-page" id="apex-quote">
+                        <div class="mockup-nav"><div class="mockup-logo">Apex HVAC</div><div class="mockup-menu"><span>Services</span><span>Maintenance</span><span>About</span><span>Contact</span></div></div>
+                        <div class="mockup-form-page">
+                            <div class="mockup-form-header"><h2>Get Your Free Quote</h2><p>Answer a few questions for an instant estimate</p></div>
+                            <div class="mockup-form-content">
+                                <div class="mockup-form-group"><label>Service Type</label><select><option>AC Repair</option><option>Heating Repair</option><option>Installation</option><option>Maintenance</option></select></div>
+                                <div class="mockup-form-group"><label>Issue Description</label><input type="text" placeholder="Describe the problem..."></div>
+                                <div class="mockup-form-row">
+                                    <div class="mockup-form-group"><label>Zip Code</label><input type="text" placeholder="28201"></div>
+                                    <div class="mockup-form-group"><label>Phone</label><input type="text" placeholder="(555) 123-4567"></div>
+                                </div>
+                                <div class="mockup-form-cta" style="background: #2563eb; color: #fff;">Get My Free Quote</div>
+                                <div style="text-align: center; margin-top: 8px; font-size: 0.6rem; color: #28ca41;">✓ Same-Day Service Available</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Services Page -->
+                    <div class="mockup-page" id="apex-service">
+                        <div class="mockup-nav"><div class="mockup-logo">Apex HVAC</div><div class="mockup-menu"><span>Services</span><span>Maintenance</span><span>About</span><span>Contact</span></div></div>
+                        <div class="mockup-services-page">
+                            <div class="mockup-services-header"><h2>Our Services</h2><p>Professional HVAC solutions for your home</p></div>
+                            <div class="mockup-services-list">
+                                <div class="mockup-service-list-item">
+                                    <div class="service-icon-small">AC</div>
+                                    <div class="service-info"><h4>Air Conditioning</h4><p>Repair, installation & maintenance</p></div>
+                                    <div class="service-cta">Learn More</div>
+                                </div>
+                                <div class="mockup-service-list-item">
+                                    <div class="service-icon-small">HT</div>
+                                    <div class="service-info"><h4>Heating</h4><p>Furnace & heat pump services</p></div>
+                                    <div class="service-cta">Learn More</div>
+                                </div>
+                                <div class="mockup-service-list-item">
+                                    <div class="service-icon-small">IN</div>
+                                    <div class="service-info"><h4>Installation</h4><p>New system installations</p></div>
+                                    <div class="service-cta">Learn More</div>
+                                </div>
+                                <div class="mockup-service-list-item">
+                                    <div class="service-icon-small">MT</div>
+                                    <div class="service-info"><h4>Maintenance</h4><p>Annual tune-ups</p></div>
+                                    <div class="service-cta">Learn More</div>
+                                </div>
+                            </div>
+                            <div class="mockup-cta-inline">Schedule Service</div>
+                        </div>
+                    </div>
+
+                    <!-- Service Areas -->
+                    <div class="mockup-page" id="apex-areas">
+                        <div class="mockup-nav"><div class="mockup-logo">Apex HVAC</div><div class="mockup-menu"><span>Services</span><span>Maintenance</span><span>About</span><span>Contact</span></div></div>
+                        <div class="mockup-areas-page">
+                            <div class="mockup-areas-header"><h2>Service Areas</h2><p>Proudly serving the Charlotte metro area</p></div>
+                            <div class="mockup-areas-grid">
+                                <div class="mockup-area-chip">Charlotte</div>
+                                <div class="mockup-area-chip">Matthews</div>
+                                <div class="mockup-area-chip">C Myers</div>
+                                <div class="mockup-area-chip">Cornelius</div>
+                                <div class="mockup-area-chip">Davidson</div>
+                                <div class="mockup-area-chip">Huntersville</div>
+                                <div class="mockup-area-chip">Wesley Chapel</div>
+                                <div class="mockup-area-chip">Mint Hill</div>
+                            </div>
+                            <div class="mockup-cta-banner">
+                                <span>📍 Don't see your area?</span>
+                                <strong>Call us: (555) 123-4567</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Features -->
+    <section class="case-study-section" style="background: var(--off-white);">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Features Included</span>
+                <h2 class="section-title">Lead Generation Tools</h2>
+            </div>
+            <div class="services-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="service-card reveal">
+                    <div class="service-icon" style="background: #2563eb;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                    </div>
+                    <h3>24/7 Quote Generator</h3>
+                    <p>Automated quoting system that collects service details and sends estimates instantly.</p>
+                </div>
+                <div class="service-card reveal">
+                    <div class="service-icon" style="background: #2563eb;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    </div>
+                    <h3>Click-to-Call Mobile</h3>
+                    <p>One-tap calling for mobile users with prominent tap-to-call buttons throughout.</p>
+                </div>
+                <div class="service-card reveal">
+                    <div class="service-icon" style="background: #2563eb;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    </div>
+                    <h3>Service Area Maps</h3>
+                    <p>Interactive service area visualization with local SEO optimization for each zone.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="case-study-section">
+        <div class="container">
+            <div class="case-study-grid">
+                <div>
+                    <h2>Project Overview</h2>
+                    <p>This concept was developed for a fictional established HVAC company in Charlotte, North Carolina. With 12 technicians and a strong local reputation since 2012, they needed a website to match their service quality.</p>
+                    <p>The strategic challenge: How do we create a digital presence that generates quality leads 24/7 and dominates local search for high-value service keywords?</p>
+                </div>
+                <div class="case-study-sidebar">
+                    <h3>Project Details</h3>
+                    <div class="sidebar-item">
+                        <div class="sidebar-label">Industry</div>
+                        <div class="sidebar-value">HVAC / Home Services</div>
+                    </div>
+                    <div class="sidebar-item">
+                        <div class="sidebar-label">Project Type</div>
+                        <div class="sidebar-value">Strategic Concept</div>
+                    </div>
+                    <div class="sidebar-item">
+                        <div class="sidebar-label">Focus Areas</div>
+                        <div class="sidebar-value">Local SEO, Lead Generation, 24/7 Capture</div>
+                    </div>
+                    <div class="sidebar-item">
+                        <div class="sidebar-label">Target Audience</div>
+                        <div class="sidebar-value">Homeowners 30-55</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="case-study-section" style="background: var(--off-white);">
+        <div class="container">
+            <h2>Business Goals</h2>
+            <ul class="case-study-list">
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <div><strong>Generate quality leads</strong> through a strategic, conversion-optimized website</div>
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <div><strong>Dominate local search</strong> for high-intent keywords like "HVAC repair near me"</div>
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <div><strong>Capture leads 24/7</strong> with online quote request forms that work outside business hours</div>
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <div><strong>Build trust online</strong> with a professional website showcasing their established reputation</div>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="case-study-section">
+        <div class="container">
+            <h2>Website Strategy</h2>
+            <div class="case-study-grid">
+                <div>
+                    <h3 style="margin-bottom: 16px;">Target Audience</h3>
+                    <p style="color: var(--text-light);">Primary: Homeowners aged 30-55 needing HVAC repair or installation. Secondary: Property managers and landlords managing rental properties.</p>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 16px;">Brand Positioning</h3>
+                    <p style="color: var(--text-light);">Position the company as Charlotte's most trusted HVAC partner—the company that treats customers like family with transparent pricing and reliable service.</p>
+                </div>
+            </div>
+            <div style="margin-top: 48px;">
+                <h3 style="margin-bottom: 24px;">Strategic Approach</h3>
+                <ul class="case-study-list">
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <div><strong>Local SEO Domination:</strong> Optimize for exactly what local HVAC customers search for—"AC repair Charlotte," "furnace installation near me"—with dedicated pages for each service.</div>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <div><strong>24/7 Lead Capture:</strong> Online quote request forms that capture detailed information, working around the clock to capture leads even when the office is closed.</div>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <div><strong>Trust Building:</strong> Reviews, certifications, and guarantees prominently displayed to overcome the trust barrier common in home services.</div>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <div><strong>Mobile-First Optimization:</strong> With majority of searches on mobile, ensure one-tap calling and seamless mobile experience.</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="case-study-section" style="background: var(--off-white);">
+        <div class="container">
+            <div class="case-study-grid">
+                <div>
+                    <h2>Pages Included</h2>
+                    <ul class="case-study-list">
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Homepage</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Service Pages (4)</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Neighborhood Landing Pages</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> About Us</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Get a Quote</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Financing Options</li>
+                    </ul>
+                </div>
+                <div>
+                    <h2>Key Features</h2>
+                    <ul class="case-study-list">
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Detailed quote request system</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Interactive service area map</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Financing calculator</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Service coupon system</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Blog for SEO content</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Live chat integration</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="case-study-section">
+        <div class="container">
+            <h2>Design Direction</h2>
+            <div class="case-study-grid">
+                <div>
+                    <h3 style="margin-bottom: 16px;">Visual Style</h3>
+                    <p style="color: var(--text-light);">Create a bold, trustworthy aesthetic that appeals directly to homeowners. Use strong colors and clear imagery to communicate reliability and professionalism without being corporate.</p>
+                    <p style="color: var(--text-light); margin-top: 16px;">Real photos of technicians and trucks humanize the brand, while clean service icons make navigation intuitive.</p>
+                </div>
+                <div class="case-study-sidebar">
+                    <h3>Design Specifications</h3>
+                    <div class="sidebar-item">
+                        <div class="sidebar-label">Primary Color</div>
+                        <div class="sidebar-value">Trust Blue (#1E3A5F)</div>
+                    </div>
+                    <div class="sidebar-item">
+                        <div class="sidebar-label">Accent Color</div>
+                        <div class="sidebar-value">Warm Orange (#E87C2C)</div>
+                    </div>
+                    <div class="sidebar-item">
+                        <div class="sidebar-label">Typography</div>
+                        <div class="sidebar-value">Playfair Display + DM Sans</div>
+                    </div>
+                    <div class="sidebar-item">
+                        <div class="sidebar-label">Style</div>
+                        <div class="sidebar-value">Professional & Approachable</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-banner">
+        <div class="container">
+            <h2>Ready to Build Your Website?</h2>
+            <p>Let's discuss how we can help your business with a strategic website designed to generate leads and drive growth.</p>
+            <div class="cta-buttons">
+                <a href="contact.html" class="btn btn-primary btn-lg">Start Your Project</a>
+                <a href="portfolio.html" class="btn btn-secondary btn-lg">View More Concepts</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <img src="images/logo.png" alt="Architech Designs" style="height: 36px;">
+                    </a>
+                    <p>Strategic web design for businesses that want to grow. We build modern, conversion-focused websites that actually work.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="portfolio.html">Our Work</a></li>
+                        <li><a href="process.html">Process</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="services.html">Web Design</a></li>
+                        <li><a href="services.html">Redesign</a></li>
+                        <li><a href="services.html">SEO</a></li>
+                        <li><a href="packages.html">Pricing</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Architech Designs. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

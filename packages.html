@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Packages & Pricing | Architech Designs</title>
+    <meta name="description" content="Choose from our transparent website packages. Starter, Growth, and Premium options for your business.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 48px 0;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .comparison-table th {
+            font-weight: 600;
+            color: var(--primary);
+            background: var(--off-white);
+        }
+        .comparison-table th:first-child {
+            width: 40%;
+        }
+        .comparison-table tr:hover {
+            background: var(--off-white);
+        }
+        .check {
+            color: var(--success);
+        }
+        .cross {
+            color: var(--text-muted);
+        }
+        .package-highlight {
+            border: 2px solid var(--accent);
+            position: relative;
+        }
+        .package-highlight::before {
+            content: 'Most Popular';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: var(--primary);
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar scrolled">
+        <div class="container">
+            <div class="navbar-inner">
+                <a href="index.html" class="logo">
+                    <img src="images/logo.png" alt="Architech Designs">
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="packages.html">Packages</a></li>
+                    <li><a href="portfolio.html">Portfolio</a></li>
+                    <li><a href="process.html">Process</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+                <div class="nav-cta">
+                    <a href="contact.html" class="btn btn-primary btn-sm">Book Consultation</a>
+                </div>
+                <button class="mobile-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <div class="page-header-content">
+                <span class="section-label">Pricing</span>
+                <h1>Simple, Transparent Pricing</h1>
+                <p>Choose the package that fits your business. No hidden fees, no surprises.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="packages-grid">
+                <div class="package-card reveal">
+                    <div class="package-header">
+                        <h3 class="package-name">Starter Website</h3>
+                        <div class="package-price">$997<span> one-time</span></div>
+                    </div>
+                    <p style="color: var(--text-light); margin-bottom: 24px;">Perfect for new businesses needing a professional online presence.</p>
+                    <ul class="package-features">
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Up to 5 pages
+                        </li>
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Mobile responsive design
+                        </li>
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Contact form integration
+                        </li>
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Basic SEO setup
+                        </li>
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            SSL certificate
+                        </li>
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            14-day delivery
+                        </li>
+                    </ul>
+                    <a href="contact.html" class="btn btn-outline package-cta">Get Started</a>
+                </div>
+
+                <div class="package-card featured reveal package-highlight">
+                    <div class="package-header">
+                        <h3 class="package-name">Growth Website</h3>
+                        <div class="package-price">$1,997<span> one-time</span></div>
+                    </div>
+                    <p style="color: var(--text-light); margin-bottom: 24px;">For businesses ready to grow with more features and conversion tools.</p>
+                    <ul class="package-features">
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Up to 10 pages
+                        </li>
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Conversion-focused layout
+                        </li>
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Lead capture forms
+                        </li>
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Advanced SEO
+                        </li>
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Google Analytics setup
+                        </li>
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Speed optimization
+                        </li>
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            30-day support
+                        </li>
+                    </ul>
+                    <a href="contact.html" class="btn btn-primary package-cta">Get Started</a>
+                </div>
+
+                <div class="package-card reveal">
+                    <div class="package-header">
+                        <h3 class="package-name">Premium System</h3>
+                        <div class="package-price">$3,997<span> one-time</span></div>
+                    </div>
+                    <p style="color: var(--text-light); margin-bottom: 24px;">Complete website system with strategy and ongoing support.</p>
+                    <ul class="package-features">
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Unlimited pages
+                        </li>
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Strategy workshop
+                        </li>
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Custom integrations
+                        </li>
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Blog setup
+                        </li>
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Email automation
+                        </li>
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            60-day support
+                        </li>
+                        <li class="package-feature">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Priority delivery
+                        </li>
+                    </ul>
+                    <a href="contact.html" class="btn btn-outline package-cta">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background: var(--off-white);">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2 class="section-title">Compare Packages</h2>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Features</th>
+                            <th>Starter<br>$997</th>
+                            <th>Growth<br>$1,997</th>
+                            <th>Premium<br>$3,997</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Number of Pages</td>
+                            <td>Up to 5</td>
+                            <td>Up to 10</td>
+                            <td>Unlimited</td>
+                        </tr>
+                        <tr>
+                            <td>Mobile Responsive</td>
+                            <td class="check">&#10003;</td>
+                            <td class="check">&#10003;</td>
+                            <td class="check">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>Contact Form</td>
+                            <td class="check">&#10003;</td>
+                            <td class="check">&#10003;</td>
+                            <td class="check">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>Lead Capture Forms</td>
+                            <td class="cross">&#8212;</td>
+                            <td class="check">&#10003;</td>
+                            <td class="check">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>Basic SEO</td>
+                            <td class="check">&#10003;</td>
+                            <td class="check">&#10003;</td>
+                            <td class="check">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>Advanced SEO</td>
+                            <td class="cross">&#8212;</td>
+                            <td class="check">&#10003;</td>
+                            <td class="check">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>Google Analytics</td>
+                            <td class="cross">&#8212;</td>
+                            <td class="check">&#10003;</td>
+                            <td class="check">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>Speed Optimization</td>
+                            <td class="cross">&#8212;</td>
+                            <td class="check">&#10003;</td>
+                            <td class="check">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>Strategy Workshop</td>
+                            <td class="cross">&#8212;</td>
+                            <td class="cross">&#8212;</td>
+                            <td class="check">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>Blog Setup</td>
+                            <td class="cross">&#8212;</td>
+                            <td class="cross">&#8212;</td>
+                            <td class="check">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>Email Automation</td>
+                            <td class="cross">&#8212;</td>
+                            <td class="cross">&#8212;</td>
+                            <td class="check">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>Post-Launch Support</td>
+                            <td>14 days</td>
+                            <td>30 days</td>
+                            <td>60 days</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Add-Ons</span>
+                <h2 class="section-title">Additional Services</h2>
+            </div>
+            <div class="services-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="service-card reveal">
+                    <h3>Content Writing</h3>
+                    <p>Professional copy for your website. We write compelling content that converts.</p>
+                    <p style="font-weight: 600; color: var(--accent); margin-top: 12px;">From $200</p>
+                </div>
+                <div class="service-card reveal">
+                    <h3>Logo Design</h3>
+                    <p>Custom logo design or refinement to match your brand identity.</p>
+                    <p style="font-weight: 600; color: var(--accent); margin-top: 12px;">From $300</p>
+                </div>
+                <div class="service-card reveal">
+                    <h3>SEO Package</h3>
+                    <p>Comprehensive SEO to improve your search rankings and visibility.</p>
+                    <p style="font-weight: 600; color: var(--accent); margin-top: 12px;">From $500</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section cta-section">
+        <div class="container">
+            <div class="cta-content reveal">
+                <h2>Not Sure Which Package?</h2>
+                <p>Book a free consultation and we'll help you find the perfect fit.</p>
+                <div class="cta-buttons">
+                    <a href="contact.html" class="btn btn-primary btn-lg">Book Consultation</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <img src="images/logo.png" alt="Architech Designs" style="height: 36px;">
+                    </a>
+                    <p>Strategic web design for businesses that want to grow. We build modern, conversion-focused websites that actually work.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="portfolio.html">Our Work</a></li>
+                        <li><a href="process.html">Process</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="services.html">Web Design</a></li>
+                        <li><a href="services.html">Redesign</a></li>
+                        <li><a href="services.html">SEO</a></li>
+                        <li><a href="packages.html">Pricing</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Architech Designs. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

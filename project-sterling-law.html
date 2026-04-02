@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sterling & Associates Law | Architech Designs</title>
+    <meta name="description" content="Law firm website concept by Architech Designs. Strategic design approach for legal websites.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .case-study-header { background: var(--white); padding: 180px 0 80px; border-bottom: 1px solid var(--border); }
+        .case-study-badge { display: inline-block; background: var(--accent-light); color: var(--accent); padding: 6px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px; }
+        .case-study-title { font-size: clamp(2.5rem, 5vw, 3.5rem); margin-bottom: 16px; }
+        .case-study-subtitle { font-size: 1.25rem; color: var(--text-light); max-width: 600px; }
+        .case-study-section { padding: 80px 0; }
+        .case-study-section h2 { font-size: 1.75rem; margin-bottom: 24px; }
+        .case-study-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+        .case-study-list { list-style: none; }
+        .case-study-list li { padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 12px; }
+        .case-study-list li svg { width: 20px; height: 20px; color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+        .case-study-sidebar { background: var(--off-white); border-radius: var(--radius-lg); padding: 32px; }
+        .case-study-sidebar h3 { font-size: 1.1rem; margin-bottom: 20px; }
+        .sidebar-item { padding: 16px 0; border-bottom: 1px solid var(--border); }
+        .sidebar-item:last-child { border-bottom: none; }
+        .sidebar-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 4px; }
+        .sidebar-value { font-weight: 600; color: var(--primary); }
+        .cta-banner { background: var(--primary); padding: 80px 0; text-align: center; }
+        .cta-banner h2 { color: var(--white); margin-bottom: 16px; }
+        .cta-banner p { color: rgba(255,255,255,0.7); max-width: 500px; margin: 0 auto 32px; }
+        .back-link { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 32px; color: var(--text-light); font-weight: 500; }
+        .back-link:hover { color: var(--accent); }
+        .concept-note { background: var(--accent-light); border-left: 4px solid var(--accent); padding: 20px 24px; margin-bottom: 32px; border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+        .concept-note p { margin: 0; color: var(--text); }
+        @media (max-width: 768px) { .case-study-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar scrolled">
+        <div class="container">
+            <div class="navbar-inner">
+                <a href="index.html" class="logo"><img src="images/logo.png" alt="Architech Designs"></a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="packages.html">Packages</a></li>
+                    <li><a href="portfolio.html">Portfolio</a></li>
+                    <li><a href="process.html">Process</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+                <div class="nav-cta"><a href="contact.html" class="btn btn-primary btn-sm">Book Consultation</a></div>
+                <button class="mobile-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="case-study-header">
+        <div class="container">
+            <a href="portfolio.html" class="back-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Back to Portfolio
+            </a>
+            <span class="case-study-badge">Project Concept</span>
+            <h1 class="case-study-title">Sterling & Associates Law</h1>
+            <p class="case-study-subtitle">A strategic website concept designed to help a personal injury law firm build trust and generate consultation requests.</p>
+            <div class="concept-note"><p><strong>Note:</strong> This is a strategic concept project demonstrating our approach to law firm websites. The design and strategy are ready for implementation.</p></div>
+            <div class="concept-preview-links">
+                <a href="#preview-sterling" class="btn btn-primary">View Website Mockup</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Mock Preview -->
+    <section id="preview-sterling" class="concept-mockup-section">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Website Preview</span>
+                <h2 class="section-title">Sterling & Associates - Interactive Demo</h2>
+                <p class="section-subtitle">Click the tabs below to explore different pages and features.</p>
+            </div>
+            
+            <div class="mockup-tabs">
+                <button class="mockup-tab active" data-page="sterling-home">Homepage</button>
+                <button class="mockup-tab" data-page="sterling-case">Case Eval</button>
+                <button class="mockup-tab" data-page="sterling-chat">Live Chat</button>
+                <button class="mockup-tab" data-page="sterling-results">Case Results</button>
+            </div>
+
+            <div class="mockup-browser">
+                <div class="mockup-browser-bar">
+                    <div class="mockup-dots"><span></span><span></span><span></span></div>
+                    <div class="mockup-url">sterlinglawhouston.com</div>
+                </div>
+                <div class="mockup-content">
+                    <!-- Homepage -->
+                    <div class="mockup-page active" id="sterling-home">
+                        <div class="mockup-nav">
+                            <div class="mockup-logo">Sterling & Associates</div>
+                            <div class="mockup-menu">
+                                <span>Practice Areas</span><span>Results</span><span>Our Team</span><span>Testimonials</span><span>Contact</span>
+                            </div>
+                        </div>
+                        <div class="mockup-hero sterling">
+                            <div class="mockup-hero-content">
+                                <h1>Fighting for Justice</h1>
+                                <p>Houston's Trusted Personal Injury Attorneys</p>
+                                <div class="mockup-cta">Free Case Evaluation</div>
+                            </div>
+                        </div>
+                        <div class="mockup-services">
+                            <div class="mockup-service"><div class="mockup-service-icon">CAR</div><h4>Car Accidents</h4><p>Full representation</p></div>
+                            <div class="mockup-service"><div class="mockup-service-icon">TRK</div><h4>Trucking</h4><p>Complex cases</p></div>
+                            <div class="mockup-service"><div class="mockup-service-icon">MED</div><h4>Medical Malpractice</h4><p>Hold accountable</p></div>
+                        </div>
+                        <div class="mockup-trust-badges">
+                            <span>⚖️ $50M+ Recovered</span>
+                            <span>⭐ 4.9 Rating</span>
+                            <span>🏆 Top Rated</span>
+                        </div>
+                        <div class="mockup-testimonial-compact" style="background: linear-gradient(135deg, #fdf8ed 0%, #faf5eb 100%);">
+                            <p>"They secured a settlement that covered everything. Highly recommend!"</p>
+                            <span>— Jennifer R., Houston</span>
+                        </div>
+                    </div>
+
+                    <!-- Case Evaluation -->
+                    <div class="mockup-page" id="sterling-case">
+                        <div class="mockup-nav"><div class="mockup-logo">Sterling</div><div class="mockup-menu"><span>Practice Areas</span><span>Results</span><span>Our Team</span><span>Contact</span></div></div>
+                        <div class="mockup-form-page">
+                            <div class="mockup-form-header"><h2>Free Case Evaluation</h2><p>Tell us about your case for a free consultation</p></div>
+                            <div class="mockup-form-content">
+                                <div class="mockup-form-group"><label>Type of Accident</label><select><option>Car Accident</option><option>Trucking Accident</option><option>Medical Malpractice</option><option>Slip & Fall</option><option>Other</option></select></div>
+                                <div class="mockup-form-group"><label>Brief Description</label><textarea style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;font-size:0.75rem;min-height:60px;" placeholder="Describe what happened..."></textarea></div>
+                                <div class="mockup-form-group"><label>Injuries Sustained</label><select><option>Minor</option><option>Moderate</option><option>Severe</option></select></div>
+                                <div class="mockup-form-row">
+                                    <div class="mockup-form-group"><label>Your Name</label><input type="text" placeholder="Full name"></div>
+                                    <div class="mockup-form-group"><label>Phone</label><input type="text" placeholder="(555) 123-4567"></div>
+                                </div>
+                                <div class="mockup-form-group"><label>Email</label><input type="text" placeholder="your@email.com"></div>
+                                <div class="mockup-form-cta">Submit Case for Review</div>
+                                <div style="text-align: center; margin-top: 8px; font-size: 0.6rem; color: #28ca41;">✓ No fee unless we win</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Chat -->
+                    <div class="mockup-page" id="sterling-chat">
+                        <div class="mockup-nav"><div class="mockup-logo">Sterling</div><div class="mockup-menu"><span>Practice Areas</span><span>Results</span><span>Our Team</span><span>Contact</span></div></div>
+                        <div class="mockup-chat-page">
+                            <div class="mockup-chat-header">
+                                <div class="chat-avatar">SA</div>
+                                <div><h4>Sterling & Associates</h4><p>Online now</p></div>
+                            </div>
+                            <div class="mockup-chat-messages">
+                                <div class="chat-msg received">Hello! Welcome to Sterling & Associates. How can I help you today?</div>
+                                <div class="chat-msg sent">I was in a car accident last week and need legal help.</div>
+                                <div class="chat-msg received">I'm sorry to hear that. Were you injured? We offer free consultations for accident victims.</div>
+                                <div class="chat-msg sent">Yes, I had some injuries. How does the consultation work?</div>
+                                <div class="chat-msg received">We review your case at no cost. If we take it, you only pay if we win. Would you like to schedule a free consultation?</div>
+                            </div>
+                            <div class="mockup-chat-input">
+                                <input type="text" placeholder="Type your message...">
+                                <div class="chat-send">Send</div>
+                            </div>
+                            <div class="mockup-chat-cta">💬 Start Live Chat</div>
+                        </div>
+                    </div>
+
+                    <!-- Case Results -->
+                    <div class="mockup-page" id="sterling-results">
+                        <div class="mockup-nav"><div class="mockup-logo">Sterling</div><div class="mockup-menu"><span>Practice Areas</span><span>Results</span><span>Our Team</span><span>Contact</span></div></div>
+                        <div class="mockup-results-page">
+                            <div class="mockup-results-header"><h2>$50M+ Recovered for Clients</h2><p>Real settlements from real cases</p></div>
+                            <div class="mockup-results-filters">
+                                <span class="active">All</span><span>Car Accident</span><span>Trucking</span><span>Medical Malpractice</span>
+                            </div>
+                            <div class="mockup-results-list">
+                                <div class="mockup-result-item">
+                                    <div class="result-amount">$2.5M</div>
+                                    <div class="result-info"><h4>Car Accident Settlement</h4><p>Spinal injury - I-95 collision</p></div>
+                                </div>
+                                <div class="mockup-result-item">
+                                    <div class="result-amount">$1.8M</div>
+                                    <div class="result-info"><h4>Trucking Accident</h4><p>Commercial vehicle collision</p></div>
+                                </div>
+                                <div class="mockup-result-item">
+                                    <div class="result-amount">$950K</div>
+                                    <div class="result-info"><h4>Medical Malpractice</h4><p>Surgical error case</p></div>
+                                </div>
+                                <div class="mockup-result-item">
+                                    <div class="result-amount">$750K</div>
+                                    <div class="result-info"><h4>Car Accident</h4><p>Multi-vehicle pileup</p></div>
+                                </div>
+                            </div>
+                            <div class="mockup-cta-inline" style="background: #C9A227; color: #1a1a1a;">View All Results</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Features -->
+    <section class="case-study-section" style="background: var(--off-white);">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Features Included</span>
+                <h2 class="section-title">Trust & Lead Capture</h2>
+            </div>
+            <div class="services-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="service-card reveal">
+                    <div class="service-icon" style="background: var(--accent);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    </div>
+                    <h3>Case Evaluation Form</h3>
+                    <p>Smart intake form that qualifies leads and captures case details automatically.</p>
+                </div>
+                <div class="service-card reveal">
+                    <div class="service-icon" style="background: var(--accent);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                    </div>
+                    <h3>Live Chat Integration</h3>
+                    <p>24/7 chat bot for capturing leads outside business hours with smart routing.</p>
+                </div>
+                <div class="service-card reveal">
+                    <div class="service-icon" style="background: var(--accent);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    </div>
+                    <h3>Case Results Showcase</h3>
+                    <p>Searchable database of past settlements to build credibility and trust.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="case-study-section">
+        <div class="container">
+            <div class="case-study-grid">
+                <div>
+                    <h2>Project Overview</h2>
+                    <p>This concept was developed for a fictional personal injury law firm in Houston, Texas. The firm specializes in car accidents, trucking accidents, and medical malpractice cases.</p>
+                    <p>The strategic challenge: How do we create a digital presence that builds trust with potential clients and converts visitors into consultation requests?</p>
+                </div>
+                <div class="case-study-sidebar">
+                    <h3>Project Details</h3>
+                    <div class="sidebar-item"><div class="sidebar-label">Industry</div><div class="sidebar-value">Legal / Personal Injury</div></div>
+                    <div class="sidebar-item"><div class="sidebar-label">Project Type</div><div class="sidebar-value">Strategic Concept</div></div>
+                    <div class="sidebar-item"><div class="sidebar-label">Focus Areas</div><div class="sidebar-value">Trust Building, Lead Capture, Credibility</div></div>
+                    <div class="sidebar-item"><div class="sidebar-label">Target Audience</div><div class="sidebar-value">Accident victims 25-55</div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="case-study-section" style="background: var(--off-white);">
+        <div class="container">
+            <h2>Business Goals</h2>
+            <ul class="case-study-list">
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg><div><strong>Build trust</strong> with potential clients seeking legal representation</div></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg><div><strong>Increase consultation requests</strong> through strategic design and CTAs</div></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg><div><strong>Establish authority</strong> through case results and credentials</div></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg><div><strong>Capture leads 24/7</strong> with online case evaluation forms</div></li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="case-study-section">
+        <div class="container">
+            <h2>Website Strategy</h2>
+            <div class="case-study-grid">
+                <div><h3 style="margin-bottom: 16px;">Target Audience</h3><p style="color: var(--text-light);">Primary: Accident victims aged 25-55 seeking legal representation. Secondary: Family members of injury victims, referring attorneys.</p></div>
+                <div><h3 style="margin-bottom: 16px;">Brand Positioning</h3><p style="color: var(--text-light);">Position the firm as Houston's trusted personal injury advocates—aggressive in the courtroom, compassionate with clients.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="case-study-section" style="background: var(--off-white);">
+        <div class="container">
+            <div class="case-study-grid">
+                <div><h2>Pages Included</h2><ul class="case-study-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>Homepage</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>Practice Areas</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>Case Results</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>Attorneys</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>Case Evaluation</li></ul></div>
+                <div><h2>Key Features</h2><ul class="case-study-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>Free case evaluation form</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>Live chat integration</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>Case results database</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>Attorney profiles</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>Testimonial integration</li></ul></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-banner">
+        <div class="container">
+            <h2>Ready to Build Your Website?</h2>
+            <p>Let's discuss how we can help your business with a strategic website designed to generate leads and drive growth.</p>
+            <div class="cta-buttons">
+                <a href="contact.html" class="btn btn-primary btn-lg">Start Your Project</a>
+                <a href="portfolio.html" class="btn btn-secondary btn-lg">View More Concepts</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand"><a href="index.html" class="logo"><img src="images/logo.png" alt="Architech Designs" style="height: 36px;"></a><p>Strategic web design for businesses that want to grow.</p></div>
+                <div class="footer-col"><h4>Company</h4><ul><li><a href="about.html">About Us</a></li><li><a href="portfolio.html">Our Work</a></li><li><a href="process.html">Process</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+                <div class="footer-col"><h4>Services</h4><ul><li><a href="services.html">Web Design</a></li><li><a href="services.html">Redesign</a></li><li><a href="services.html">SEO</a></li><li><a href="packages.html">Pricing</a></li></ul></div>
+            </div>
+            <div class="footer-bottom"><p>&copy; 2026 Architech Designs. All rights reserved.</p></div>
+        </div>
+    </footer>
+    <script src="js/main.js"></script>
+</body>
+</html>

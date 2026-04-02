@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Study: Luxe Medical Spa | Architech Designs</title>
+    <meta name="description" content="Medical spa website redesign case study by Architech Designs. 47% increase in booking inquiries.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .case-study-header {
+            background: var(--white);
+            padding: 180px 0 80px;
+            border-bottom: 1px solid var(--border);
+        }
+        .case-study-badge {
+            display: inline-block;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 6px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+        .case-study-title {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            margin-bottom: 16px;
+        }
+        .case-study-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            max-width: 600px;
+        }
+        .case-study-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-top: 48px;
+            padding-top: 48px;
+            border-top: 1px solid var(--border);
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        .case-study-section {
+            padding: 80px 0;
+        }
+        .case-study-section h2 {
+            font-size: 1.75rem;
+            margin-bottom: 24px;
+        }
+        .case-study-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+        }
+        .case-study-list {
+            list-style: none;
+        }
+        .case-study-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .case-study-list li svg {
+            width: 20px;
+            height: 20px;
+            color: var(--accent);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .case-study-sidebar {
+            background: var(--off-white);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+        }
+        .case-study-sidebar h3 {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+        .sidebar-item {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .sidebar-item:last-child {
+            border-bottom: none;
+        }
+        .sidebar-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .sidebar-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .cta-banner {
+            background: var(--primary);
+            padding: 80px 0;
+            text-align: center;
+        }
+        .cta-banner h2 {
+            color: var(--white);
+            margin-bottom: 16px;
+        }
+        .cta-banner p {
+            color: rgba(255,255,255,0.7);
+            max-width: 500px;
+            margin: 0 auto 32px;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 32px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        .back-link:hover {
+            color: var(--accent);
+        }
+        @media (max-width: 768px) {
+            .case-study-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .case-study-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar scrolled">
+        <div class="container">
+            <div class="navbar-inner">
+                <a href="index.html" class="logo">
+                    <img src="images/logo.png" alt="Architech Designs">
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="packages.html">Packages</a></li>
+                    <li><a href="portfolio.html">Portfolio</a></li>
+                    <li><a href="process.html">Process</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+                <div class="nav-cta">
+                    <a href="contact.html" class="btn btn-primary btn-sm">Book Consultation</a>
+                </div>
+                <button class="mobile-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Case Study Header -->
+    <section class="case-study-header">
+        <div class="container">
+            <a href="portfolio.html" class="back-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Portfolio
+            </a>
+            <span class="case-study-badge">Website Redesign</span>
+            <h1 class="case-study-title">Luxe Medical Spa</h1>
+            <p class="case-study-subtitle">Transforming a premium medical spa's digital presence with a luxury-focused redesign that matches their high-end in-clinic experience.</p>
+            
+            <div class="case-study-stats">
+                <div class="stat-item">
+                    <div class="stat-value">+47%</div>
+                    <div class="stat-label">Booking Inquiries</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">+300%</div>
+                    <div class="stat-label">Mobile Conversions</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">+217%</div>
+                    <div class="stat-label">Online Booking Rate</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">#1</div>
+                    <div class="stat-label">Local Search Ranking</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview -->
+    <section class="case-study-section">
+        <div class="container">
+            <div class="case-study-grid">
+                <div>
+                    <h2>Project Overview</h2>
+                    <p>Luxe Medical Spa is a premium aesthetic clinic in Scottsdale, Arizona, offering Botox, dermal fillers, laser treatments, and medical-grade skincare. With two board-certified physicians and a team of aesthetic specialists, they needed a website that reflected their luxury positioning.</p>
+                    <p>The challenge: Their existing site was dated and generic, failing to communicate the premium experience they offer. With 65% of traffic coming from mobile devices and no online booking capability, they were losing potential clients to competitors with stronger digital presence.</p>
+                </div>
+                <div class="case-study-sidebar">
+                    <h3>Project Details</h3>
+                    <div class="sidebar-item">
+                        <div class="sidebar-label">Industry</div>
+                        <div class="sidebar-value">Medical Aesthetics</div>
+                    </div>
+                    <div class="sidebar-item">
+                        <div class="sidebar-label">Services</div>
+                        <div class="sidebar-value">Strategy, Design, Development, SEO</div>
+                    </div>
+                    <div class="sidebar-item">
+                        <div class="sidebar-label">Timeline</div>
+                        <div class="sidebar-value">3 Weeks</div>
+                    </div>
+                    <div class="sidebar-item">
+                        <div class="sidebar-label">Location</div>
+                        <div class="sidebar-value">Scottsdale, AZ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Business Goals -->
+    <section class="case-study-section" style="background: var(--off-white);">
+        <div class="container">
+            <h2>Business Goals</h2>
+            <ul class="case-study-list">
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <div><strong>Attract more affluent clients</strong> seeking premium medical aesthetics in the Scottsdale area</div>
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <div><strong>Increase booking inquiries</strong> by making it easy for potential clients to learn about services and book consultations</div>
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <div><strong>Build trust and credibility</strong> through professional design and prominent display of physician credentials</div>
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <div><strong>Dominate local search</strong> for high-value treatment keywords like "Botox Scottsdale" and "best med spa near me"</div>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Website Strategy -->
+    <section class="case-study-section">
+        <div class="container">
+            <h2>Website Strategy</h2>
+            <div class="case-study-grid">
+                <div>
+                    <h3 style="margin-bottom: 16px;">Target Audience</h3>
+                    <p style="color: var(--text-light);">Primary: Women aged 35-55 with household income $100K+ seeking anti-aging treatments. Secondary: Younger professionals (28-35) interested in preventative aesthetics.</p>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 16px;">Brand Positioning</h3>
+                    <p style="color: var(--text-light);">We positioned Luxe as the premier medical spa destination in Scottsdale—one that combines clinical expertise with luxury spa experience. Every design decision was made to communicate exclusivity and trust.</p>
+                </div>
+            </div>
+            <div style="margin-top: 48px;">
+                <h3 style="margin-bottom: 24px;">Strategic Approach</h3>
+                <ul class="case-study-list">
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <div><strong>Trust-First Design:</strong> Medical aesthetic clients need confidence. We built trust through professional photography, prominently displayed physician credentials, and an extensive before/after gallery.</div>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <div><strong>Mobile-First Experience:</strong> With 65% of traffic from mobile, we optimized every touchpoint for seamless mobile booking and navigation.</div>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <div><strong>Treatment-Focused Navigation:</strong> Organized services by category for easy discovery, with a smart treatment finder quiz to guide users.</div>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <div><strong>Conversion Optimization:</strong> Strategic placement of booking CTAs throughout the user journey, from hero section to treatment pages.</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pages & Features -->
+    <section class="case-study-section" style="background: var(--off-white);">
+        <div class="container">
+            <div class="case-study-grid">
+                <div>
+                    <h2>Pages Included</h2>
+                    <ul class="case-study-list">
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Homepage</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Treatments Hub</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Treatment Detail Pages (12)</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> About & Team</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Before/After Gallery</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Online Booking</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Contact</li>
+                    </ul>
+                </div>
+                <div>
+                    <h2>Key Features</h2>
+                    <ul class="case-study-list">
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Real-time online booking integration</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Interactive treatment finder quiz</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Filterable before/after gallery</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Lead capture with free skincare guide</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Blog for SEO content</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Video testimonial integration</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Virtual consultation requests</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Design Direction -->
+    <section class="case-study-section">
+        <div class="container">
+            <h2>Design Direction</h2>
+            <div class="case-study-grid">
+                <div>
+                    <h3 style="margin-bottom: 16px;">Visual Style</h3>
+                    <p style="color: var(--text-light);">We created a luxury aesthetic that mirrors the high-end experience Luxe delivers in-clinic. The design uses ample white space, elegant typography, and subtle gold accents to communicate exclusivity without being ostentatious.</p>
+                    <p style="color: var(--text-light); margin-top: 16px;">Large, high-quality photography showcases the clinic's elegant interior, while custom illustrations explain complex treatments in an approachable way.</p>
+                </div>
+                <div class="case-study-sidebar">
+                    <h3>Design Specifications</h3>
+                    <div class="sidebar-item">
+                        <div class="sidebar-label">Primary Color</div>
+                        <div class="sidebar-value">Deep Charcoal (#1A1A1A)</div>
+                    </div>
+                    <div class="sidebar-item">
+                        <div class="sidebar-label">Accent Color</div>
+                        <div class="sidebar-value">Champagne Gold (#C9A227)</div>
+                    </div>
+                    <div class="sidebar-item">
+                        <div class="sidebar-label">Typography</div>
+                        <div class="sidebar-value">Playfair Display + DM Sans</div>
+                    </div>
+                    <div class="sidebar-item">
+                        <div class="sidebar-label">Style</div>
+                        <div class="sidebar-value">Luxury Minimalist</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-banner">
+        <div class="container">
+            <h2>Ready to Transform Your Online Presence?</h2>
+            <p>Let's discuss how we can help your medical spa attract more clients and grow your business.</p>
+            <div class="cta-buttons">
+                <a href="contact.html" class="btn btn-primary btn-lg">Start Your Project</a>
+                <a href="portfolio.html" class="btn btn-secondary btn-lg">View More Work</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <img src="images/logo.png" alt="Architech Designs" style="height: 36px;">
+                    </a>
+                    <p>Strategic web design for businesses that want to grow. We build modern, conversion-focused websites that actually work.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="portfolio.html">Our Work</a></li>
+                        <li><a href="process.html">Process</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="services.html">Web Design</a></li>
+                        <li><a href="services.html">Redesign</a></li>
+                        <li><a href="services.html">SEO</a></li>
+                        <li><a href="packages.html">Pricing</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Architech Designs. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
