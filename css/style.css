@@ -1092,6 +1092,7 @@ img { max-width: 100%; height: auto; display: block; }
     justify-content: center;
     opacity: 0;
     transition: var(--transition);
+    pointer-events: none;
 }
 
 .project-overlay a {
@@ -1101,6 +1102,14 @@ img { max-width: 100%; height: auto; display: block; }
     align-items: center;
     justify-content: center;
     z-index: 10;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.project-card:hover .project-overlay,
+.project-card .project-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .project-card:hover .project-overlay {
@@ -1776,9 +1785,24 @@ img { max-width: 100%; height: auto; display: block; }
     .cta-buttons .btn { width: 100%; max-width: 280px; }
     
     .form-row { grid-template-columns: 1fr; }
-    .contact-form { padding: 24px 16px; border-radius: var(--radius-lg); }
-    .form-group { margin-bottom: 16px; }
-    .form-group input, .form-group select, .form-group textarea { padding: 12px; font-size: 0.9rem; }
+    .contact-form { 
+        padding: 20px 16px; 
+        border-radius: var(--radius-lg);
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    .form-group { margin-bottom: 14px; }
+    .form-group input, .form-group select, .form-group textarea { 
+        padding: 12px; 
+        font-size: 0.9rem; 
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .contact-form .btn {
+        width: 100%;
+        max-width: 100%;
+    }
     
     .faq-list { gap: 12px; }
     .faq-question { padding: 16px; font-size: 0.9rem; }
@@ -3146,6 +3170,8 @@ img { max-width: 100%; height: auto; display: block; }
     .services-grid .service-card { padding: 24px 16px; }
     
     .packages-grid .package-card { padding: 24px 16px; }
+    
+    .project-overlay { display: none; }
     
     .portfolio-grid .project-card { margin-bottom: 16px; }
     
