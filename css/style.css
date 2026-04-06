@@ -1863,6 +1863,8 @@ img { max-width: 100%; height: auto; display: block; }
     position: relative;
     z-index: 2;
     max-width: 700px;
+    text-align: center;
+    margin: 0 auto;
 }
 
 .page-header h1 {
