@@ -1118,6 +1118,12 @@ img { max-width: 100%; height: auto; display: block; }
 .package-name {
     font-size: 1.25rem;
     font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.package-tagline {
+    font-size: 0.85rem;
+    color: var(--text-light);
     margin-bottom: 12px;
 }
 
