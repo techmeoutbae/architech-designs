@@ -433,4 +433,87 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     Logger.info('App', 'Application initialized successfully');
+
+    const cardModal = document.getElementById('cardModal');
+    const cardModalOverlay = document.getElementById('cardModalOverlay');
+    const cardModalClose = document.getElementById('cardModalClose');
+    const cardModalIcon = document.getElementById('cardModalIcon');
+    const cardModalTitle = document.getElementById('cardModalTitle');
+    const cardModalText = document.getElementById('cardModalText');
+
+    if (cardModal && cardModalOverlay && cardModalClose) {
+        function openCardModal(iconHtml, title, text) {
+            if (cardModalIcon && cardModalTitle && cardModalText) {
+                cardModalIcon.innerHTML = iconHtml;
+                cardModalTitle.textContent = title;
+                cardModalText.textContent = text;
+            }
+            cardModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCardModal() {
+            cardModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        cardModalOverlay.addEventListener('click', closeCardModal);
+        cardModalClose.addEventListener('click', closeCardModal);
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && cardModal.classList.contains('active')) {
+                closeCardModal();
+            }
+        });
+
+        const clickableCards = document.querySelectorAll('.service-card, .package-card, .value-card');
+        clickableCards.forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768) {
+                    const icon = this.querySelector('.service-icon, .value-icon');
+                    const title = this.querySelector('h3, h4');
+                    const text = this.querySelector('p');
+                    
+                    if (title && text) {
+                        const iconHtml = icon ? icon.innerHTML : '';
+                        openCardModal(iconHtml, title.textContent, text.textContent);
+                    }
+                }
+            });
+
+            card.addEventListener('keydown', function(e) {
+                if ((e.key === 'Enter' || e.key === ' ') && window.innerWidth <= 768) {
+                    e.preventDefault();
+                    this.click();
+                }
+            });
+
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('role', 'button');
+        });
+    }
+
+    const projectCards = document.querySelectorAll('.project-card');
+    projectCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) {
+                const link = this.querySelector('.project-overlay a');
+                if (link) {
+                    window.location.href = link.href;
+                }
+            }
+        });
+        
+        card.addEventListener('keydown', function(e) {
+            if ((e.key === 'Enter' || e.key === ' ') && window.innerWidth <= 768) {
+                e.preventDefault();
+                const link = this.querySelector('.project-overlay a');
+                if (link) {
+                    window.location.href = link.href;
+                }
+            }
+        });
+        
+        card.setAttribute('tabindex', '0');
+    });
 });
