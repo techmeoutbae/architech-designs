@@ -3782,4 +3782,53 @@ img { max-width: 100%; height: auto; display: block; }
     .header-logo-text img {
         height: 50px;
     }
+    
+    .footer-grid {
+        text-align: center;
+    }
+    
+    .footer-brand {
+        text-align: center;
+    }
+    
+    .footer-brand .logo {
+        justify-content: center;
+    }
+    
+    .footer-brand .logo img {
+        margin: 0 auto;
+        display: block;
+    }
+    
+    .footer-brand p {
+        margin: 0 auto 24px;
+        text-align: center;
+    }
+    
+    .footer-col {
+        text-align: center;
+    }
+    
+    .footer-col h4::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .footer-col ul {
+        padding: 0;
+    }
+    
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+    
+    .footer-links {
+        justify-content: center;
+    }
+    
+    .footer-social {
+        justify-content: center;
+    }
 }
