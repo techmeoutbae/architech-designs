@@ -25,42 +25,51 @@
         .comparison-table th,
         .comparison-table td {
             padding: 16px;
-            text-align: left;
+            text-align: center;
             border-bottom: 1px solid var(--border);
+        }
+        .comparison-table th:first-child {
+            text-align: left;
+            width: 40%;
         }
         .comparison-table th {
             font-weight: 600;
             color: var(--primary);
             background: var(--off-white);
+            vertical-align: bottom;
         }
-        .comparison-table th:first-child {
-            width: 40%;
+        .comparison-table th.package-highlight-th {
+            background: rgba(201, 162, 39, 0.1);
+            border-top: 3px solid var(--accent);
+            position: relative;
         }
-        .comparison-table tr:hover {
+        .comparison-table th.package-highlight-th::before {
+            content: 'Most Popular';
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: var(--primary);
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .comparison-table tbody tr:hover {
             background: var(--off-white);
+        }
+        .comparison-table td:first-child {
+            text-align: left;
+            font-weight: 500;
         }
         .check {
             color: var(--success);
         }
         .cross {
             color: var(--text-muted);
-        }
-        .package-highlight {
-            border: 2px solid var(--accent);
-            position: relative;
-        }
-        .package-highlight::before {
-            content: 'Most Popular';
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--accent);
-            color: var(--primary);
-            padding: 4px 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border-radius: var(--radius-sm);
         }
     </style>
 </head>
@@ -282,9 +291,21 @@
                     <thead>
                         <tr>
                             <th>Features</th>
-                            <th>Launch<br>$1,499</th>
-                            <th>Growth<br>$2,499</th>
-                            <th>Premium Growth<br>$4,499</th>
+                            <th>
+                                <div style="font-size: 1rem; margin-bottom: 4px;">Launch</div>
+                                <div style="font-size: 0.75rem; color: var(--text-light);">$1,499</div>
+                            </th>
+                            <th class="package-highlight-th">
+                                <div style="font-size: 1rem; margin-bottom: 4px;">Growth</div>
+                                <div style="font-size: 0.75rem; color: var(--text-light);">$2,499</div>
+                            </th>
+                            <th>
+                                <div style="font-size: 1rem; margin-bottom: 4px;">
+                                    <svg style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px; color: var(--accent);" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+                                    Premium
+                                </div>
+                                <div style="font-size: 0.75rem; color: var(--text-light);">$4,499</div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
