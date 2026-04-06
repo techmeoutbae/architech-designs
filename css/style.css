@@ -3749,4 +3749,26 @@ img { max-width: 100%; height: auto; display: block; }
     .simple-card {
         padding: 24px 20px;
     }
+    
+    .navbar-inner {
+        justify-content: center;
+    }
+    
+    .header-logo-wrapper {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .header-logo-link {
+        display: none;
+    }
+    
+    .header-logo-text {
+        margin-left: 0;
+        justify-content: center;
+    }
+    
+    .header-logo-text img {
+        height: 50px;
+    }
 }
