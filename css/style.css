@@ -3770,11 +3770,14 @@ img { max-width: 100%; height: auto; display: block; }
         flex-direction: row;
         gap: 0;
         align-items: center;
-        flex: 1;
+        width: 100%;
         justify-content: center;
+        position: relative;
     }
     
     .header-logo-link {
+        position: absolute;
+        left: 0;
         display: flex;
         align-items: center;
     }
@@ -3784,7 +3787,7 @@ img { max-width: 100%; height: auto; display: block; }
     }
     
     .header-logo-text {
-        margin-left: 12px;
+        margin-left: 0;
         justify-content: center;
     }
     
