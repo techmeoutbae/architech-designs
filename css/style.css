@@ -3762,24 +3762,37 @@ img { max-width: 100%; height: auto; display: block; }
     }
     
     .navbar-inner {
-        justify-content: center;
+        justify-content: space-between;
+        gap: 16px;
     }
     
     .header-logo-wrapper {
-        flex-direction: column;
-        gap: 8px;
+        flex-direction: row;
+        gap: 0;
+        align-items: center;
+        flex: 1;
+        justify-content: center;
     }
     
     .header-logo-link {
-        display: none;
+        display: flex;
+        align-items: center;
+    }
+    
+    .header-logo-link img {
+        height: 40px;
     }
     
     .header-logo-text {
-        margin-left: 0;
+        margin-left: 12px;
         justify-content: center;
     }
     
     .header-logo-text img {
-        height: 50px;
+        height: 40px;
+    }
+    
+    .nav-cta {
+        display: none;
     }
 }
