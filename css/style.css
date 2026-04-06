@@ -1843,7 +1843,7 @@ img { max-width: 100%; height: auto; display: block; }
 
 /* Page Header */
 .page-header {
-    padding: 200px 0 100px;
+    padding: 220px 0 100px;
     background: var(--primary);
     position: relative;
     overflow: hidden;
