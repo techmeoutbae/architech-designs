@@ -3780,6 +3780,7 @@ img { max-width: 100%; height: auto; display: block; }
         left: 0;
         display: flex;
         align-items: center;
+        z-index: 1;
     }
     
     .header-logo-link img {
@@ -3787,15 +3788,23 @@ img { max-width: 100%; height: auto; display: block; }
     }
     
     .header-logo-text {
-        margin-left: 0;
+        display: flex;
+        align-items: center;
         justify-content: center;
     }
     
     .header-logo-text img {
         height: 40px;
+        display: block;
     }
     
     .nav-cta {
         display: none;
+    }
+    
+    .mobile-toggle {
+        position: absolute;
+        right: 0;
+        z-index: 2;
     }
 }
