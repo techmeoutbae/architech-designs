@@ -5911,3 +5911,29 @@ img { max-width: 100%; height: auto; display: block; }
 ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, var(--primary-light), var(--primary));
 }
+
+/* ===========================================
+   FINAL OVERRIDE - PAGE HEADERS WHITE (LAST)
+   =========================================== */
+body section.page-header h1,
+body section.page-header h2,
+body section.page-header h3,
+body section.page-header h4,
+body section.page-header p,
+body section.page-header .section-label,
+body section.page-header .section-title,
+body section.page-header .section-subtitle,
+body section.page-header-content h1,
+body section.page-header-content h2,
+body section.page-header-content p,
+body .page-header * {
+    color: #FFFFFF !important;
+}
+
+body section.page-header .section-label {
+    color: #C9A227 !important;
+}
+
+body section.page-header .section-subtitle {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
