@@ -114,12 +114,34 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 .section-title {
+    color: var(--primary);
     margin-bottom: 16px;
 }
 
 .section-subtitle {
     font-size: 1.125rem;
     color: var(--text-light);
+}
+
+/* Ensure white text in page headers - override everything */
+.page-header .section-label,
+.page-header .section-title,
+.page-header .section-subtitle,
+.page-header h1,
+.page-header h2,
+.page-header h3,
+.page-header h4,
+.page-header p,
+.page-header span:not(.section-label) {
+    color: var(--white) !important;
+}
+
+.page-header .section-label {
+    color: var(--accent) !important;
+}
+
+.page-header .section-subtitle {
+    color: rgba(255,255,255,0.8) !important;
 }
 
 /* Section headers on dark backgrounds */
@@ -2467,29 +2489,6 @@ img { max-width: 100%; height: auto; display: block; }
     max-width: 700px;
     text-align: center;
     margin: 0 auto;
-}
-
-.page-header .section-label {
-    color: var(--accent) !important;
-}
-
-.page-header .section-title {
-    color: var(--white) !important;
-}
-
-.page-header .section-subtitle {
-    color: rgba(255,255,255,0.7) !important;
-}
-
-.page-header h1 {
-    color: var(--white) !important;
-    margin-bottom: 16px;
-}
-
-.page-header p,
-.page-header-content p {
-    color: rgba(255,255,255,0.7) !important;
-    font-size: 1.2rem;
 }
 
 /* Hero Section Labels */
