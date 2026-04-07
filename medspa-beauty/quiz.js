@@ -10,7 +10,7 @@ const questions = [
         ]
     },
     {
-        question: "What is your skin type? (Select up to 2)",
+        question: "What is your skin type? (Select all that apply)",
         multiSelect: true,
         options: [
             { value: "oily", text: "Oily", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" },
@@ -30,7 +30,7 @@ const questions = [
         ]
     },
     {
-        question: "How much downtime can you afford? (Select up to 2)",
+        question: "How much downtime can you afford? (Select all that apply)",
         multiSelect: true,
         options: [
             { value: "none", text: "Zero downtime", img: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=100&h=100&fit=crop" },
@@ -148,7 +148,6 @@ function renderQuestion() {
 
 function toggleOption(value) {
     const question = questions[currentQuestion];
-    const maxSelections = question.multiSelect ? 2 : 1;
     
     if (!answers[currentQuestion]) {
         answers[currentQuestion] = [];
@@ -159,10 +158,10 @@ function toggleOption(value) {
     if (index > -1) {
         answers[currentQuestion].splice(index, 1);
     } else {
-        if (answers[currentQuestion].length < maxSelections) {
+        if (question.multiSelect || answers[currentQuestion].length === 0) {
             answers[currentQuestion].push(value);
         } else {
-            return;
+            answers[currentQuestion] = [value];
         }
     }
     
