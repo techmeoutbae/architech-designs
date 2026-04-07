@@ -1204,3 +1204,47 @@ h1, h2, h3, h4, h5 {
     background-clip: text;
     animation: goldShimmer 3s linear infinite;
 }
+
+/* Back to Portfolio Button */
+.back-to-portfolio {
+    position: fixed;
+    top: 100px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--glass-dark);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 30px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.back-to-portfolio svg {
+    width: 18px;
+    height: 18px;
+}
+
+.back-to-portfolio:hover {
+    background: var(--accent);
+    color: #fff;
+    transform: translateX(-5px);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+}
+
+@media (max-width: 768px) {
+    .back-to-portfolio span {
+        display: none;
+    }
+    .back-to-portfolio {
+        padding: 12px;
+        border-radius: 50%;
+    }
+}

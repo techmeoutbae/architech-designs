@@ -123,25 +123,31 @@ img { max-width: 100%; height: auto; display: block; }
     color: var(--text-light);
 }
 
-/* Ensure white text in page headers - override everything */
-.page-header .section-label,
-.page-header .section-title,
-.page-header .section-subtitle,
+/* PAGE HEADERS - WHITE TEXT (HIGHEST PRIORITY) */
 .page-header h1,
 .page-header h2,
 .page-header h3,
 .page-header h4,
 .page-header p,
-.page-header span:not(.section-label) {
-    color: var(--white) !important;
+.page-header-content h1,
+.page-header-content h2,
+.page-header-content h3,
+.page-header-content h4,
+.page-header-content p {
+    color: #FFFFFF !important;
 }
 
 .page-header .section-label {
-    color: var(--accent) !important;
+    color: #C9A227 !important;
 }
 
 .page-header .section-subtitle {
-    color: rgba(255,255,255,0.8) !important;
+    color: rgba(255,255,255,0.85) !important;
+}
+
+.page-header span,
+.page-header div {
+    color: #FFFFFF !important;
 }
 
 /* Section headers on dark backgrounds */
@@ -5904,32 +5910,4 @@ img { max-width: 100%; height: auto; display: block; }
 
 ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, var(--primary-light), var(--primary));
-}
-
-/* ============================================
-   PAGE HEADER TEXT - FORCE WHITE (CRITICAL)
-   ============================================ */
-.page-header h1,
-.page-header h2,
-.page-header h3,
-.page-header h4,
-.page-header p,
-.page-header-content h1,
-.page-header-content h2,
-.page-header-content h3,
-.page-header-content h4,
-.page-header-content p {
-    color: #FFFFFF !important;
-}
-
-.page-header .section-label {
-    color: #C9A227 !important;
-}
-
-.page-header .section-subtitle {
-    color: rgba(255,255,255,0.85) !important;
-}
-
-.page-header span {
-    color: #FFFFFF !important;
 }
