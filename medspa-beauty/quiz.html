@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treatment Quiz | Lumina Beauty</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Raleway:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="quiz.css">
+</head>
+<body>
+    <div class="bubbles-container" id="bubbles"></div>
+
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">✦</span>
+                <span class="logo-text">Lumina</span>
+                <span class="logo-sub">Beauty</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="treatments.html">Treatments</a></li>
+                <li><a href="before-after.html">Before & After</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="reviews.html">Reviews</a></li>
+                <li><a href="quiz.html" class="active">Quiz</a></li>
+                <li><a href="book.html" class="nav-cta">Book Now</a></li>
+            </ul>
+            <div class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <section class="quiz-hero">
+        <div class="quiz-hero-content">
+            <p class="page-subtitle">Find Your Perfect Treatment</p>
+            <h1 class="page-title">Treatment <span class="gold">Quiz</span></h1>
+            <p class="page-description">Answer a few questions and discover which treatments are best for your unique needs.</p>
+        </div>
+    </section>
+
+    <section class="quiz-section">
+        <div class="quiz-container">
+            <div class="quiz-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <span class="progress-text" id="progressText">Question 1 of 5</span>
+            </div>
+
+            <div class="quiz-card" id="quizCard">
+                <div class="quiz-question" id="questionContainer">
+                    <h2 id="questionText">What is your primary skin concern?</h2>
+                </div>
+
+                <div class="quiz-options" id="optionsContainer">
+                    <button class="quiz-option" data-value="aging">
+                        <span class="option-icon">🧴</span>
+                        <span class="option-text">Fine lines & wrinkles</span>
+                    </button>
+                    <button class="quiz-option" data-value="acne">
+                        <span class="option-icon">✨</span>
+                        <span class="option-text">Acne & breakouts</span>
+                    </button>
+                    <button class="quiz-option" data-value="hydration">
+                        <span class="option-icon">💧</span>
+                        <span class="option-text">Dryness & hydration</span>
+                    </button>
+                    <button class="quiz-option" data-value="brightness">
+                        <span class="option-icon">🌟</span>
+                        <span class="option-text">Dullness & uneven tone</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="quiz-nav">
+                <button class="btn btn-outline" id="prevBtn" disabled>Previous</button>
+                <button class="btn btn-primary" id="nextBtn" disabled>Next</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="quiz-result" id="resultSection" style="display: none;">
+        <div class="result-container">
+            <div class="result-header">
+                <div class="result-icon">💫</div>
+                <h2>Your Personalized Recommendation</h2>
+                <p>Based on your answers, we recommend the following treatments:</p>
+            </div>
+            
+            <div class="result-cards" id="resultCards">
+            </div>
+
+            <div class="result-cta">
+                <p>Ready to book your consultation?</p>
+                <a href="book.html" class="btn btn-primary btn-large">Book Now</a>
+                <button class="btn btn-outline" id="retakeBtn">Retake Quiz</button>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-main">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <span class="logo-icon">✦</span>
+                        <span class="logo-sub">Beauty</span>
+                        <span class="logo-text">Lumina</span>
+                    </a>
+                    <p>Where luxury meets transformation. Your journey to radiance starts here.</p>
+                    <div class="footer-social">
+                        <a href="#">📷</a>
+                        <a href="#">📘</a>
+                        <a href="#">🎵</a>
+                        <a href="#">📌</a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="treatments.html">Treatments</a></li>
+                        <li><a href="before-after.html">Before & After</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="reviews.html">Reviews</a></li>
+                        <li><a href="book.html">Book Now</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="treatments.html">Facials</a></li>
+                        <li><a href="treatments.html">Injectables</a></li>
+                        <li><a href="treatments.html">Lash Extensions</a></li>
+                        <li><a href="treatments.html">Laser Treatments</a></li>
+                        <li><a href="treatments.html">HydraFacial</a></li>
+                        <li><a href="treatments.html">Chemical Peels</a></li>
+                    </ul>
+                </div>
+                <div class="footer-newsletter">
+                    <h4>Stay Updated</h4>
+                    <p>Subscribe for exclusive offers.</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Your email">
+                        <button type="submit" class="btn btn-primary">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Lumina Beauty. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="quiz.js"></script>
+</body>
+</html>

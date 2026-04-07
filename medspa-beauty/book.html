@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Now | Lumina Beauty</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Raleway:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="book.css">
+</head>
+<body>
+    <!-- Floating Bubbles -->
+    <div class="bubbles-container" id="bubbles"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">✦</span>
+                <span class="logo-text">Lumina</span>
+                <span class="logo-sub">Beauty</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="treatments.html">Treatments</a></li>
+                <li><a href="before-after.html">Before & After</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="reviews.html">Reviews</a></li>
+                <li><a href="quiz.html">Quiz</a></li>
+                <li><a href="book.html" class="nav-cta">Book Now</a></li>
+            </ul>
+            <div class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-hero page-hero-dark">
+        <div class="page-hero-content">
+            <p class="page-subtitle">Contact</p>
+            <h1 class="page-title">Book Your <span class="gold">Session</span></h1>
+            <p class="page-description">Schedule your consultation and start your transformation journey.</p>
+        </div>
+    </section>
+
+    <!-- Main Booking Section -->
+    <section class="book-main-section">
+        <div class="book-main-container">
+            
+            <!-- Contact Info Side -->
+            <div class="book-info-side">
+                <h2>Get in <span class="gold">Touch</span></h2>
+                <p class="book-info-intro">Have questions? We'd love to help you find the perfect treatment.</p>
+                
+                <div class="book-contact-list">
+                    <div class="book-contact-item">
+                        <div class="contact-icon-large">📍</div>
+                        <div>
+                            <h4>Location</h4>
+                            <p>123 Beauty Lane, Suite 100<br>Beverly Hills, CA 90210</p>
+                        </div>
+                    </div>
+                    <div class="book-contact-item">
+                        <div class="contact-icon-large">📞</div>
+                        <div>
+                            <h4>Phone</h4>
+                            <p>(310) 555-BEAUTY</p>
+                        </div>
+                    </div>
+                    <div class="book-contact-item">
+                        <div class="contact-icon-large">✉️</div>
+                        <div>
+                            <h4>Email</h4>
+                            <p>hello@luminabeauty.com</p>
+                        </div>
+                    </div>
+                    <div class="book-contact-item">
+                        <div class="contact-icon-large">🕐</div>
+                        <div>
+                            <h4>Hours</h4>
+                            <p>Mon - Sat: 9am - 7pm<br>Sunday: Closed</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="book-social">
+                    <h4>Follow Us</h4>
+                    <div class="book-social-icons">
+                        <a href="#">📷</a>
+                        <a href="#">📘</a>
+                        <a href="#">🎵</a>
+                        <a href="#">📌</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Booking Form Side -->
+            <div class="book-form-side">
+                <form class="booking-form-full" id="bookingFormFull">
+                    <h3>Book Your Consultation</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>First Name *</label>
+                            <input type="text" name="firstname" placeholder="Your first name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name *</label>
+                            <input type="text" name="lastname" placeholder="Your last name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" name="email" placeholder="your@email.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone *</label>
+                        <input type="tel" name="phone" placeholder="(555) 555-5555" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Interested Service *</label>
+                        <select name="service" required>
+                            <option value="">Choose a service...</option>
+                            <option value="facial">Luxury Facial</option>
+                            <option value="injectables">Injectables (Botox/Filler)</option>
+                            <option value="lashes">Lash Extensions</option>
+                            <option value="laser">Laser Treatments</option>
+                            <option value="hydrafacial">HydraFacial</option>
+                            <option value="peel">Chemical Peel</option>
+                            <option value="consultation">Consultation Only</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Preferred Date</label>
+                            <input type="date" name="date">
+                        </div>
+                        <div class="form-group">
+                            <label>Preferred Time</label>
+                            <select name="time">
+                                <option value="">Any time</option>
+                                <option value="morning">Morning (9am-12pm)</option>
+                                <option value="afternoon">Afternoon (12pm-5pm)</option>
+                                <option value="evening">Evening (5pm-7pm)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tell us about your goals (optional)</label>
+                        <textarea name="message" placeholder="What would you like to achieve?"></textarea>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="newsletter" name="newsletter">
+                        <label for="newsletter">Subscribe to our newsletter for exclusive offers</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-large btn-full">Book Appointment</button>
+                </form>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="book-faq-section">
+        <div class="book-faq-container">
+            <div class="section-header">
+                <p class="section-subtitle">Questions</p>
+                <h2 class="section-title">Frequently <span class="gold">Asked</span></h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="book-faq-grid">
+                <div class="book-faq-item">
+                    <h4>What should I expect during my first visit?</h4>
+                    <p>Your first visit includes a comprehensive consultation where we discuss your goals, assess your skin, and create a personalized treatment plan.</p>
+                </div>
+                <div class="book-faq-item">
+                    <h4>How long do results typically last?</h4>
+                    <p>Results vary by treatment. HydraFacials last 4-6 weeks, lash extensions 2-4 weeks with fills, Botox 3-4 months, and dermal fillers 6-18 months.</p>
+                </div>
+                <div class="book-faq-item">
+                    <h4>Is there downtime after treatments?</h4>
+                    <p>Most treatments have minimal to no downtime. You may experience slight redness or sensitivity which typically resolves within a day.</p>
+                </div>
+                <div class="book-faq-item">
+                    <h4>Do you offer payment plans?</h4>
+                    <p>Yes! We offer flexible payment plans through Cherry and CareCredit. We also have a membership program with exclusive discounts.</p>
+                </div>
+            </div>
+            <div class="book-faq-cta">
+                <p>Still have questions? <a href="tel:310555BEAUTY" class="link-text">Call us</a> at (310) 555-BEAUTY</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Placeholder -->
+    <section class="book-map-section">
+        <div class="map-placeholder">
+            <div class="map-content">
+                <span class="map-icon">🗺️</span>
+                <p>123 Beauty Lane, Suite 100<br>Beverly Hills, CA 90210</p>
+                <a href="https://maps.google.com" target="_blank" class="btn btn-outline">Get Directions</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-main">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <span class="logo-icon">✦</span>
+                        <span class="logo-sub">Beauty</span>
+                        <span class="logo-text">Lumina</span>
+                    </a>
+                    <p>Where luxury meets transformation. Your journey to radiance starts here.</p>
+                    <div class="footer-social">
+                        <a href="#">📷</a>
+                        <a href="#">📘</a>
+                        <a href="#">🎵</a>
+                        <a href="#">📌</a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="treatments.html">Treatments</a></li>
+                        <li><a href="before-after.html">Before & After</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="reviews.html">Reviews</a></li>
+                        <li><a href="book.html">Book Now</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="treatments.html">Facials</a></li>
+                        <li><a href="treatments.html">Injectables</a></li>
+                        <li><a href="treatments.html">Lash Extensions</a></li>
+                        <li><a href="treatments.html">Laser Treatments</a></li>
+                        <li><a href="treatments.html">HydraFacial</a></li>
+                        <li><a href="treatments.html">Chemical Peels</a></li>
+                    </ul>
+                </div>
+                <div class="footer-newsletter">
+                    <h4>Stay Updated</h4>
+                    <p>Subscribe for exclusive offers.</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Your email">
+                        <button type="submit" class="btn btn-primary">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Lumina Beauty. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
