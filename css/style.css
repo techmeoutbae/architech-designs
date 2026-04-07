@@ -2239,24 +2239,25 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 .page-header .section-label {
-    color: var(--accent);
+    color: var(--accent) !important;
 }
 
 .page-header .section-title {
-    color: var(--white);
+    color: var(--white) !important;
 }
 
 .page-header .section-subtitle {
-    color: rgba(255,255,255,0.7);
+    color: rgba(255,255,255,0.7) !important;
 }
 
 .page-header h1 {
-    color: var(--white);
+    color: var(--white) !important;
     margin-bottom: 16px;
 }
 
-.page-header p {
-    color: rgba(255,255,255,0.7);
+.page-header p,
+.page-header-content p {
+    color: rgba(255,255,255,0.7) !important;
     font-size: 1.2rem;
 }
 
