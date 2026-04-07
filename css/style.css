@@ -122,6 +122,19 @@ img { max-width: 100%; height: auto; display: block; }
     color: var(--text-light);
 }
 
+/* Section headers on dark backgrounds */
+.section-dark .section-label {
+    color: var(--accent);
+}
+
+.section-dark .section-title {
+    color: var(--white);
+}
+
+.section-dark .section-subtitle {
+    color: rgba(255,255,255,0.7);
+}
+
 .btn {
     display: inline-flex;
     align-items: center;
@@ -2227,6 +2240,14 @@ img { max-width: 100%; height: auto; display: block; }
 
 .page-header .section-label {
     color: var(--accent);
+}
+
+.page-header .section-title {
+    color: var(--white);
+}
+
+.page-header .section-subtitle {
+    color: rgba(255,255,255,0.7);
 }
 
 .page-header h1 {
