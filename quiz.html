@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Quiz | Architech Designs</title>
+    <meta name="description" content="Take our quick quiz and discover which web design package is right for your business. Answer 6 questions and get a personalized recommendation.">
+    <link rel="canonical" href="https://www.architechdesigns.net/quiz.html">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar scrolled">
+        <div class="container">
+            <div class="navbar-inner">
+                <div class="header-logo-wrapper">
+                    <a href="index.html" class="header-logo-link">
+                        <img src="images/architech-building.png" alt="Architech Building" class="header-building">
+                    </a>
+                    <a href="index.html" class="header-logo-text">
+                        <img src="images/architech-text-logo.png" alt="Architech Designs">
+                    </a>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="packages.html">Packages</a></li>
+                    <li><a href="portfolio.html">Portfolio</a></li>
+                    <li><a href="quiz.html" class="active">Quiz</a></li>
+                    <li><a href="process.html">Process</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li class="mobile-only-cta"><a href="contact.html" class="btn btn-primary">Book Consultation</a></li>
+                </ul>
+                <div class="nav-cta">
+                    <a href="contact.html" class="btn btn-primary btn-sm">Book Consultation</a>
+                </div>
+                <button class="mobile-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="page-header-content">
+                <span class="section-label">Find Your Perfect Solution</span>
+                <h1 style="color: #FFFFFF !important;">What Does Your Business Need?</h1>
+                <p style="color: rgba(255,255,255,0.85) !important;">Answer 6 quick questions and discover which web design package is right for your goals.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Website Quiz Section -->
+    <section class="section quiz-section" id="website-quiz" style="padding-top: 60px;">
+        <div class="container">
+            <div class="quiz-container reveal" id="quizContainer">
+                <!-- Quiz Progress -->
+                <div class="quiz-progress">
+                    <div class="quiz-progress-steps">
+                        <div class="quiz-progress-step active" data-step="1">1</div>
+                        <div class="quiz-progress-step" data-step="2">2</div>
+                        <div class="quiz-progress-step" data-step="3">3</div>
+                        <div class="quiz-progress-step" data-step="4">4</div>
+                        <div class="quiz-progress-step" data-step="5">5</div>
+                        <div class="quiz-progress-step" data-step="6">6</div>
+                    </div>
+                    <div class="quiz-progress-bar">
+                        <div class="quiz-progress-fill" id="quizProgressFill"></div>
+                    </div>
+                    <span class="quiz-progress-text">Question <span id="currentQuestion">1</span> of <span id="totalQuestions">6</span></span>
+                </div>
+                
+                <!-- Quiz Questions -->
+                <div class="quiz-wrapper" id="quizWrapper">
+                    <!-- Question 1 -->
+                    <div class="quiz-question active" data-question="1" data-key="current_presence">
+                        <div class="quiz-question-header">
+                            <div class="quiz-question-number">Step 1</div>
+                            <h3 class="quiz-question-title">Do you currently have a website?</h3>
+                        </div>
+                        <div class="quiz-options">
+                            <button class="quiz-option" data-value="none">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                                </span>
+                                <span class="quiz-option-text">No, I don't have a website yet</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="outdated">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Yes, but it's outdated or needs a refresh</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="basic">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Yes, but it's very basic (just info, no conversions)</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="good">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Yes, and I'm happy with it</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Question 2 -->
+                    <div class="quiz-question" data-question="2" data-key="primary_goal">
+                        <div class="quiz-question-header">
+                            <div class="quiz-question-number">Step 2</div>
+                            <h3 class="quiz-question-title">What's your primary goal for your website?</h3>
+                            <p class="quiz-question-subtitle">Select all that apply</p>
+                        </div>
+                        <div class="quiz-options">
+                            <button class="quiz-option" data-value="leads">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Get more leads and inquiries</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="sales">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Sell products or services online</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="brand">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Build brand awareness and credibility</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="info">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Provide information about my business</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Question 3 -->
+                    <div class="quiz-question" data-question="3" data-key="time_frame">
+                        <div class="quiz-question-header">
+                            <div class="quiz-question-number">Step 3</div>
+                            <h3 class="quiz-question-title">When do you need your website ready?</h3>
+                        </div>
+                        <div class="quiz-options">
+                            <button class="quiz-option" data-value="asap">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                </span>
+                                <span class="quiz-option-text">ASAP - I'm ready to start now</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="soon">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Within the next month</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="few_months">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                </span>
+                                <span class="quiz-option-text">In the next few months</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="exploring">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Just exploring options for now</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Question 4 -->
+                    <div class="quiz-question" data-question="4" data-key="help_needed">
+                        <div class="quiz-question-header">
+                            <div class="quiz-question-number">Step 4</div>
+                            <h3 class="quiz-question-title">What do you need most help with?</h3>
+                            <p class="quiz-question-subtitle">Select all that apply</p>
+                        </div>
+                        <div class="quiz-options quiz-options-multi">
+                            <button class="quiz-option" data-value="design">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Beautiful design</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="conversions">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+                                </span>
+                                <span class="quiz-option-text">More conversions</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="seo">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Better SEO</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="mobile">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Mobile-friendly</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="content">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Content writing</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Question 5 -->
+                    <div class="quiz-question" data-question="5" data-key="budget">
+                        <div class="quiz-question-header">
+                            <div class="quiz-question-number">Step 5</div>
+                            <h3 class="quiz-question-title">What's your approximate budget?</h3>
+                        </div>
+                        <div class="quiz-options">
+                            <button class="quiz-option" data-value="under_2k">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Under $2,000</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="2k_5k">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                </span>
+                                <span class="quiz-option-text">$2,000 - $5,000</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="5k_10k">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                </span>
+                                <span class="quiz-option-text">$5,000 - $10,000</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="over_10k">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                </span>
+                                <span class="quiz-option-text">$10,000+</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Question 6 -->
+                    <div class="quiz-question" data-question="6" data-key="business_type">
+                        <div class="quiz-question-header">
+                            <div class="quiz-question-number">Step 6</div>
+                            <h3 class="quiz-question-title">What type of business are you in?</h3>
+                        </div>
+                        <div class="quiz-options">
+                            <button class="quiz-option" data-value="local_service">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Local service business</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="consultant">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Consultant or coach</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="e-commerce">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Retail or e-commerce</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="saas">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                                </span>
+                                <span class="quiz-option-text">SaaS or tech company</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="healthcare">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Healthcare or wellness</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="real_estate">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Real estate</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                            <button class="quiz-option" data-value="other">
+                                <span class="quiz-option-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                </span>
+                                <span class="quiz-option-text">Other industry</span>
+                                <span class="quiz-option-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Results -->
+                    <div class="quiz-results" id="quizResults">
+                        <div class="quiz-results-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <h3 class="quiz-results-title">Your Recommended Package</h3>
+                        <div class="quiz-results-package" id="quizResultsPackage"></div>
+                        <p class="quiz-results-description" id="quizResultsDescription"></p>
+                        <div class="quiz-results-features" id="quizResultsFeatures"></div>
+                        <div class="quiz-results-cta">
+                            <a href="contact.html" class="btn btn-primary btn-lg">Get Your Custom Proposal</a>
+                            <a href="packages.html" class="btn btn-outline">View All Packages</a>
+                        </div>
+                        <button class="quiz-retake" id="quizRetake">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                            Retake Quiz
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Still Have Questions -->
+    <section class="section cta-section">
+        <div class="container">
+            <div class="cta-content reveal">
+                <h2>Ready to Build Your Perfect Website?</h2>
+                <p>Let's discuss your project and create a website that helps your business grow. Book your free consultation today.</p>
+                <div class="cta-buttons">
+                    <a href="contact.html" class="btn btn-primary btn-lg">Book Free Strategy Call</a>
+                    <a href="packages.html" class="btn btn-secondary btn-lg">View Packages</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <img src="images/architech-logo-footer.png" alt="Architech Designs">
+                    </a>
+                    <p>Strategic web design for businesses that want to grow. We build modern, conversion-focused websites that actually work.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="process.html">Our Process</a></li>
+                        <li><a href="portfolio.html">Portfolio</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="services.html">Web Design</a></li>
+                        <li><a href="services.html">Redesign</a></li>
+                        <li><a href="services.html">Landing Pages</a></li>
+                        <li><a href="services.html">Support</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="packages.html">Pricing</a></li>
+                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Architech Designs. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy-policy.html">Privacy</a>
+                    <a href="terms.html">Terms</a>
+                    <a href="disclaimer.html">Disclaimer</a>
+                    <a href="cookie-policy.html">Cookies</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    </a>
+                    <a href="#" aria-label="Twitter">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                    <a href="#" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
