@@ -392,6 +392,13 @@ h1, h2, h3, h4, h5 {
     color: var(--dark);
 }
 
+.multi-select-hint {
+    font-size: 0.9rem;
+    color: var(--accent);
+    margin-top: 8px;
+    font-weight: 500;
+}
+
 .quiz-options {
     display: flex;
     flex-direction: column;

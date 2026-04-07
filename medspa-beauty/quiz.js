@@ -1,6 +1,7 @@
 const questions = [
     {
-        question: "What are your primary skin concerns? (Select up to 2)",
+        question: "What are your primary skin concerns?",
+        multiSelect: false,
         options: [
             { value: "aging", text: "Fine lines & wrinkles", img: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100&h=100&fit=crop" },
             { value: "acne", text: "Acne & breakouts", img: "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=100&h=100&fit=crop" },
@@ -10,6 +11,7 @@ const questions = [
     },
     {
         question: "What is your skin type? (Select up to 2)",
+        multiSelect: true,
         options: [
             { value: "oily", text: "Oily", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" },
             { value: "dry", text: "Dry", img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop" },
@@ -18,7 +20,8 @@ const questions = [
         ]
     },
     {
-        question: "What are your aesthetic goals? (Select up to 2)",
+        question: "What are your aesthetic goals?",
+        multiSelect: false,
         options: [
             { value: "youthful", text: "Look more youthful", img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop" },
             { value: "glow", text: "Get a radiant glow", img: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=100&h=100&fit=crop" },
@@ -28,6 +31,7 @@ const questions = [
     },
     {
         question: "How much downtime can you afford? (Select up to 2)",
+        multiSelect: true,
         options: [
             { value: "none", text: "Zero downtime", img: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=100&h=100&fit=crop" },
             { value: "minimal", text: "A few hours", img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop" },
@@ -36,7 +40,8 @@ const questions = [
         ]
     },
     {
-        question: "What treatments interest you most? (Select up to 2)",
+        question: "What treatments interest you most?",
+        multiSelect: false,
         options: [
             { value: "facial", text: "Facials & skincare", img: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=100&h=100&fit=crop" },
             { value: "injectables", text: "Injectables (Botox/Filler)", img: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=100&h=100&fit=crop" },
@@ -111,6 +116,13 @@ function renderQuestion() {
     questionText.textContent = question.question;
     progressText.textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
     progressFill.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+    
+    const hintEl = document.getElementById('multiSelectHint');
+    if (question.multiSelect) {
+        hintEl.style.display = 'block';
+    } else {
+        hintEl.style.display = 'none';
+    }
 
     optionsContainer.innerHTML = '';
     const selectedAnswers = answers[currentQuestion] || [];
@@ -135,6 +147,9 @@ function renderQuestion() {
 }
 
 function toggleOption(value) {
+    const question = questions[currentQuestion];
+    const maxSelections = question.multiSelect ? 2 : 1;
+    
     if (!answers[currentQuestion]) {
         answers[currentQuestion] = [];
     }
@@ -144,7 +159,7 @@ function toggleOption(value) {
     if (index > -1) {
         answers[currentQuestion].splice(index, 1);
     } else {
-        if (answers[currentQuestion].length < 2) {
+        if (answers[currentQuestion].length < maxSelections) {
             answers[currentQuestion].push(value);
         } else {
             return;
