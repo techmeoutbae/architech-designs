@@ -584,26 +584,92 @@ document.addEventListener('DOMContentLoaded', function() {
             
             function calculateResult() {
                 const currentPresence = answers.current_presence || 'none';
-                const primaryGoal = answers.primary_goal || 'leads';
-                const helpNeeded = answers.help_needed || 'design';
+                const primaryGoal = answers.primary_goal || [];
+                const helpNeeded = answers.help_needed || [];
                 const budget = answers.budget || '2k_5k';
                 
+                // Normalize to arrays
+                const goals = Array.isArray(primaryGoal) ? primaryGoal : [primaryGoal];
+                const needs = Array.isArray(helpNeeded) ? helpNeeded : [helpNeeded];
+                
+                // Calculate score for each package
+                let launchScore = 0;
+                let growthScore = 0;
+                let premiumScore = 0;
+                
+                // Current presence scoring
+                if (currentPresence === 'none') {
+                    launchScore += 3;
+                    growthScore += 1;
+                } else if (currentPresence === 'outdated') {
+                    growthScore += 3;
+                    premiumScore += 1;
+                } else if (currentPresence === 'basic') {
+                    growthScore += 2;
+                    launchScore += 1;
+                }
+                
+                // Primary goal scoring
+                if (goals.includes('leads')) {
+                    growthScore += 3;
+                    premiumScore += 1;
+                }
+                if (goals.includes('sales')) {
+                    premiumScore += 3;
+                    growthScore += 2;
+                }
+                if (goals.includes('brand')) {
+                    growthScore += 2;
+                    premiumScore += 2;
+                }
+                if (goals.includes('info')) {
+                    launchScore += 2;
+                    growthScore += 1;
+                }
+                
+                // Help needed scoring
+                if (needs.includes('conversions')) {
+                    premiumScore += 3;
+                    growthScore += 2;
+                }
+                if (needs.includes('seo')) {
+                    growthScore += 2;
+                    premiumScore += 2;
+                }
+                if (needs.includes('design')) {
+                    growthScore += 2;
+                    launchScore += 1;
+                }
+                if (needs.includes('mobile')) {
+                    launchScore += 1;
+                    growthScore += 2;
+                }
+                if (needs.includes('content')) {
+                    growthScore += 2;
+                    premiumScore += 1;
+                }
+                
+                // Budget scoring
+                if (budget === 'under_2k') {
+                    launchScore += 3;
+                } else if (budget === '2k_5k') {
+                    growthScore += 2;
+                    launchScore += 1;
+                } else if (budget === '5k_10k') {
+                    growthScore += 3;
+                    premiumScore += 1;
+                } else if (budget === 'over_10k') {
+                    premiumScore += 3;
+                }
+                
+                // Determine winner
                 let recommendedPackage = 'growth';
-                let description = 'Perfect for growing businesses that need a professional website to generate leads and build credibility.';
+                let description = '';
                 let features = [];
                 
-                if (currentPresence === 'none' && budget === 'under_2k') {
-                    recommendedPackage = 'launch';
-                    description = 'Great starting point! Get your business online quickly with a professional website that attracts customers.';
-                    features = [
-                        'Up to 5 professional pages',
-                        'Mobile-responsive design',
-                        'Contact forms & calls to action',
-                        'Basic SEO setup',
-                        'Google Maps integration',
-                        '2 weeks delivery'
-                    ];
-                } else if (budget === 'over_10k' || (primaryGoal === 'sales' && helpNeeded === 'conversions')) {
+                const maxScore = Math.max(launchScore, growthScore, premiumScore);
+                
+                if (premiumScore === maxScore && premiumScore > 0) {
                     recommendedPackage = 'premium';
                     description = 'Complete solution for serious growth. Advanced features, ongoing support, and comprehensive strategy.';
                     features = [
@@ -616,7 +682,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         'Monthly strategy calls',
                         'Priority turnaround'
                     ];
-                } else if (currentPresence === 'outdated' || primaryGoal === 'conversions' || primaryGoal === 'leads') {
+                } else if (growthScore === maxScore) {
                     recommendedPackage = 'growth';
                     description = 'Perfect for growing businesses that need a professional website to generate leads and build credibility.';
                     features = [
@@ -628,28 +694,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         '3 weeks delivery',
                         'Post-launch support'
                     ];
-                } else if (helpNeeded === 'design' || helpNeeded === 'mobile') {
+                } else {
                     recommendedPackage = 'launch';
-                    description = 'Get a beautiful, modern website that represents your business professionally.';
+                    description = 'Great starting point! Get your business online quickly with a professional website that attracts customers.';
                     features = [
                         'Up to 5 professional pages',
-                        'Stunning visual design',
-                        'Mobile-responsive layout',
-                        'Contact forms',
-                        'Social media integration',
+                        'Mobile-responsive design',
+                        'Contact forms & calls to action',
+                        'Basic SEO setup',
+                        'Google Maps integration',
                         '2 weeks delivery'
-                    ];
-                } else {
-                    recommendedPackage = 'growth';
-                    description = 'Professional solution to establish your online presence and attract more customers.';
-                    features = [
-                        'Up to 8 custom pages',
-                        'Premium design with animations',
-                        'Advanced SEO optimization',
-                        'Lead capture & automation',
-                        'Speed optimization',
-                        '3 weeks delivery',
-                        'Post-launch support'
                     ];
                 }
                 
@@ -698,22 +752,49 @@ document.addEventListener('DOMContentLoaded', function() {
             questions.forEach((question, qIndex) => {
                 const options = question.querySelectorAll('.quiz-option');
                 const key = question.dataset.key;
+                const isMultiSelect = key === 'primary_goal' || key === 'help_needed';
                 
                 options.forEach(option => {
                     option.addEventListener('click', function() {
-                        options.forEach(o => o.classList.remove('selected'));
-                        this.classList.add('selected');
-                        
-                        answers[key] = this.dataset.value;
-                        
-                        setTimeout(() => {
-                            if (qIndex < totalSteps - 1) {
-                                currentStep = qIndex + 1;
-                                showQuestion(currentStep);
-                            } else {
-                                showResults();
+                        if (isMultiSelect) {
+                            // Toggle selection for multi-select questions
+                            this.classList.toggle('selected');
+                            
+                            // Collect all selected values
+                            const selectedValues = [];
+                            options.forEach(o => {
+                                if (o.classList.contains('selected')) {
+                                    selectedValues.push(o.dataset.value);
+                                }
+                            });
+                            answers[key] = selectedValues;
+                            
+                            // Auto-advance after a short delay if at least one is selected
+                            if (selectedValues.length > 0) {
+                                setTimeout(() => {
+                                    if (qIndex < totalSteps - 1) {
+                                        currentStep = qIndex + 1;
+                                        showQuestion(currentStep);
+                                    } else {
+                                        showResults();
+                                    }
+                                }, 400);
                             }
-                        }, 300);
+                        } else {
+                            // Single select behavior
+                            options.forEach(o => o.classList.remove('selected'));
+                            this.classList.add('selected');
+                            answers[key] = this.dataset.value;
+                            
+                            setTimeout(() => {
+                                if (qIndex < totalSteps - 1) {
+                                    currentStep = qIndex + 1;
+                                    showQuestion(currentStep);
+                                } else {
+                                    showResults();
+                                }
+                            }, 300);
+                        }
                     });
                 });
             });

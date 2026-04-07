@@ -187,25 +187,26 @@ img { max-width: 100%; height: auto; display: block; }
 
 .btn-primary {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-    color: var(--white);
+    color: var(--white) !important;
     box-shadow: 0 4px 15px rgba(30, 58, 95, 0.3);
 }
 
 .btn-primary:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 25px rgba(30, 58, 95, 0.4);
+    color: var(--white) !important;
 }
 
 .btn-accent {
     background: linear-gradient(135deg, var(--accent) 0%, #D4B445 100%);
-    color: var(--white);
+    color: var(--white) !important;
     box-shadow: 0 4px 15px rgba(201, 162, 39, 0.3);
 }
 
 .btn-accent:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 25px rgba(201, 162, 39, 0.4);
-    color: var(--white);
+    color: var(--white) !important;
 }
 
 .btn-secondary {
@@ -2224,6 +2225,10 @@ img { max-width: 100%; height: auto; display: block; }
     margin: 0 auto;
 }
 
+.page-header .section-label {
+    color: var(--accent);
+}
+
 .page-header h1 {
     color: var(--white);
     margin-bottom: 16px;
@@ -2232,6 +2237,16 @@ img { max-width: 100%; height: auto; display: block; }
 .page-header p {
     color: rgba(255,255,255,0.7);
     font-size: 1.2rem;
+}
+
+/* Hero Section Labels */
+.hero .section-label {
+    color: var(--accent);
+}
+
+/* Quiz Section Labels */
+.quiz-section .section-label {
+    color: var(--accent);
 }
 
 /* Contact Form */
