@@ -516,4 +516,220 @@ document.addEventListener('DOMContentLoaded', function() {
         
         card.setAttribute('tabindex', '0');
     });
+
+    // ========== WEBSITE QUIZ COMPONENT ==========
+    try {
+        const quizContainer = document.getElementById('quizContainer');
+        
+        if (quizContainer) {
+            const quizWrapper = document.getElementById('quizWrapper');
+            const questions = quizWrapper.querySelectorAll('.quiz-question');
+            const quizResults = document.getElementById('quizResults');
+            const progressFill = document.getElementById('quizProgressFill');
+            const currentQuestionEl = document.getElementById('currentQuestion');
+            const totalQuestionsEl = document.getElementById('totalQuestions');
+            const quizRetake = document.getElementById('quizRetake');
+            
+            let currentStep = 0;
+            const totalSteps = questions.length - 1;
+            const answers = {};
+            
+            totalQuestionsEl.textContent = totalSteps;
+            
+            function showQuestion(index) {
+                questions.forEach((q, i) => {
+                    if (i === index) {
+                        q.classList.add('active');
+                    } else {
+                        q.classList.remove('active');
+                    }
+                });
+                quizResults.classList.remove('active');
+                currentQuestionEl.textContent = index + 1;
+                updateProgress();
+            }
+            
+            function updateProgress() {
+                const progress = ((currentStep + 1) / totalSteps) * 100;
+                progressFill.style.width = progress + '%';
+                
+                const steps = quizContainer.querySelectorAll('.quiz-progress-step');
+                steps.forEach((step, i) => {
+                    if (i < currentStep) {
+                        step.classList.add('completed');
+                        step.classList.remove('active');
+                    } else if (i === currentStep) {
+                        step.classList.add('active');
+                        step.classList.remove('completed');
+                    } else {
+                        step.classList.remove('active', 'completed');
+                    }
+                });
+            }
+            
+            function showResults() {
+                questions.forEach(q => q.classList.remove('active'));
+                quizResults.classList.add('active');
+                progressFill.style.width = '100%';
+                
+                const steps = quizContainer.querySelectorAll('.quiz-progress-step');
+                steps.forEach(step => {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                });
+                
+                const result = calculateResult();
+                displayResult(result);
+            }
+            
+            function calculateResult() {
+                const currentPresence = answers.current_presence || 'none';
+                const primaryGoal = answers.primary_goal || 'leads';
+                const helpNeeded = answers.help_needed || 'design';
+                const budget = answers.budget || '2k_5k';
+                
+                let recommendedPackage = 'growth';
+                let description = 'Perfect for growing businesses that need a professional website to generate leads and build credibility.';
+                let features = [];
+                
+                if (currentPresence === 'none' && budget === 'under_2k') {
+                    recommendedPackage = 'launch';
+                    description = 'Great starting point! Get your business online quickly with a professional website that attracts customers.';
+                    features = [
+                        'Up to 5 professional pages',
+                        'Mobile-responsive design',
+                        'Contact forms & calls to action',
+                        'Basic SEO setup',
+                        'Google Maps integration',
+                        '2 weeks delivery'
+                    ];
+                } else if (budget === 'over_10k' || (primaryGoal === 'sales' && helpNeeded === 'conversions')) {
+                    recommendedPackage = 'premium';
+                    description = 'Complete solution for serious growth. Advanced features, ongoing support, and comprehensive strategy.';
+                    features = [
+                        'Unlimited pages & features',
+                        'Advanced SEO & content strategy',
+                        'Conversion optimization',
+                        'E-commerce capabilities',
+                        'Custom animations & interactions',
+                        'Ongoing support & maintenance',
+                        'Monthly strategy calls',
+                        'Priority turnaround'
+                    ];
+                } else if (currentPresence === 'outdated' || primaryGoal === 'conversions' || primaryGoal === 'leads') {
+                    recommendedPackage = 'growth';
+                    description = 'Perfect for growing businesses that need a professional website to generate leads and build credibility.';
+                    features = [
+                        'Up to 8 custom pages',
+                        'Premium design with animations',
+                        'Advanced SEO optimization',
+                        'Lead capture & automation',
+                        'Speed optimization',
+                        '3 weeks delivery',
+                        'Post-launch support'
+                    ];
+                } else if (helpNeeded === 'design' || helpNeeded === 'mobile') {
+                    recommendedPackage = 'launch';
+                    description = 'Get a beautiful, modern website that represents your business professionally.';
+                    features = [
+                        'Up to 5 professional pages',
+                        'Stunning visual design',
+                        'Mobile-responsive layout',
+                        'Contact forms',
+                        'Social media integration',
+                        '2 weeks delivery'
+                    ];
+                } else {
+                    recommendedPackage = 'growth';
+                    description = 'Professional solution to establish your online presence and attract more customers.';
+                    features = [
+                        'Up to 8 custom pages',
+                        'Premium design with animations',
+                        'Advanced SEO optimization',
+                        'Lead capture & automation',
+                        'Speed optimization',
+                        '3 weeks delivery',
+                        'Post-launch support'
+                    ];
+                }
+                
+                return {
+                    package: recommendedPackage,
+                    description: description,
+                    features: features
+                };
+            }
+            
+            function displayResult(result) {
+                const packageEl = document.getElementById('quizResultsPackage');
+                const descriptionEl = document.getElementById('quizResultsDescription');
+                const featuresEl = document.getElementById('quizResultsFeatures');
+                
+                const packageNames = {
+                    'launch': { name: 'Launch Site', subtitle: 'Starting Package' },
+                    'growth': { name: 'Growth Site', subtitle: 'Most Popular' },
+                    'premium': { name: 'Premium Growth System', subtitle: 'Best Value' }
+                };
+                
+                const pkg = packageNames[result.package];
+                
+                packageEl.innerHTML = `
+                    <h4>${pkg.name}</h4>
+                    <span>${pkg.subtitle}</span>
+                `;
+                
+                descriptionEl.textContent = result.description;
+                
+                featuresEl.innerHTML = `
+                    <h5>What's Included:</h5>
+                    <ul>
+                        ${result.features.map(f => `
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                ${f}
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+            }
+            
+            questions.forEach((question, qIndex) => {
+                const options = question.querySelectorAll('.quiz-option');
+                const key = question.dataset.key;
+                
+                options.forEach(option => {
+                    option.addEventListener('click', function() {
+                        options.forEach(o => o.classList.remove('selected'));
+                        this.classList.add('selected');
+                        
+                        answers[key] = this.dataset.value;
+                        
+                        setTimeout(() => {
+                            if (qIndex < totalSteps - 1) {
+                                currentStep = qIndex + 1;
+                                showQuestion(currentStep);
+                            } else {
+                                showResults();
+                            }
+                        }, 300);
+                    });
+                });
+            });
+            
+            quizRetake.addEventListener('click', function() {
+                currentStep = 0;
+                Object.keys(answers).forEach(key => delete answers[key]);
+                quizWrapper.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+                quizWrapper.querySelectorAll('.quiz-progress-step').forEach(s => s.classList.remove('active', 'completed'));
+                showQuestion(0);
+            });
+            
+            showQuestion(0);
+            Logger.info('Quiz', 'Website quiz initialized');
+        }
+    } catch (e) {
+        Logger.error('Quiz', 'Failed to initialize website quiz', e);
+    }
 });
