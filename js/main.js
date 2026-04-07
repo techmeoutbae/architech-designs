@@ -496,25 +496,34 @@ document.addEventListener('DOMContentLoaded', function() {
     const projectCards = document.querySelectorAll('.project-card');
     projectCards.forEach(card => {
         card.addEventListener('click', function(e) {
-            if (window.innerWidth <= 768) {
-                const link = this.querySelector('.project-overlay a');
-                if (link) {
-                    window.location.href = link.href;
+            const href = this.dataset.href || this.querySelector('.project-overlay a')?.href;
+            if (href) {
+                const newTab = this.dataset.newTab === 'true';
+                if (newTab) {
+                    window.open(href, '_blank');
+                } else {
+                    window.location.href = href;
                 }
             }
         });
         
         card.addEventListener('keydown', function(e) {
-            if ((e.key === 'Enter' || e.key === ' ') && window.innerWidth <= 768) {
+            if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                const link = this.querySelector('.project-overlay a');
-                if (link) {
-                    window.location.href = link.href;
+                const href = this.dataset.href || this.querySelector('.project-overlay a')?.href;
+                if (href) {
+                    const newTab = this.dataset.newTab === 'true';
+                    if (newTab) {
+                        window.open(href, '_blank');
+                    } else {
+                        window.location.href = href;
+                    }
                 }
             }
         });
         
         card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'button');
     });
 
     // ========== WEBSITE QUIZ COMPONENT ==========
