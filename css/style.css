@@ -486,27 +486,11 @@ img { max-width: 100%; height: auto; display: block; }
     border-bottom: 1px solid rgba(226, 232, 240, 0.6);
 }
 
-/* Navy blue background behind navbar */
-.navbar::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 100px;
-    background: var(--primary);
-    z-index: -1;
-}
-
 .navbar.scrolled {
     padding: 14px 0;
     background: #FFFFFF !important;
     box-shadow: 0 4px 30px rgba(30, 58, 95, 0.08);
     border-bottom-color: rgba(226, 232, 240, 0.6);
-}
-
-.navbar.scrolled::before {
-    opacity: 1;
 }
 
 .navbar.scrolled .nav-links a { color: var(--text); }
@@ -3377,10 +3361,6 @@ img { max-width: 100%; height: auto; display: block; }
     .header-logo { height: 44px !important; }
     .navbar { padding: 8px 0; }
     
-    .navbar::before {
-        height: 70px;
-    }
-    
     .hero-visual {
         position: relative;
         width: 100%;
@@ -3487,10 +3467,6 @@ img { max-width: 100%; height: auto; display: block; }
     }
     
     .navbar { background: #FFFFFF !important; }
-    
-    .navbar::before {
-        height: 90px;
-    }
     
     .hero-visual {
         position: relative;
