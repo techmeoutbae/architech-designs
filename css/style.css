@@ -635,17 +635,23 @@ img { max-width: 100%; height: auto; display: block; }
     display: none;
     flex-direction: column;
     gap: 5px;
-    background: none;
+    background: rgba(30, 58, 95, 0.1);
     border: none;
     cursor: pointer;
-    padding: 5px;
+    padding: 10px;
+    border-radius: 6px;
+    z-index: 1001;
 }
 
 .mobile-toggle span {
-    width: 24px;
+    width: 22px;
     height: 2px;
-    background: var(--white);
-    transition: var(--transition);
+    background: var(--primary);
+    transition: all 0.3s ease;
+}
+
+.mobile-toggle.active span {
+    background: var(--primary);
 }
 
 /* Hero Section */
@@ -4588,16 +4594,6 @@ img { max-width: 100%; height: auto; display: block; }
     .mobile-toggle { 
         display: flex; 
         z-index: 1001;
-    }
-    
-    .mobile-toggle.active span:nth-child(1) {
-        transform: rotate(45deg) translate(5px, 5px);
-    }
-    .mobile-toggle.active span:nth-child(2) {
-        opacity: 0;
-    }
-    .mobile-toggle.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(5px, -5px);
     }
     
     .nav-links {
