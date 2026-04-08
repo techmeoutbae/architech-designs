@@ -137,6 +137,61 @@ document.addEventListener('DOMContentLoaded', function() {
         Logger.error('FAQ', 'Failed to initialize FAQ accordion', e);
     }
 
+    // ========== CARD MODAL FOR MOBILE ==========
+    try {
+        const cardModal = document.getElementById('cardModal');
+        const cardModalOverlay = document.getElementById('cardModalOverlay');
+        const cardModalClose = document.getElementById('cardModalClose');
+        const cardModalTitle = document.getElementById('cardModalTitle');
+        const cardModalText = document.getElementById('cardModalText');
+        const cardModalIcon = document.getElementById('cardModalIcon');
+        
+        if (!cardModal) {
+            Logger.warn('CardModal', 'Card modal not found');
+        } else {
+            // Get all clickable cards
+            const clickableCards = document.querySelectorAll('.service-card, .package-card, .who-card, .approach-card');
+            
+            clickableCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Don't trigger if clicking a link inside the card
+                    if (e.target.tagName === 'A' || e.target.closest('a')) return;
+                    
+                    const title = this.querySelector('h3')?.textContent || '';
+                    const text = this.querySelector('p')?.textContent || '';
+                    const icon = this.querySelector('.service-icon, .who-icon')?.innerHTML || '';
+                    
+                    cardModalTitle.textContent = title;
+                    cardModalText.textContent = text;
+                    cardModalIcon.innerHTML = icon;
+                    
+                    cardModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+            
+            // Close modal functions
+            function closeCardModal() {
+                cardModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            cardModalOverlay.addEventListener('click', closeCardModal);
+            cardModalClose.addEventListener('click', closeCardModal);
+            
+            // Close on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && cardModal.classList.contains('active')) {
+                    closeCardModal();
+                }
+            });
+            
+            Logger.info('CardModal', 'Initialized card modal');
+        }
+    } catch (e) {
+        Logger.error('CardModal', 'Failed to initialize card modal', e);
+    }
+
     // ========== ANIMATED COUNTERS COMPONENT ==========
     try {
         const statNumbers = document.querySelectorAll('.stat-number');
