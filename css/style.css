@@ -482,7 +482,7 @@ img { max-width: 100%; height: auto; display: block; }
     z-index: 1000;
     padding: 20px 0;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    background: var(--white);
+    background: #FFFFFF !important;
     border-bottom: 1px solid rgba(226, 232, 240, 0.6);
 }
 
@@ -500,7 +500,7 @@ img { max-width: 100%; height: auto; display: block; }
 
 .navbar.scrolled {
     padding: 14px 0;
-    background: var(--white);
+    background: #FFFFFF !important;
     box-shadow: 0 4px 30px rgba(30, 58, 95, 0.08);
     border-bottom-color: rgba(226, 232, 240, 0.6);
 }
@@ -3486,7 +3486,7 @@ img { max-width: 100%; height: auto; display: block; }
         display: flex;
     }
     
-    .navbar { background: var(--white); }
+    .navbar { background: #FFFFFF !important; }
     
     .navbar::before {
         height: 90px;
