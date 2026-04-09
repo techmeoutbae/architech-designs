@@ -198,6 +198,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         function animateCounters() {
             statNumbers.forEach(stat => {
+                if (stat.dataset.animated === 'true') {
+                    return;
+                }
+
                 const target = parseInt(stat.getAttribute('data-target'));
                 if (isNaN(target)) {
                     Logger.warn('Counter', 'Invalid data-target value');
@@ -222,12 +226,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (statCard) {
                     const statTop = statCard.getBoundingClientRect().top;
                     const windowHeight = window.innerHeight;
-                    if (statTop < windowHeight - 100) updateCounter();
+                    if (statTop < windowHeight - 100) {
+                        stat.dataset.animated = 'true';
+                        updateCounter();
+                    }
                 }
             });
         }
         
         window.addEventListener('scroll', animateCounters);
+        animateCounters();
         Logger.info('Counter', `Watching ${statNumbers.length} counter elements`);
     } catch (e) {
         Logger.error('Counter', 'Failed to initialize animated counters', e);
@@ -712,6 +720,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     growthScore += 2;
                     premiumScore += 1;
                 }
+                if (needs.includes('automation')) {
+                    premiumScore += 4;
+                    growthScore += 1;
+                }
                 
                 // Budget scoring
                 if (budget === 'under_2k') {
@@ -735,39 +747,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (premiumScore === maxScore && premiumScore > 0) {
                     recommendedPackage = 'premium';
-                    description = 'Complete solution for serious growth. Advanced features, ongoing support, and comprehensive strategy.';
+                    description = 'Best fit when your project needs advanced functionality, integrations, or custom workflow support alongside premium design.';
                     features = [
-                        'Unlimited pages & features',
-                        'Advanced SEO & content strategy',
-                        'Conversion optimization',
-                        'E-commerce capabilities',
-                        'Custom animations & interactions',
-                        'Ongoing support & maintenance',
-                        'Monthly strategy calls',
-                        'Priority turnaround'
+                        'Discovery and technical scoping',
+                        'Custom dashboards, portals, or internal tools',
+                        'Integration and automation planning',
+                        'Premium front-end design system',
+                        'QA, launch support, and refinement',
+                        'Tailored roadmap based on your workflow needs'
                     ];
                 } else if (growthScore === maxScore) {
                     recommendedPackage = 'growth';
-                    description = 'Perfect for growing businesses that need a professional website to generate leads and build credibility.';
+                    description = 'Best for businesses that need a premium website with stronger conversion structure, trust architecture, and growth-focused functionality.';
                     features = [
-                        'Up to 8 custom pages',
-                        'Premium design with animations',
-                        'Advanced SEO optimization',
-                        'Lead capture & automation',
-                        'Speed optimization',
-                        '3 weeks delivery',
-                        'Post-launch support'
+                        'Premium custom website design',
+                        'Conversion-focused page structure',
+                        'Lead capture and workflow setup',
+                        'Advanced SEO and performance baseline',
+                        'Analytics and optimization readiness',
+                        'Launch support and refinement'
                     ];
                 } else {
                     recommendedPackage = 'launch';
-                    description = 'Great starting point! Get your business online quickly with a professional website that attracts customers.';
+                    description = 'Ideal when you need a polished, professional website that elevates your brand and creates a strong first impression.';
                     features = [
-                        'Up to 5 professional pages',
-                        'Mobile-responsive design',
-                        'Contact forms & calls to action',
-                        'Basic SEO setup',
-                        'Google Maps integration',
-                        '2 weeks delivery'
+                        'Strategic page planning',
+                        'Premium responsive front-end design',
+                        'Lead capture and contact flow',
+                        'Performance and SEO baseline',
+                        'Launch-ready structure and support'
                     ];
                 }
                 
@@ -784,9 +792,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const featuresEl = document.getElementById('quizResultsFeatures');
                 
                 const packageNames = {
-                    'launch': { name: 'Launch Site', subtitle: 'Starting Package' },
-                    'growth': { name: 'Growth Site', subtitle: 'Most Popular' },
-                    'premium': { name: 'Premium Growth System', subtitle: 'Best Value' }
+                    'launch': { name: 'Signature Website', subtitle: 'Focused Website Engagement' },
+                    'growth': { name: 'Growth System', subtitle: 'Conversion-Led Build' },
+                    'premium': { name: 'Custom Software Build', subtitle: 'Tailored Scope' }
                 };
                 
                 const pkg = packageNames[result.package];
@@ -872,7 +880,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             showQuestion(0);
-            Logger.info('Quiz', 'Website quiz initialized');
+            Logger.info('Quiz', 'Project fit estimator initialized');
         }
     } catch (e) {
         Logger.error('Quiz', 'Failed to initialize website quiz', e);
