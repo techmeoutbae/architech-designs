@@ -662,7 +662,8 @@ img { max-width: 100%; height: auto; display: block; }
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%);
     position: relative;
     overflow: hidden;
-    padding-top: 180px;
+    padding-top: 140px;
+    padding-bottom: 60px;
 }
 
 .hero::before {
@@ -892,8 +893,7 @@ img { max-width: 100%; height: auto; display: block; }
 .hero-visual {
     position: absolute;
     right: 5%;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 140px;
     width: 45%;
     max-width: 600px;
     opacity: 0;
@@ -2819,7 +2819,7 @@ img { max-width: 100%; height: auto; display: block; }
 
 /* Page Header */
 .page-header {
-    padding: 220px 0 100px;
+    padding: 180px 0 80px;
     background: var(--primary);
     position: relative;
     overflow: hidden;
