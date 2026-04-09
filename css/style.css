@@ -683,7 +683,7 @@ img { max-width: 100%; height: auto; display: block; }
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%);
     position: relative;
     overflow: hidden;
-    padding-top: 100px;
+    padding-top: 110px;
     padding-bottom: 60px;
 }
 
@@ -914,7 +914,7 @@ img { max-width: 100%; height: auto; display: block; }
 .hero-visual {
     position: absolute;
     right: 5%;
-    top: 100px;
+    top: 110px;
     width: 45%;
     max-width: 600px;
     opacity: 0;
