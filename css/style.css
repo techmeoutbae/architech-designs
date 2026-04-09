@@ -683,8 +683,8 @@ img { max-width: 100%; height: auto; display: block; }
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%);
     position: relative;
     overflow: hidden;
-    padding-top: 110px;
-    padding-bottom: 60px;
+    padding-top: 140px;
+    padding-bottom: 80px;
 }
 
 .hero::before {
@@ -908,7 +908,7 @@ img { max-width: 100%; height: auto; display: block; }
 .hero-visual {
     position: absolute;
     right: 5%;
-    top: 120px;
+    top: 85px;
     width: 45%;
     max-width: 600px;
     opacity: 0;
@@ -3413,14 +3413,7 @@ img { max-width: 100%; height: auto; display: block; }
     .header-logo { height: 40px !important; }
     .navbar { padding: 8px 0; }
     
-    .hero-visual {
-        position: relative;
-        width: 100%;
-        right: auto;
-        top: auto;
-        transform: none;
-        margin-top: 30px;
-    }
+
     
     .hero {
         padding-top: 80px;
@@ -3523,15 +3516,6 @@ img { max-width: 100%; height: auto; display: block; }
     
     .navbar { background: #FFFFFF !important; }
     
-    .hero-visual {
-        position: relative;
-        width: 100%;
-        right: auto;
-        top: auto;
-        transform: none;
-        margin-top: 40px;
-        max-width: 100%;
-    }
     
     .hero {
         padding-bottom: 80px;
