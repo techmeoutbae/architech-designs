@@ -908,11 +908,12 @@ img { max-width: 100%; height: auto; display: block; }
 .hero-visual {
     position: absolute;
     right: 5%;
-    top: 200px;
+    top: 65px;
     width: 45%;
     max-width: 600px;
     opacity: 0;
     animation: fadeInRight 1s ease 0.5s forwards;
+    z-index: 1;
 }
 
 .hero-visual::before {
