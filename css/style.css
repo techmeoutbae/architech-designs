@@ -739,12 +739,6 @@ img { max-width: 100%; height: auto; display: block; }
     animation-delay: 0.8s;
 }
 
-.hero-visual {
-    opacity: 0;
-    animation: scaleIn 1s ease forwards;
-    animation-delay: 0.6s;
-}
-
 .hero-background-shapes {
     position: absolute;
     inset: 0;
@@ -1023,24 +1017,6 @@ img { max-width: 100%; height: auto; display: block; }
     flex-wrap: wrap;
     opacity: 0;
     animation: fadeInUp 0.8s ease 0.3s forwards;
-}
-
-.hero-visual {
-    position: absolute;
-    right: 5%;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 45%;
-    max-width: 600px;
-    opacity: 0;
-    animation: fadeInRight 1s ease 0.5s forwards;
-}
-
-.browser-mockup {
-    background: var(--white);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-xl);
-    overflow: hidden;
 }
 
 .browser-header {
