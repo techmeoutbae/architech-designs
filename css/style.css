@@ -914,7 +914,7 @@ img { max-width: 100%; height: auto; display: block; }
 .hero-visual {
     position: absolute;
     right: 5%;
-    top: 110px;
+    top: 120px;
     width: 45%;
     max-width: 600px;
     opacity: 0;
