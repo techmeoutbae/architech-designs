@@ -67,7 +67,7 @@
                 <article class="portal-auth-card">
                     <span class="workspace-eyebrow">Protected Client Access</span>
                     <h2>Sign in to your private workspace.</h2>
-                    <p>Use the demo credentials below to explore the portal experience. This front-end shell is designed to be connected to production authentication and billing infrastructure.</p>
+                    <p>Use one of the client accounts below to test the portal end-to-end. Messages, files, invoices, and access credentials persist in your browser so you can preview a more realistic client experience.</p>
                     <form class="portal-auth-form" id="portalAuthForm">
                         <label for="portalEmail">Client email</label>
                         <input id="portalEmail" name="portalEmail" type="email" placeholder="client@architechdesigns.net" required>
@@ -76,11 +76,14 @@
                         <button type="submit" class="btn btn-primary btn-block">Enter Client Portal</button>
                         <button type="button" class="btn btn-outline btn-block" id="portalDemoFill">Use Demo Credentials</button>
                     </form>
-                    <div class="portal-auth-note" id="portalAuthNote">Demo access: <code>client@architechdesigns.net</code> with key <code>ARCHI-2026</code>.</div>
+                    <div class="portal-auth-note" id="portalAuthNote" aria-live="polite">Demo access: <code>client@architechdesigns.net</code> with key <code>ARCHI-2026</code>.</div>
+                    <div class="portal-access-cards" id="portalDemoAccounts"></div>
                 </article>
                 <aside class="portal-preview-card">
                     <span class="workspace-eyebrow">What Clients See</span>
-                    <div class="portal-preview-metrics">
+                    <h3 id="portalPreviewTitle">Sterling &amp; Associates portal preview</h3>
+                    <p id="portalPreviewText">A polished workspace for project visibility, invoice tracking, shared files, and direct communication.</p>
+                    <div class="portal-preview-metrics" id="portalPreviewMetrics">
                         <article>
                             <span>Milestone</span>
                             <strong>UI review ready</strong>
@@ -94,7 +97,7 @@
                             <strong>7 deliverables shared</strong>
                         </article>
                     </div>
-                    <ul class="portal-preview-list">
+                    <ul class="portal-preview-list" id="portalPreviewList">
                         <li>Project status and milestone visibility</li>
                         <li>Invoice center with payment prompts</li>
                         <li>Threaded project messaging</li>
@@ -109,6 +112,7 @@
                         <span class="workspace-user-kicker">Client Workspace</span>
                         <strong id="portalClientName">Sterling &amp; Associates</strong>
                         <p id="portalClientEmail">client@architechdesigns.net</p>
+                        <p id="portalClientMeta">Growth System engagement</p>
                     </div>
                     <div class="workspace-nav">
                         <button class="workspace-nav-button active" type="button" data-workspace-tab="portal-overview">Overview</button>
@@ -124,16 +128,16 @@
                     <div class="workspace-toolbar">
                         <div>
                             <span class="workspace-toolbar-label">Active Project</span>
-                            <h2>Sterling &amp; Associates Website + Client Portal</h2>
+                            <h2 id="portalProjectTitle">Sterling &amp; Associates Website + Client Portal</h2>
                         </div>
-                        <div class="workspace-toolbar-meta">
+                        <div class="workspace-toolbar-meta" id="portalToolbarMeta">
                             <span class="workspace-pill success">On track</span>
                             <span class="workspace-pill">Next review in 2 days</span>
                         </div>
                     </div>
 
                     <section class="workspace-view active" id="portal-overview">
-                        <div class="workspace-kpi-grid">
+                        <div class="workspace-kpi-grid" id="portalOverviewMetrics">
                             <article class="workspace-kpi-card">
                                 <span>Current phase</span>
                                 <strong>UI review + content refinement</strong>
@@ -154,12 +158,12 @@
                         <div class="workspace-panel-grid">
                             <article class="workspace-panel workspace-panel-highlight">
                                 <span class="workspace-panel-kicker">Project Summary</span>
-                                <h3>Design approved. Development pass in progress.</h3>
-                                <p>We are finalizing responsive refinements, portal access flows, and invoice-triggered milestone logic before the next review window opens.</p>
+                                <h3 id="portalSummaryTitle">Design approved. Development pass in progress.</h3>
+                                <p id="portalSummaryText">We are finalizing responsive refinements, portal access flows, and invoice-triggered milestone logic before the next review window opens.</p>
                             </article>
                             <article class="workspace-panel">
                                 <span class="workspace-panel-kicker">Next Client Actions</span>
-                                <ul class="workspace-list">
+                                <ul class="workspace-list" id="portalNextActions">
                                     <li>Approve refined mobile homepage layout</li>
                                     <li>Review final consultation CTA copy</li>
                                     <li>Confirm invoice release after feedback round</li>
@@ -169,7 +173,7 @@
                     </section>
 
                     <section class="workspace-view" id="portal-timeline">
-                        <div class="workspace-timeline">
+                        <div class="workspace-timeline" id="portalTimelineList">
                             <article class="workspace-timeline-item complete">
                                 <span class="workspace-timeline-date">April 03</span>
                                 <div>
@@ -207,7 +211,7 @@
                                 <span class="workspace-panel-kicker">Invoice Center</span>
                                 <h3>Payment visibility without back-and-forth.</h3>
                             </div>
-                            <span class="workspace-pill">2 paid / 1 open</span>
+                            <span class="workspace-pill" id="portalInvoiceSummary">2 paid / 1 open</span>
                         </div>
                         <div class="invoice-card-grid" id="portalInvoiceGrid">
                             <article class="invoice-card paid" data-invoice-id="inv-1001">
@@ -353,6 +357,6 @@
     </footer>
 
     <script src="js/main.js"></script>
-    <script src="js/workspace.js"></script>
+    <script src="js/workspace-premium.js"></script>
 </body>
 </html>

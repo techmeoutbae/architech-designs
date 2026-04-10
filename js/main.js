@@ -224,7 +224,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         window.addEventListener('scroll', checkReveal);
+        window.addEventListener('load', checkReveal);
+        window.addEventListener('hashchange', checkReveal);
         checkReveal();
+        window.setTimeout(checkReveal, 120);
         Logger.info('ScrollReveal', `Watching ${revealElements.length} elements`);
     } catch (e) {
         Logger.error('ScrollReveal', 'Failed to initialize scroll reveal', e);

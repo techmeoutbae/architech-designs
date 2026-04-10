@@ -75,11 +75,12 @@
                         <button class="workspace-nav-button" type="button" data-workspace-tab="ops-leads">Leads</button>
                         <button class="workspace-nav-button" type="button" data-workspace-tab="ops-consults">Consultations</button>
                         <button class="workspace-nav-button" type="button" data-workspace-tab="ops-projects">Projects</button>
+                        <button class="workspace-nav-button" type="button" data-workspace-tab="ops-clients">Client Desk</button>
                         <button class="workspace-nav-button" type="button" data-workspace-tab="ops-finance">Finance</button>
                     </div>
                     <div class="workspace-side-note">
                         <span class="workspace-panel-kicker">Why this matters</span>
-                        <p>This interface demonstrates how your public website can connect to a more structured operating system as the business grows.</p>
+                        <p>This interface now acts as the control layer for portal credentials, client messaging, files, and invoice visibility across the site.</p>
                     </div>
                 </aside>
 
@@ -172,6 +173,84 @@
                         <div class="workspace-card-stack" id="opsProjectList"></div>
                     </section>
 
+                    <section class="workspace-view" id="ops-clients">
+                        <div class="workspace-section-head">
+                            <div>
+                                <span class="workspace-panel-kicker">Client Desk</span>
+                                <h3>Manage portal access, communication, files, and invoices in one place.</h3>
+                            </div>
+                            <a href="client-portal.html" class="btn btn-outline btn-sm">Open Client Portal</a>
+                        </div>
+                        <div class="client-desk-layout">
+                            <aside class="workspace-panel client-roster-panel">
+                                <span class="workspace-panel-kicker">Portal Accounts</span>
+                                <h3>Choose an active client.</h3>
+                                <p>Review credentials, jump into the portal, and keep each client thread organized.</p>
+                                <div class="client-roster" id="opsClientList"></div>
+                            </aside>
+
+                            <div class="client-desk-main">
+                                <article class="workspace-panel client-desk-summary" id="opsClientSummary"></article>
+
+                                <div class="client-desk-grid">
+                                    <article class="workspace-panel client-desk-thread-panel">
+                                        <span class="workspace-panel-kicker">Conversation</span>
+                                        <h3>Client communication in one premium thread.</h3>
+                                        <div class="workspace-thread client-desk-thread" id="opsClientThread"></div>
+                                        <form class="workspace-composer" id="opsClientMessageForm">
+                                            <label for="opsClientMessageInput">Send a client update</label>
+                                            <textarea id="opsClientMessageInput" rows="4" placeholder="Share the latest milestone update, approval request, or next step."></textarea>
+                                            <button type="submit" class="btn btn-primary">Send Update</button>
+                                        </form>
+                                    </article>
+
+                                    <div class="client-desk-side">
+                                        <form class="workspace-upload-card client-share-form" id="opsClientFileForm">
+                                            <label for="opsClientFileName">Share a deliverable</label>
+                                            <input id="opsClientFileName" type="text" placeholder="Homepage Review Deck.pdf" required>
+                                            <input id="opsClientFileType" type="text" placeholder="Review package">
+                                            <button type="submit" class="btn btn-outline">Share File</button>
+                                            <p>Shared files appear in the client portal immediately in this browser.</p>
+                                        </form>
+
+                                        <form class="workspace-upload-card client-invoice-form" id="opsClientInvoiceForm">
+                                            <label for="opsClientInvoiceTitle">Create invoice</label>
+                                            <input id="opsClientInvoiceTitle" type="text" placeholder="Phase 2 milestone invoice" required>
+                                            <div class="client-inline-grid">
+                                                <input id="opsClientInvoiceAmount" type="number" placeholder="1250" min="0" step="50" required>
+                                                <select id="opsClientInvoiceStatus">
+                                                    <option value="open">Open now</option>
+                                                    <option value="scheduled">Schedule next</option>
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn btn-outline">Add Invoice</button>
+                                            <p>Create a live invoice card the client can see and pay inside the portal preview.</p>
+                                        </form>
+
+                                        <form class="workspace-upload-card ops-client-form" id="opsClientForm">
+                                            <label for="opsClientCompany">Create client access</label>
+                                            <div class="client-inline-grid">
+                                                <input id="opsClientCompany" type="text" placeholder="Company name" required>
+                                                <input id="opsClientContact" type="text" placeholder="Primary contact" required>
+                                            </div>
+                                            <div class="client-inline-grid">
+                                                <input id="opsClientEmail" type="email" placeholder="client@company.com" required>
+                                                <select id="opsClientService">
+                                                    <option value="Signature Website">Signature Website</option>
+                                                    <option value="Growth System">Growth System</option>
+                                                    <option value="Custom Software Build">Custom Software Build</option>
+                                                </select>
+                                            </div>
+                                            <input id="opsClientProject" type="text" placeholder="Project name" required>
+                                            <button type="submit" class="btn btn-primary">Create Client Portal Access</button>
+                                            <p class="workspace-form-note" id="opsClientFormNote" aria-live="polite">New client accounts get a generated access key and become available in the portal immediately.</p>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
                     <section class="workspace-view" id="ops-finance">
                         <div class="workspace-section-head">
                             <div>
@@ -236,6 +315,6 @@
     </footer>
 
     <script src="js/main.js"></script>
-    <script src="js/workspace.js"></script>
+    <script src="js/workspace-premium.js"></script>
 </body>
 </html>
