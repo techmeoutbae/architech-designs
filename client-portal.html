@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1e3a5f">
+    <title>Client Portal | Architech Designs</title>
+    <meta name="description" content="A premium client portal experience by Architech Designs with project status, invoices, messaging, deliverables, and structured communication in one polished workspace.">
+    <link rel="canonical" href="https://www.architechdesigns.net/client-portal.html">
+    <link rel="icon" type="image/png" href="images/updated-ad-logo.png">
+    <link rel="apple-touch-icon" href="images/updated-ad-logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="workspace-page" data-app="portal">
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-inner">
+                <div class="header-logo-wrapper">
+                    <a href="index.html" class="header-logo-link">
+                        <img src="images/updated-ad-logo.png" alt="Architech Designs" class="header-building">
+                    </a>
+                    <a href="index.html" class="header-logo-text">
+                        <img src="images/updated-ad-logo.png" alt="Architech Designs">
+                    </a>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="packages.html">Packages</a></li>
+                    <li><a href="portfolio.html">Portfolio</a></li>
+                    <li><a href="process.html">Process</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+                <div class="nav-cta">
+                    <a href="contact.html" class="btn btn-primary btn-sm">Book Consultation</a>
+                </div>
+                <button class="mobile-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-header workspace-header">
+        <div class="container">
+            <div class="page-header-content">
+                <span class="section-label">Client Portal</span>
+                <h1>Private project access with the same premium standard as the public-facing site.</h1>
+                <p class="section-subtitle">A polished client workspace for project visibility, deliverables, invoices, messaging, and structured communication until the full CRM ecosystem is complete.</p>
+                <div class="workspace-header-actions">
+                    <a href="#portal-access" class="btn btn-primary btn-lg">Open Workspace Demo</a>
+                    <a href="ops-suite.html" class="btn btn-outline btn-lg">View Ops Suite</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section workspace-demo-section" id="portal-access">
+        <div class="container">
+            <div class="portal-auth-shell" id="portalAuthShell">
+                <article class="portal-auth-card">
+                    <span class="workspace-eyebrow">Protected Client Access</span>
+                    <h2>Sign in to your private workspace.</h2>
+                    <p>Use the demo credentials below to explore the portal experience. This front-end shell is designed to be connected to production authentication and billing infrastructure.</p>
+                    <form class="portal-auth-form" id="portalAuthForm">
+                        <label for="portalEmail">Client email</label>
+                        <input id="portalEmail" name="portalEmail" type="email" placeholder="client@architechdesigns.net" required>
+                        <label for="portalKey">Access key</label>
+                        <input id="portalKey" name="portalKey" type="password" placeholder="ARCHI-2026" required>
+                        <button type="submit" class="btn btn-primary btn-block">Enter Client Portal</button>
+                        <button type="button" class="btn btn-outline btn-block" id="portalDemoFill">Use Demo Credentials</button>
+                    </form>
+                    <div class="portal-auth-note" id="portalAuthNote">Demo access: <code>client@architechdesigns.net</code> with key <code>ARCHI-2026</code>.</div>
+                </article>
+                <aside class="portal-preview-card">
+                    <span class="workspace-eyebrow">What Clients See</span>
+                    <div class="portal-preview-metrics">
+                        <article>
+                            <span>Milestone</span>
+                            <strong>UI review ready</strong>
+                        </article>
+                        <article>
+                            <span>Outstanding</span>
+                            <strong>1 invoice open</strong>
+                        </article>
+                        <article>
+                            <span>Files</span>
+                            <strong>7 deliverables shared</strong>
+                        </article>
+                    </div>
+                    <ul class="portal-preview-list">
+                        <li>Project status and milestone visibility</li>
+                        <li>Invoice center with payment prompts</li>
+                        <li>Threaded project messaging</li>
+                        <li>File access and upload requests</li>
+                    </ul>
+                </aside>
+            </div>
+
+            <div class="workspace-shell workspace-app-shell is-hidden" id="portalAppShell">
+                <aside class="workspace-sidebar">
+                    <div class="workspace-user-card">
+                        <span class="workspace-user-kicker">Client Workspace</span>
+                        <strong id="portalClientName">Sterling &amp; Associates</strong>
+                        <p id="portalClientEmail">client@architechdesigns.net</p>
+                    </div>
+                    <div class="workspace-nav">
+                        <button class="workspace-nav-button active" type="button" data-workspace-tab="portal-overview">Overview</button>
+                        <button class="workspace-nav-button" type="button" data-workspace-tab="portal-timeline">Timeline</button>
+                        <button class="workspace-nav-button" type="button" data-workspace-tab="portal-invoices">Invoices</button>
+                        <button class="workspace-nav-button" type="button" data-workspace-tab="portal-messages">Messages</button>
+                        <button class="workspace-nav-button" type="button" data-workspace-tab="portal-files">Files</button>
+                    </div>
+                    <button class="workspace-logout" type="button" id="portalLogout">Sign out</button>
+                </aside>
+
+                <div class="workspace-main">
+                    <div class="workspace-toolbar">
+                        <div>
+                            <span class="workspace-toolbar-label">Active Project</span>
+                            <h2>Sterling &amp; Associates Website + Client Portal</h2>
+                        </div>
+                        <div class="workspace-toolbar-meta">
+                            <span class="workspace-pill success">On track</span>
+                            <span class="workspace-pill">Next review in 2 days</span>
+                        </div>
+                    </div>
+
+                    <section class="workspace-view active" id="portal-overview">
+                        <div class="workspace-kpi-grid">
+                            <article class="workspace-kpi-card">
+                                <span>Current phase</span>
+                                <strong>UI review + content refinement</strong>
+                            </article>
+                            <article class="workspace-kpi-card">
+                                <span>Next invoice</span>
+                                <strong>$1,250 due after approval</strong>
+                            </article>
+                            <article class="workspace-kpi-card">
+                                <span>Open items</span>
+                                <strong>2 feedback requests awaiting reply</strong>
+                            </article>
+                            <article class="workspace-kpi-card">
+                                <span>Launch target</span>
+                                <strong>April 24, 2026</strong>
+                            </article>
+                        </div>
+                        <div class="workspace-panel-grid">
+                            <article class="workspace-panel workspace-panel-highlight">
+                                <span class="workspace-panel-kicker">Project Summary</span>
+                                <h3>Design approved. Development pass in progress.</h3>
+                                <p>We are finalizing responsive refinements, portal access flows, and invoice-triggered milestone logic before the next review window opens.</p>
+                            </article>
+                            <article class="workspace-panel">
+                                <span class="workspace-panel-kicker">Next Client Actions</span>
+                                <ul class="workspace-list">
+                                    <li>Approve refined mobile homepage layout</li>
+                                    <li>Review final consultation CTA copy</li>
+                                    <li>Confirm invoice release after feedback round</li>
+                                </ul>
+                            </article>
+                        </div>
+                    </section>
+
+                    <section class="workspace-view" id="portal-timeline">
+                        <div class="workspace-timeline">
+                            <article class="workspace-timeline-item complete">
+                                <span class="workspace-timeline-date">April 03</span>
+                                <div>
+                                    <h3>Discovery and conversion planning completed</h3>
+                                    <p>Audience priorities, service architecture, and systems scope locked for production.</p>
+                                </div>
+                            </article>
+                            <article class="workspace-timeline-item complete">
+                                <span class="workspace-timeline-date">April 07</span>
+                                <div>
+                                    <h3>Premium UI direction approved</h3>
+                                    <p>Visual hierarchy, premium card system, and mobile art direction signed off.</p>
+                                </div>
+                            </article>
+                            <article class="workspace-timeline-item current">
+                                <span class="workspace-timeline-date">Now</span>
+                                <div>
+                                    <h3>Development and portal integration pass</h3>
+                                    <p>Responsive implementation, portal shell wiring, and client messaging flow in progress.</p>
+                                </div>
+                            </article>
+                            <article class="workspace-timeline-item">
+                                <span class="workspace-timeline-date">Next</span>
+                                <div>
+                                    <h3>Client review and invoice release</h3>
+                                    <p>Deliver milestone review package, open invoice, and queue launch checklist.</p>
+                                </div>
+                            </article>
+                        </div>
+                    </section>
+
+                    <section class="workspace-view" id="portal-invoices">
+                        <div class="workspace-section-head">
+                            <div>
+                                <span class="workspace-panel-kicker">Invoice Center</span>
+                                <h3>Payment visibility without back-and-forth.</h3>
+                            </div>
+                            <span class="workspace-pill">2 paid / 1 open</span>
+                        </div>
+                        <div class="invoice-card-grid" id="portalInvoiceGrid">
+                            <article class="invoice-card paid" data-invoice-id="inv-1001">
+                                <div class="invoice-card-head">
+                                    <div>
+                                        <span>Invoice 1001</span>
+                                        <strong>Discovery + strategy deposit</strong>
+                                    </div>
+                                    <span class="workspace-pill success">Paid</span>
+                                </div>
+                                <p>Paid on April 04, 2026</p>
+                                <div class="invoice-card-foot">
+                                    <strong>$1,500</strong>
+                                    <button type="button" class="btn btn-outline btn-sm" disabled>Settled</button>
+                                </div>
+                            </article>
+                            <article class="invoice-card open" data-invoice-id="inv-1002">
+                                <div class="invoice-card-head">
+                                    <div>
+                                        <span>Invoice 1002</span>
+                                        <strong>Design + development milestone</strong>
+                                    </div>
+                                    <span class="workspace-pill warning">Open</span>
+                                </div>
+                                <p>Due after current feedback round is approved</p>
+                                <div class="invoice-card-foot">
+                                    <strong>$1,250</strong>
+                                    <button type="button" class="btn btn-primary btn-sm" data-pay-invoice="inv-1002">Pay Invoice</button>
+                                </div>
+                            </article>
+                            <article class="invoice-card upcoming" data-invoice-id="inv-1003">
+                                <div class="invoice-card-head">
+                                    <div>
+                                        <span>Invoice 1003</span>
+                                        <strong>Launch + transition handoff</strong>
+                                    </div>
+                                    <span class="workspace-pill">Scheduled</span>
+                                </div>
+                                <p>Queued for release after launch approval</p>
+                                <div class="invoice-card-foot">
+                                    <strong>$950</strong>
+                                    <button type="button" class="btn btn-outline btn-sm" disabled>Scheduled</button>
+                                </div>
+                            </article>
+                        </div>
+                    </section>
+
+                    <section class="workspace-view" id="portal-messages">
+                        <div class="workspace-section-head">
+                            <div>
+                                <span class="workspace-panel-kicker">Project Messaging</span>
+                                <h3>Structured communication inside the project itself.</h3>
+                            </div>
+                        </div>
+                        <div class="workspace-thread" id="portalMessageThread"></div>
+                        <form class="workspace-composer" id="portalMessageForm">
+                            <label for="portalMessageInput">Send a message</label>
+                            <textarea id="portalMessageInput" rows="4" placeholder="Share approval notes, content updates, or questions for the team."></textarea>
+                            <button type="submit" class="btn btn-primary">Send Update</button>
+                        </form>
+                    </section>
+
+                    <section class="workspace-view" id="portal-files">
+                        <div class="workspace-section-head">
+                            <div>
+                                <span class="workspace-panel-kicker">Deliverables + Files</span>
+                                <h3>One place for assets, approvals, and handoff files.</h3>
+                            </div>
+                        </div>
+                        <div class="workspace-file-grid" id="portalFileList"></div>
+                        <div class="workspace-upload-card">
+                            <label for="portalUploadInput">Upload reference files for the project</label>
+                            <input id="portalUploadInput" type="file" multiple>
+                            <p>Uploaded files are stored in this preview session so the interaction can be reviewed end-to-end.</p>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="workspace-modal" id="portalInvoiceModal" aria-hidden="true">
+        <div class="workspace-modal-backdrop" data-close-portal-modal></div>
+        <div class="workspace-modal-card">
+            <button type="button" class="workspace-modal-close" id="portalInvoiceModalClose" aria-label="Close invoice modal">&times;</button>
+            <span class="workspace-panel-kicker">Invoice Payment</span>
+            <h3>Confirm payment for this milestone.</h3>
+            <p id="portalInvoiceModalBody">This action marks the invoice as paid inside the demo workspace.</p>
+            <div class="workspace-modal-actions">
+                <button type="button" class="btn btn-outline" data-close-portal-modal>Cancel</button>
+                <button type="button" class="btn btn-primary" id="portalInvoiceConfirm">Mark as Paid</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <img src="images/updated-ad-logo.png" alt="Architech Designs">
+                    </a>
+                    <p>Premium web design and custom software for businesses that need a polished digital presence with real technical capability behind it.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="process.html">Our Process</a></li>
+                        <li><a href="portfolio.html">Portfolio</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Systems</h4>
+                    <ul>
+                        <li><a href="client-portal.html">Client Portal</a></li>
+                        <li><a href="ops-suite.html">Ops Suite</a></li>
+                        <li><a href="services.html">Custom Software</a></li>
+                        <li><a href="packages.html">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="privacy-policy.html">Privacy</a></li>
+                        <li><a href="terms.html">Terms</a></li>
+                        <li><a href="cookie-policy.html">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Architech Designs. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy-policy.html">Privacy</a>
+                    <a href="terms.html">Terms</a>
+                    <a href="disclaimer.html">Disclaimer</a>
+                    <a href="cookie-policy.html">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/workspace.js"></script>
+</body>
+</html>

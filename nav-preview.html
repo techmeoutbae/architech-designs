@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nav Preview</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background:
+                linear-gradient(180deg, #102138 0%, #173052 50%, #f4f6f9 50%, #f4f6f9 100%);
+            min-height: 100vh;
+        }
+
+        .preview-stage {
+            padding: 32px 32px 120px;
+            display: grid;
+            gap: 120px;
+        }
+
+        .preview-block {
+            position: relative;
+            min-height: 180px;
+        }
+
+        .preview-label {
+            position: absolute;
+            top: -18px;
+            left: 24px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.92);
+            color: #102138;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .preview-block.scrolled-stage {
+            padding-top: 24px;
+        }
+    </style>
+</head>
+<body>
+    <main class="preview-stage">
+        <section class="preview-block">
+            <div class="preview-label">Top State</div>
+            <nav class="navbar" style="position: relative;">
+                <div class="container">
+                    <div class="navbar-inner">
+                        <div class="header-logo-wrapper">
+                            <a href="index.html" class="header-logo-text">
+                                <img src="images/updated-ad-logo.png" alt="Architech Designs">
+                            </a>
+                        </div>
+                        <ul class="nav-links">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="about.html">About</a></li>
+                            <li><a href="services.html">Services</a></li>
+                            <li><a href="portfolio.html">Portfolio</a></li>
+                        </ul>
+                        <div class="nav-cta">
+                            <a href="contact.html" class="btn btn-primary">Book a Call</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </section>
+
+        <section class="preview-block scrolled-stage">
+            <div class="preview-label">Scrolled State</div>
+            <nav class="navbar scrolled" style="position: relative;">
+                <div class="container">
+                    <div class="navbar-inner">
+                        <div class="header-logo-wrapper">
+                            <a href="index.html" class="header-logo-text">
+                                <img src="images/updated-ad-logo.png" alt="Architech Designs">
+                            </a>
+                        </div>
+                        <ul class="nav-links">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="about.html">About</a></li>
+                            <li><a href="services.html">Services</a></li>
+                            <li><a href="portfolio.html">Portfolio</a></li>
+                        </ul>
+                        <div class="nav-cta">
+                            <a href="contact.html" class="btn btn-primary">Book a Call</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </section>
+    </main>
+</body>
+</html>

@@ -19,9 +19,119 @@ document.addEventListener('DOMContentLoaded', function() {
         const navbar = document.querySelector('.navbar');
         const mobileToggle = document.querySelector('.mobile-toggle');
         const navLinks = document.querySelector('.nav-links');
+        const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+        const isMarketingShell = !window.location.pathname.includes('/medspa-beauty/');
+        let menuOverlay = null;
         
         if (!navbar) {
             Logger.error('Navigation', 'Navbar element not found');
+        }
+
+        function ensureNavItem(href, label, className = '') {
+            if (!navLinks || navLinks.querySelector(`a[href="${href}"]`)) {
+                return;
+            }
+
+            const item = document.createElement('li');
+            if (className) {
+                item.className = className;
+            }
+            item.innerHTML = `<a href="${href}">${label}</a>`;
+            navLinks.appendChild(item);
+        }
+
+        function ensureMobileMenuCards() {
+            if (!navLinks || navLinks.querySelector('.mobile-nav-card-item')) {
+                return;
+            }
+
+            const portalCard = document.createElement('li');
+            portalCard.className = 'mobile-nav-card-item mobile-only-portal';
+            portalCard.innerHTML = `
+                <a href="client-portal.html" class="mobile-nav-card">
+                    <span>Client Portal</span>
+                    <strong>Status, files, invoices, messaging</strong>
+                </a>
+            `;
+
+            const consultCard = document.createElement('li');
+            consultCard.className = 'mobile-nav-card-item mobile-only-book';
+            consultCard.innerHTML = `
+                <a href="contact.html" class="mobile-nav-card mobile-nav-card-accent">
+                    <span>Book Consultation</span>
+                    <strong>Scope your premium build</strong>
+                </a>
+            `;
+
+            navLinks.appendChild(portalCard);
+            navLinks.appendChild(consultCard);
+        }
+
+        function ensureFooterPortalLink() {
+            if (!isMarketingShell) {
+                return;
+            }
+
+            const resourceHeadings = Array.from(document.querySelectorAll('.footer-col h4'));
+            const resourcesHeading = resourceHeadings.find((heading) => /resources/i.test(heading.textContent));
+            const list = resourcesHeading?.nextElementSibling;
+
+            if (!list || list.querySelector('a[href="client-portal.html"]')) {
+                return;
+            }
+
+            const item = document.createElement('li');
+            item.innerHTML = '<a href="client-portal.html">Client Portal</a>';
+            list.appendChild(item);
+        }
+
+        function updateActiveNavLinks() {
+            const normalizedPath = currentPath === '' ? 'index.html' : currentPath;
+            document.querySelectorAll('.nav-links a').forEach((link) => {
+                const href = link.getAttribute('href');
+                link.classList.toggle('active', href === normalizedPath);
+            });
+        }
+
+        function closeMenu() {
+            navLinks?.classList.remove('active');
+            mobileToggle?.classList.remove('active');
+            menuOverlay?.classList.remove('active');
+            document.body.classList.remove('nav-open');
+            document.body.style.overflow = '';
+        }
+
+        function openMenu() {
+            navLinks?.classList.add('active');
+            mobileToggle?.classList.add('active');
+            menuOverlay?.classList.add('active');
+            document.body.classList.add('nav-open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function toggleMenu() {
+            if (navLinks?.classList.contains('active')) {
+                closeMenu();
+            } else {
+                openMenu();
+            }
+        }
+
+        if (isMarketingShell && navLinks) {
+            ensureNavItem('client-portal.html', 'Portal', 'nav-portal-item');
+            ensureMobileMenuCards();
+            ensureFooterPortalLink();
+            updateActiveNavLinks();
+        }
+
+        if (mobileToggle && !document.querySelector('.menu-overlay')) {
+            menuOverlay = document.createElement('button');
+            menuOverlay.type = 'button';
+            menuOverlay.className = 'menu-overlay';
+            menuOverlay.setAttribute('aria-label', 'Close navigation menu');
+            document.body.appendChild(menuOverlay);
+        } else {
+            menuOverlay = document.querySelector('.menu-overlay');
         }
         
         window.addEventListener('scroll', function() {
@@ -33,29 +143,31 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         if (mobileToggle) {
-            mobileToggle.addEventListener('click', function() {
-                navLinks?.classList.toggle('active');
-                mobileToggle.classList.toggle('active');
-                document.body.style.overflow = navLinks?.classList.contains('active') ? 'hidden' : '';
+            mobileToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleMenu();
             });
-            
-            // Close menu when clicking a link
-            navLinks?.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', () => {
-                    navLinks.classList.remove('active');
-                    mobileToggle.classList.remove('active');
-                    document.body.style.overflow = '';
-                });
+
+            navLinks?.addEventListener('click', function(e) {
+                if (e.target.closest('a')) {
+                    closeMenu();
+                }
             });
+
+            menuOverlay?.addEventListener('click', closeMenu);
             
             // Close menu when clicking outside
             document.addEventListener('click', function(e) {
                 if (navLinks?.classList.contains('active') && 
                     !navLinks.contains(e.target) && 
                     !mobileToggle.contains(e.target)) {
-                    navLinks.classList.remove('active');
-                    mobileToggle.classList.remove('active');
-                    document.body.style.overflow = '';
+                    closeMenu();
+                }
+            });
+
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    closeMenu();
                 }
             });
             
@@ -73,7 +185,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
                     e.preventDefault();
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    const navbar = document.querySelector('.navbar');
+                    const headerOffset = navbar ? navbar.offsetHeight + 24 : 24;
+                    const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
                 } else {
                     Logger.warn('SmoothScroll', `Target not found: ${this.getAttribute('href')}`);
                 }
@@ -135,61 +254,6 @@ document.addEventListener('DOMContentLoaded', function() {
         Logger.info('FAQ', `Initialized ${faqItems.length} FAQ items`);
     } catch (e) {
         Logger.error('FAQ', 'Failed to initialize FAQ accordion', e);
-    }
-
-    // ========== CARD MODAL FOR MOBILE ==========
-    try {
-        const cardModal = document.getElementById('cardModal');
-        const cardModalOverlay = document.getElementById('cardModalOverlay');
-        const cardModalClose = document.getElementById('cardModalClose');
-        const cardModalTitle = document.getElementById('cardModalTitle');
-        const cardModalText = document.getElementById('cardModalText');
-        const cardModalIcon = document.getElementById('cardModalIcon');
-        
-        if (!cardModal) {
-            Logger.warn('CardModal', 'Card modal not found');
-        } else {
-            // Get all clickable cards
-            const clickableCards = document.querySelectorAll('.service-card, .package-card, .who-card, .approach-card');
-            
-            clickableCards.forEach(card => {
-                card.addEventListener('click', function(e) {
-                    // Don't trigger if clicking a link inside the card
-                    if (e.target.tagName === 'A' || e.target.closest('a')) return;
-                    
-                    const title = this.querySelector('h3')?.textContent || '';
-                    const text = this.querySelector('p')?.textContent || '';
-                    const icon = this.querySelector('.service-icon, .who-icon')?.innerHTML || '';
-                    
-                    cardModalTitle.textContent = title;
-                    cardModalText.textContent = text;
-                    cardModalIcon.innerHTML = icon;
-                    
-                    cardModal.classList.add('active');
-                    document.body.style.overflow = 'hidden';
-                });
-            });
-            
-            // Close modal functions
-            function closeCardModal() {
-                cardModal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-            
-            cardModalOverlay.addEventListener('click', closeCardModal);
-            cardModalClose.addEventListener('click', closeCardModal);
-            
-            // Close on escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && cardModal.classList.contains('active')) {
-                    closeCardModal();
-                }
-            });
-            
-            Logger.info('CardModal', 'Initialized card modal');
-        }
-    } catch (e) {
-        Logger.error('CardModal', 'Failed to initialize card modal', e);
     }
 
     // ========== ANIMATED COUNTERS COMPONENT ==========
@@ -370,33 +434,6 @@ document.addEventListener('DOMContentLoaded', function() {
         Logger.error('PackageToggle', 'Failed to initialize package toggle', e);
     }
 
-    // ========== STICKY NAVIGATION COMPONENT ==========
-    try {
-        let lastScroll = 0;
-        const nav = document.querySelector('.navbar');
-        
-        window.addEventListener('scroll', function() {
-            if (!nav) return;
-            
-            const currentScroll = window.pageYOffset;
-            
-            if (currentScroll > 500) {
-                if (currentScroll > lastScroll) {
-                    nav.style.transform = 'translateY(-100%)';
-                } else {
-                    nav.style.transform = 'translateY(0)';
-                }
-            } else {
-                nav.style.transform = 'translateY(0)';
-            }
-            
-            lastScroll = currentScroll;
-        });
-        Logger.info('StickyNav', 'Sticky navigation initialized');
-    } catch (e) {
-        Logger.error('StickyNav', 'Failed to initialize sticky navigation', e);
-    }
-
     // ========== PARALLAX EFFECT COMPONENT ==========
     try {
         const heroSection = document.querySelector('.hero');
@@ -502,14 +539,50 @@ document.addEventListener('DOMContentLoaded', function() {
     const cardModalClose = document.getElementById('cardModalClose');
     const cardModalIcon = document.getElementById('cardModalIcon');
     const cardModalTitle = document.getElementById('cardModalTitle');
-    const cardModalText = document.getElementById('cardModalText');
+    let cardModalText = document.getElementById('cardModalText');
 
     if (cardModal && cardModalOverlay && cardModalClose) {
-        function openCardModal(iconHtml, title, text) {
+        if (cardModalText && cardModalText.tagName === 'P') {
+            const replacement = document.createElement('div');
+            replacement.id = 'cardModalText';
+            replacement.className = 'card-modal-copy';
+            cardModalText.replaceWith(replacement);
+            cardModalText = replacement;
+        }
+
+        function escapeHtml(value) {
+            return value
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function buildCardModalBody(card) {
+            const paragraphs = Array.from(card.querySelectorAll('p'))
+                .map((p) => p.textContent.replace(/\s+/g, ' ').trim())
+                .filter(Boolean);
+
+            const listItems = Array.from(card.querySelectorAll('.package-feature, .why-feature span, .project-metrics span'))
+                .map((item) => item.textContent.replace(/\s+/g, ' ').trim())
+                .filter(Boolean);
+
+            let html = paragraphs.map((text) => `<p>${escapeHtml(text)}</p>`).join('');
+
+            if (listItems.length > 0) {
+                html += `<ul class="card-modal-list">${listItems.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
+            }
+
+            return html;
+        }
+
+        function openCardModal(iconHtml, title, bodyHtml) {
             if (cardModalIcon && cardModalTitle && cardModalText) {
-                cardModalIcon.innerHTML = iconHtml;
+                cardModalIcon.innerHTML = iconHtml || '';
+                cardModalIcon.style.display = iconHtml ? 'flex' : 'none';
                 cardModalTitle.textContent = title;
-                cardModalText.textContent = text;
+                cardModalText.innerHTML = bodyHtml;
             }
             cardModal.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -529,23 +602,33 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        const clickableCards = document.querySelectorAll('.service-card, .package-card, .value-card');
+        const clickableCards = document.querySelectorAll('.service-card, .package-card, .value-card, .who-card, .approach-card, .trust-proof-card, .client-experience-card');
         clickableCards.forEach(card => {
             card.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768) {
-                    const icon = this.querySelector('.service-icon, .value-icon');
-                    const title = this.querySelector('h3, h4');
-                    const text = this.querySelector('p');
-                    
-                    if (title && text) {
-                        const iconHtml = icon ? icon.innerHTML : '';
-                        openCardModal(iconHtml, title.textContent, text.textContent);
-                    }
+                if (window.innerWidth > 768) {
+                    return;
+                }
+
+                if (e.target.tagName === 'A' || e.target.closest('a')) {
+                    return;
+                }
+
+                const icon = this.querySelector('.service-icon, .value-icon, .who-icon');
+                const title = this.querySelector('h3, h4');
+                const bodyHtml = buildCardModalBody(this);
+                
+                if (title && bodyHtml) {
+                    const iconHtml = icon ? icon.innerHTML : '';
+                    openCardModal(iconHtml, title.textContent, bodyHtml);
                 }
             });
 
             card.addEventListener('keydown', function(e) {
-                if ((e.key === 'Enter' || e.key === ' ') && window.innerWidth <= 768) {
+                if (window.innerWidth > 768) {
+                    return;
+                }
+
+                if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
                     this.click();
                 }
@@ -716,10 +799,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     launchScore += 1;
                     growthScore += 2;
                 }
-                if (needs.includes('content')) {
-                    growthScore += 2;
-                    premiumScore += 1;
-                }
                 if (needs.includes('automation')) {
                     premiumScore += 4;
                     growthScore += 1;
@@ -753,7 +832,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         'Custom dashboards, portals, or internal tools',
                         'Integration and automation planning',
                         'Premium front-end design system',
-                        'QA, launch support, and refinement',
+                        'Q&A, launch support, and refinement',
                         'Tailored roadmap based on your workflow needs'
                     ];
                 } else if (growthScore === maxScore) {
