@@ -636,7 +636,7 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 .mobile-toggle {
-    display: none;
+    display: flex;
     flex-direction: column;
     gap: 5px;
     background: rgba(30, 58, 95, 0.1);
@@ -3667,9 +3667,6 @@ img { max-width: 100%; height: auto; display: block; }
         display: none;
     }
     
-    .mobile-toggle {
-        display: flex;
-    }
     
     .navbar { background: #FFFFFF !important; }
     
@@ -4763,11 +4760,6 @@ img { max-width: 100%; height: auto; display: block; }
     
     .logo img { height: 45px; }
     .header-logo { height: 45px !important; }
-    
-    .mobile-toggle { 
-        display: flex; 
-        z-index: 1001;
-    }
     
     .nav-links {
         position: fixed;
@@ -7562,11 +7554,6 @@ body section.page-header .section-subtitle {
 .nav-cta .btn-primary {
     padding-inline: 22px;
     border-radius: 999px;
-}
-
-.mobile-toggle {
-    background: rgba(30, 58, 95, 0.06);
-    border: 1px solid rgba(30, 58, 95, 0.08);
 }
 
 .mobile-toggle.active span:nth-child(1) {
