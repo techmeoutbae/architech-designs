@@ -32,7 +32,7 @@ const WorkspaceSeed = {
             email: 'client@architechdesigns.net',
             accessKey: 'ARCHI-2026',
             service: 'Growth System',
-            projectName: 'Sterling & Associates Website + Client Portal',
+            projectName: 'Sterling & Associates Website + Demo Portal',
             status: 'On track',
             nextReview: 'April 12, 2026',
             launchTarget: 'April 24, 2026',
@@ -165,6 +165,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (app === 'portal') {
         initPortalWorkspace();
+    }
+
+    if (app === 'login') {
+        initClientLoginWorkspace();
     }
 
     if (app === 'ops') {
@@ -493,6 +497,7 @@ function initPortalWorkspace() {
         clearPortalSession();
         setPortalNote();
         renderPortal();
+        window.location.href = 'client-login.html';
     });
 
     messageForm?.addEventListener('submit', (event) => {
@@ -632,6 +637,7 @@ function initPortalWorkspace() {
         const activeClient = getActivePortalClient();
         const previewClient = getClientById(state.data, activeClient?.id || state.previewClientId);
 
+        document.body.classList.toggle('portal-authenticated', Boolean(activeClient));
         authShell?.classList.toggle('is-hidden', Boolean(activeClient));
         appShell?.classList.toggle('is-hidden', !activeClient);
 
@@ -675,7 +681,7 @@ function initPortalWorkspace() {
         const openInvoices = getOpenInvoices(client).length;
         const scheduledInvoices = getScheduledInvoices(client).length;
 
-        previewTitle.textContent = `${client.company} portal preview`;
+        previewTitle.textContent = `${client.company} Demo Portal preview`;
         previewText.textContent = `A premium workspace for ${client.service.toLowerCase()} delivery, invoice visibility, shared files, and direct communication with ${client.contactName}.`;
         previewMetrics.innerHTML = `
             <article>
@@ -772,6 +778,73 @@ function initPortalWorkspace() {
         renderMessageThread(messageThread, client.messages);
         renderFileCards(fileList, client.files);
     }
+}
+
+function initClientLoginWorkspace() {
+    const loginForm = document.getElementById('loginForm');
+    const loginStatus = document.getElementById('loginStatus');
+    const demoFillButton = document.getElementById('loginDemoFill');
+    const rememberCheckbox = document.getElementById('remember');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const data = loadWorkspaceData();
+    const session = loadPortalSession();
+    const activeClient = getClientById(data, session?.clientId);
+
+    function setStatus(message, success = false) {
+        if (!loginStatus) {
+            return;
+        }
+
+        loginStatus.textContent = message;
+        loginStatus.classList.toggle('success', success);
+    }
+
+    function fillClient(client) {
+        if (!client || !emailInput || !passwordInput) {
+            return;
+        }
+
+        emailInput.value = client.email;
+        passwordInput.value = client.accessKey;
+    }
+
+    const fallbackClient = getClientById(data, loadSelectedClientId()) || data.clients[0];
+
+    if (activeClient) {
+        setSelectedClientId(activeClient.id);
+        fillClient(activeClient);
+        setStatus(`You're already signed in for ${activeClient.company}. Use the form below to re-enter the Demo Portal or switch accounts.`, true);
+    }
+
+    demoFillButton?.addEventListener('click', () => {
+        fillClient(fallbackClient);
+        setStatus(`Demo credentials loaded for ${fallbackClient.company}.`, true);
+    });
+
+    loginForm?.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const email = emailInput?.value.trim().toLowerCase();
+        const accessKey = passwordInput?.value.trim().toUpperCase();
+        const client = data.clients.find((item) => item.email.toLowerCase() === email && item.accessKey.toUpperCase() === accessKey);
+
+        if (!client) {
+            setStatus('The email and access key do not match an active workspace. Use valid client credentials to continue.', false);
+            return;
+        }
+
+        if (rememberCheckbox?.checked) {
+            setSelectedClientId(client.id);
+        }
+
+        setPortalSession(client.id);
+        setSelectedClientId(client.id);
+        setStatus(`Access granted for ${client.company}. Redirecting to the Demo Portal.`, true);
+        window.setTimeout(() => {
+            window.location.href = 'client-portal.html';
+        }, 220);
+    });
 }
 
 function initOpsWorkspace() {
@@ -1196,7 +1269,7 @@ function initOpsWorkspace() {
                     <span>${escapeHtml(item.projectName)}</span>
                     <span>${item.progress}% progress</span>
                 </div>
-                <button type="button" class="btn btn-outline btn-sm" data-open-portal-as="${escapeHtml(item.id)}">Open Portal</button>
+                <button type="button" class="btn btn-outline btn-sm" data-open-portal-as="${escapeHtml(item.id)}">Open Demo Portal</button>
             </article>
         `).join('');
 
@@ -1207,7 +1280,7 @@ function initOpsWorkspace() {
                     <h3>${escapeHtml(client.company)}</h3>
                     <p>${escapeHtml(client.contactName)} | ${escapeHtml(client.service)} | ${escapeHtml(client.projectName)}</p>
                 </div>
-                <button type="button" class="btn btn-primary btn-sm" data-open-portal-as="${escapeHtml(client.id)}">Open Portal As Client</button>
+                <button type="button" class="btn btn-primary btn-sm" data-open-portal-as="${escapeHtml(client.id)}">Open Demo Portal</button>
             </div>
             <div class="client-credential-pills">
                 <span class="client-credential-pill"><strong>Email</strong>${escapeHtml(client.email)}</span>

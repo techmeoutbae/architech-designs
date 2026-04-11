@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Login | Architech Designs</title>
+    <meta name="description" content="Secure client login for Architech Designs projects. Access the Client Portal, project workspace, files, and updates.">
+    <meta name="keywords" content="client login, project access, client workspace">
+    <meta name="robots" content="noindex, follow">
+    <meta property="og:title" content="Client Login | Architech Designs">
+    <meta property="og:description" content="Secure access to your project workspace.">
+    <meta property="og:type" content="website">
+    <link rel="canonical" href="https://www.architechdesigns.net/client-login.html">
+    <link rel="icon" type="image/png" href="images/updated-ad-logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="client-login-page" data-app="login">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-inner">
+                <div class="header-logo-wrapper">
+                    <a href="index.html" class="header-logo-link">
+                        <img src="images/updated-ad-logo.png" alt="Architech Building" class="header-building">
+                    </a>
+                    <a href="index.html" class="header-logo-text">
+                        <img src="images/updated-ad-logo.png" alt="Architech Designs">
+                    </a>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="packages.html">Packages</a></li>
+                    <li><a href="portfolio.html">Portfolio</a></li>
+                    <li><a href="process.html">Process</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+                <div class="nav-cta">
+                    <a href="contact.html" class="btn btn-primary btn-sm">Book Consultation</a>
+                </div>
+                <button class="mobile-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="page-header-content">
+                <span class="section-label">Client Login</span>
+                <h1>Your Workspace Awaits</h1>
+                <p>Access your project workspace, files, updates, and communication in one secure location.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Section -->
+    <section class="section login-section">
+        <div class="container">
+            <div class="login-container">
+                <!-- Login Form -->
+                <div class="login-panel login-form-panel reveal">
+                    <div class="login-header">
+                        <h2>Client Access</h2>
+                        <p>Sign in to your project workspace</p>
+                    </div>
+
+                    <form id="loginForm" class="login-form">
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                required 
+                                placeholder="your@email.com"
+                                autocomplete="email"
+                            >
+                            <span class="form-hint">The email address associated with your project</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Access Key</label>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                required 
+                            >
+                            <span class="form-hint">Use the access key assigned to your workspace</span>
+                        </div>
+
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="remember" name="remember">
+                            <label for="remember">Keep me signed in</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-full" style="margin-top: 24px;">
+                            Enter Client Portal
+                        </button>
+
+                        <div class="form-divider">or</div>
+
+                        <p style="text-align: center; color: var(--text-light); font-size: 0.9rem; margin-bottom: 16px;">
+                            Don't have access yet?
+                        </p>
+                        <a href="contact.html" class="btn btn-outline btn-full">
+                            Request Client Portal Access
+                        </a>
+                    </form>
+
+                    <div class="portal-auth-note login-status-note" id="loginStatus" aria-live="polite">
+                        Use your client email and access key to open the Client Portal.
+                    </div>
+
+                    <div class="login-footer">
+                        <a href="contact.html" class="forgot-password-link">Need help accessing your workspace?</a>
+                    </div>
+                </div>
+
+                <!-- Info Panel -->
+                <div class="login-info-panel reveal">
+                    <div class="login-info-header">
+                        <h3>What You'll Find Inside</h3>
+                    </div>
+
+                    <ul class="login-features">
+                        <li class="login-feature">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 11l3 3L22 4"></path>
+                                    <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+                                </svg>
+                            </div>
+                            <div class="feature-content">
+                                <strong>Project Updates</strong>
+                                <p>Track progress, deliverables, and milestones in real-time.</p>
+                            </div>
+                        </li>
+
+                        <li class="login-feature">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="feature-content">
+                                <strong>Direct Messaging</strong>
+                                <p>Communicate securely with your project team and stakeholders.</p>
+                            </div>
+                        </li>
+
+                        <li class="login-feature">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path>
+                                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                    <polyline points="7 3 7 8 15 8"></polyline>
+                                </svg>
+                            </div>
+                            <div class="feature-content">
+                                <strong>File Access</strong>
+                                <p>Download assets, specifications, and project documentation.</p>
+                            </div>
+                        </li>
+
+                        <li class="login-feature">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="9" y1="9" x2="15" y2="9"></line>
+                                    <line x1="9" y1="15" x2="15" y2="15"></line>
+                                </svg>
+                            </div>
+                            <div class="feature-content">
+                                <strong>Invoices & Records</strong>
+                                <p>View contracts, invoices, and important project documentation.</p>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="login-contact-support">
+                        <h4>Need Help Accessing Your Account?</h4>
+                        <p>Our team is available to assist with login issues or account questions.</p>
+                        <a href="contact.html" class="link-with-arrow">Contact Support</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security & Trust Section -->
+    <section class="section" style="background: linear-gradient(180deg, rgba(30, 58, 95, 0.04) 0%, rgba(248, 250, 252, 0.6) 100%); border-top: 1px solid rgba(226, 232, 240, 0.5);">
+        <div class="container">
+            <div class="security-section reveal">
+                <h3 style="text-align: center; margin-bottom: 32px;">Enterprise-Grade Security</h3>
+                <div class="security-grid">
+                    <div class="security-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="security-icon">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            <polyline points="10 14 12 16 14 12"></polyline>
+                        </svg>
+                        <h4>SSL Encrypted</h4>
+                        <p>All data in transit is protected with industry-standard SSL/TLS encryption.</p>
+                    </div>
+                    <div class="security-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="security-icon">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0110 0v4"></path>
+                        </svg>
+                        <h4>Secure Access</h4>
+                        <p>Password-protected accounts with optional two-factor authentication.</p>
+                    </div>
+                    <div class="security-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="security-icon">
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 0l4.24-4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08 0l4.24 4.24"></path>
+                        </svg>
+                        <h4>Privacy Protected</h4>
+                        <p>Your information is never shared. Complete control over your data.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section" style="background: linear-gradient(135deg, #1e3a5f 0%, #2a4a7a 100%); padding: 80px 0;">
+        <div class="container">
+            <div class="cta-content reveal" style="text-align: center; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #FFFFFF; margin-bottom: 20px;">Ready to Explore Your Project?</h2>
+                <p style="color: rgba(255,255,255,0.85); margin-bottom: 32px; font-size: 1.1rem;">If you don't have login credentials yet, contact us to request access to your private workspace.</p>
+                <a href="contact.html" class="btn btn-primary" style="display: inline-block;">Request Access Today</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Architech Designs</h4>
+                    <p>Premium web design and custom software for growth-focused businesses.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="portfolio.html">Portfolio</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="services.html">Website Design</a></li>
+                        <li><a href="services.html">Custom Development</a></li>
+                        <li><a href="services.html">Lead Generation</a></li>
+                        <li><a href="services.html">Conversion Optimization</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="client-login.html">Client Login</a></li>
+                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Architech Designs LLC. All rights reserved. | <a href="privacy-policy.html">Privacy</a> | <a href="terms.html">Terms</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/workspace-premium.js"></script>
+</body>
+</html>

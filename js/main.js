@@ -40,31 +40,21 @@ document.addEventListener('DOMContentLoaded', function() {
             navLinks.appendChild(item);
         }
 
-        function ensureMobileMenuCards() {
-            if (!navLinks || navLinks.querySelector('.mobile-nav-card-item')) {
+        function ensureMobileMenuLinks() {
+            if (!navLinks || navLinks.querySelector('.mobile-nav-link-item')) {
                 return;
             }
 
-            const portalCard = document.createElement('li');
-            portalCard.className = 'mobile-nav-card-item mobile-only-portal';
-            portalCard.innerHTML = `
-                <a href="client-portal.html" class="mobile-nav-card">
-                    <span>Client Portal</span>
-                    <strong>Status, files, invoices, messaging</strong>
-                </a>
-            `;
+            const portalItem = document.createElement('li');
+            portalItem.className = 'mobile-nav-link-item mobile-only-portal';
+            portalItem.innerHTML = '<a href="client-portal.html">Demo Portal</a>';
 
-            const consultCard = document.createElement('li');
-            consultCard.className = 'mobile-nav-card-item mobile-only-book';
-            consultCard.innerHTML = `
-                <a href="contact.html" class="mobile-nav-card mobile-nav-card-accent">
-                    <span>Book Consultation</span>
-                    <strong>Scope your premium build</strong>
-                </a>
-            `;
+            const consultItem = document.createElement('li');
+            consultItem.className = 'mobile-nav-link-item mobile-only-book';
+            consultItem.innerHTML = '<a href="contact.html">Book Consultation</a>';
 
-            navLinks.appendChild(portalCard);
-            navLinks.appendChild(consultCard);
+            navLinks.appendChild(portalItem);
+            navLinks.appendChild(consultItem);
         }
 
         function ensureFooterPortalLink() {
@@ -81,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             const item = document.createElement('li');
-            item.innerHTML = '<a href="client-portal.html">Client Portal</a>';
+            item.innerHTML = '<a href="client-portal.html">Demo Portal</a>';
             list.appendChild(item);
         }
 
@@ -118,8 +108,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (isMarketingShell && navLinks) {
-            ensureNavItem('client-portal.html', 'Portal', 'nav-portal-item');
-            ensureMobileMenuCards();
+            ensureNavItem('client-login.html', 'Client Login', 'nav-login-item');
+            ensureMobileMenuLinks();
             ensureFooterPortalLink();
             updateActiveNavLinks();
         }
