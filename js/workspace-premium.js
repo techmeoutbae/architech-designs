@@ -32,7 +32,7 @@ const WorkspaceSeed = {
             email: 'client@architechdesigns.net',
             accessKey: 'ARCHI-2026',
             service: 'Growth System',
-            projectName: 'Sterling & Associates Website + Demo Portal',
+            projectName: 'Sterling & Associates Website + Client Workspace',
             status: 'On track',
             nextReview: 'April 12, 2026',
             launchTarget: 'April 24, 2026',
@@ -51,6 +51,10 @@ const WorkspaceSeed = {
                 { id: 'timeline-sterling-2', date: 'April 07', title: 'Premium UI direction approved', body: 'Visual hierarchy, premium card system, and mobile art direction signed off.', state: 'complete' },
                 { id: 'timeline-sterling-3', date: 'Now', title: 'Development and portal integration pass', body: 'Responsive implementation, portal shell wiring, and client messaging flow in progress.', state: 'current' },
                 { id: 'timeline-sterling-4', date: 'Next', title: 'Client review and invoice release', body: 'Deliver milestone review package, open invoice, and queue launch checklist.', state: 'upcoming' }
+            ],
+            approvals: [
+                { id: 'approval-sterling-1', title: 'Homepage mobile refinement', owner: 'Responsive review', due: 'Review by April 12', status: 'pending', note: 'Approve the tightened mobile hero spacing, card pacing, and shorter systems section.' },
+                { id: 'approval-sterling-2', title: 'Milestone invoice release', owner: 'Billing checkpoint', due: 'Queue after approval', status: 'review', note: 'Confirm invoice 1002 can be released after the responsive review package is approved.' }
             ],
             messages: [
                 { id: 'msg-sterling-1', sender: 'Architech', role: 'team', time: 'Today - 9:18 AM', body: 'The refined mobile homepage pass is ready for review. We tightened the card rails, elevated the portal preview section, and cleaned up the sticky header behavior.' },
@@ -96,6 +100,9 @@ const WorkspaceSeed = {
                 { id: 'timeline-glow-3', date: 'Now', title: 'Launch sequencing and QA', body: 'Final testing is underway before domain cutover and handoff.', state: 'current' },
                 { id: 'timeline-glow-4', date: 'Next', title: 'Launch support window', body: 'Monitor leads, forms, and traffic after release.', state: 'upcoming' }
             ],
+            approvals: [
+                { id: 'approval-glow-1', title: 'Launch routing confirmation', owner: 'Launch readiness', due: 'Review by April 15', status: 'pending', note: 'Approve final booking routing and after-hours notification behavior before launch.' }
+            ],
             messages: [
                 { id: 'msg-glow-1', sender: 'Architech', role: 'team', time: 'Yesterday - 4:10 PM', body: 'The booking flow passed another QA round. We are preparing the launch checklist and handoff packet.' },
                 { id: 'msg-glow-2', sender: 'Maya Brooks', role: 'client', time: 'Yesterday - 5:32 PM', body: 'Perfect. Please keep the patient intake steps feeling as simple as possible on mobile.' }
@@ -134,6 +141,9 @@ const WorkspaceSeed = {
                 { id: 'timeline-apex-1', date: 'April 01', title: 'Systems map approved', body: 'Lead routing, dispatch territories, and automation goals were defined.', state: 'complete' },
                 { id: 'timeline-apex-2', date: 'April 09', title: 'Quote logic implementation started', body: 'Conditional pathways and service-area rules are being wired into the workflow.', state: 'current' },
                 { id: 'timeline-apex-3', date: 'Next', title: 'Client rule review', body: 'Validate edge cases before the internal ops release.', state: 'upcoming' }
+            ],
+            approvals: [
+                { id: 'approval-apex-1', title: 'Dispatch zone confirmation', owner: 'Systems review', due: 'Pending client input', status: 'review', note: 'Confirm the outer service areas before the final workflow logic is locked.' }
             ],
             messages: [
                 { id: 'msg-apex-1', sender: 'Architech', role: 'team', time: 'Today - 8:25 AM', body: 'We have the routing model in place. We just need confirmation on the outer service areas before the final test pass.' }
@@ -261,11 +271,40 @@ function getPaidInvoices(client) {
     return client.invoices.filter((invoice) => invoice.status === 'paid');
 }
 
+function getPendingApprovals(client) {
+    return client.approvals.filter((approval) => approval.status === 'pending' || approval.status === 'review');
+}
+
+function getApprovalStatusLabel(status) {
+    if (status === 'approved') {
+        return 'Approved';
+    }
+
+    if (status === 'review') {
+        return 'Needs review';
+    }
+
+    return 'Pending';
+}
+
+function getApprovalStatusClass(status) {
+    if (status === 'approved') {
+        return 'success';
+    }
+
+    if (status === 'review') {
+        return 'warning';
+    }
+
+    return '';
+}
+
 function normalizeClient(client) {
     return {
         ...client,
         nextActions: Array.isArray(client.nextActions) ? client.nextActions : [],
         timeline: Array.isArray(client.timeline) ? client.timeline : [],
+        approvals: Array.isArray(client.approvals) ? client.approvals : [],
         messages: Array.isArray(client.messages) ? client.messages : [],
         files: Array.isArray(client.files) ? client.files : [],
         invoices: Array.isArray(client.invoices) ? client.invoices : []
@@ -393,6 +432,7 @@ function initWorkspaceTabs(root = document) {
 }
 
 function initPortalWorkspace() {
+    const portalMode = document.body.dataset.workspaceMode === 'client' ? 'client' : 'demo';
     const authShell = document.getElementById('portalAuthShell');
     const appShell = document.getElementById('portalAppShell');
     const authForm = document.getElementById('portalAuthForm');
@@ -427,12 +467,14 @@ function initPortalWorkspace() {
     const summaryText = document.getElementById('portalSummaryText');
     const nextActions = document.getElementById('portalNextActions');
     const timelineList = document.getElementById('portalTimelineList');
+    const approvalList = document.getElementById('portalApprovalList');
+    const approvalSummary = document.getElementById('portalApprovalSummary');
 
     const state = {
         data: loadWorkspaceData(),
-        session: loadPortalSession(),
+        session: portalMode === 'client' ? loadPortalSession() : null,
         pendingInvoiceId: null,
-        previewClientId: loadPortalSession()?.clientId || loadWorkspaceData().clients[0]?.id || null
+        previewClientId: (portalMode === 'client' ? loadPortalSession()?.clientId : null) || loadSelectedClientId() || loadWorkspaceData().clients[0]?.id || null
     };
 
     initWorkspaceTabs(document);
@@ -458,13 +500,21 @@ function initPortalWorkspace() {
         const client = state.data.clients.find((item) => item.email.toLowerCase() === email && item.accessKey.toUpperCase() === key);
 
         if (!client) {
-            setPortalNote('Use one of the available client accounts below. Email and access key must match an active workspace.', false);
+            setPortalNote(
+                portalMode === 'demo'
+                    ? 'Use one of the available demo accounts below. Email and access key must match an active workspace.'
+                    : 'The email and access key do not match an active client workspace.',
+                false
+            );
             return;
         }
 
         state.session = { clientId: client.id };
         state.previewClientId = client.id;
-        setPortalSession(client.id);
+        setSelectedClientId(client.id);
+        if (portalMode === 'client') {
+            setPortalSession(client.id);
+        }
         setPortalNote(`Access granted for ${client.company}. Opening your private workspace.`, true);
         renderPortal();
     });
@@ -494,10 +544,12 @@ function initPortalWorkspace() {
 
     logoutButton?.addEventListener('click', () => {
         state.session = null;
-        clearPortalSession();
+        if (portalMode === 'client') {
+            clearPortalSession();
+        }
         setPortalNote();
         renderPortal();
-        window.location.href = 'client-login.html';
+        window.location.href = portalMode === 'demo' ? 'client-portal.html' : 'client-login.html';
     });
 
     messageForm?.addEventListener('submit', (event) => {
@@ -542,6 +594,30 @@ function initPortalWorkspace() {
         renderPortalWorkspace(client);
         renderPortalPreview(client);
         uploadInput.value = '';
+    });
+
+    approvalList?.addEventListener('click', (event) => {
+        const trigger = event.target.closest('[data-approval-action]');
+        const client = getActivePortalClient();
+
+        if (!trigger || !client) {
+            return;
+        }
+
+        const approval = client.approvals.find((item) => item.id === trigger.dataset.approvalId);
+
+        if (!approval) {
+            return;
+        }
+
+        approval.status = trigger.dataset.approvalAction === 'approve' ? 'approved' : 'review';
+        approval.note = trigger.dataset.approvalAction === 'approve'
+            ? `Approved ${formatNowLabel()}`
+            : `Revision notes requested ${formatNowLabel()}`;
+
+        persistPortalData();
+        renderPortalWorkspace(client);
+        renderPortalPreview(client);
     });
 
     invoiceGrid?.addEventListener('click', (event) => {
@@ -591,8 +667,8 @@ function initPortalWorkspace() {
         }
 
         state.data = loadWorkspaceData();
-        state.session = loadPortalSession();
-        state.previewClientId = getClientById(state.data, state.previewClientId)?.id || state.data.clients[0]?.id || null;
+        state.session = portalMode === 'client' ? loadPortalSession() : state.session;
+        state.previewClientId = getClientById(state.data, state.previewClientId)?.id || loadSelectedClientId() || state.data.clients[0]?.id || null;
         renderPortal();
     });
 
@@ -624,12 +700,14 @@ function initPortalWorkspace() {
         }
 
         if (!previewClient) {
-            authNote.textContent = 'Client access is unavailable.';
+            authNote.textContent = portalMode === 'demo' ? 'Demo access is unavailable.' : 'Client workspace access is unavailable.';
             authNote.classList.remove('success');
             return;
         }
 
-        authNote.innerHTML = `Demo access: <code>${escapeHtml(previewClient.email)}</code> with key <code>${escapeHtml(previewClient.accessKey)}</code>.`;
+        authNote.innerHTML = portalMode === 'demo'
+            ? `Demo access: <code>${escapeHtml(previewClient.email)}</code> with key <code>${escapeHtml(previewClient.accessKey)}</code>.`
+            : `Login required for ${escapeHtml(previewClient.company)}. Use your client email and access key to enter the live workspace.`;
         authNote.classList.remove('success');
     }
 
@@ -641,7 +719,9 @@ function initPortalWorkspace() {
         authShell?.classList.toggle('is-hidden', Boolean(activeClient));
         appShell?.classList.toggle('is-hidden', !activeClient);
 
-        renderDemoAccounts(activeClient?.id || null);
+        if (portalMode === 'demo') {
+            renderDemoAccounts(activeClient?.id || null);
+        }
         renderPortalPreview(previewClient);
 
         if (activeClient) {
@@ -668,7 +748,7 @@ function initPortalWorkspace() {
                     <span><strong>Email</strong>${escapeHtml(client.email)}</span>
                     <span><strong>Key</strong>${escapeHtml(client.accessKey)}</span>
                 </div>
-                <button type="button" class="btn ${client.id === activeClientId ? 'btn-primary' : 'btn-outline'} btn-sm" data-use-client="${escapeHtml(client.id)}">${client.id === activeClientId ? 'Opened' : 'Use Account'}</button>
+                <button type="button" class="btn ${client.id === activeClientId ? 'btn-primary' : 'btn-outline'} btn-sm" data-use-client="${escapeHtml(client.id)}">${client.id === activeClientId ? 'Opened' : 'Use Demo Account'}</button>
             </article>
         `).join('');
     }
@@ -680,17 +760,22 @@ function initPortalWorkspace() {
 
         const openInvoices = getOpenInvoices(client).length;
         const scheduledInvoices = getScheduledInvoices(client).length;
+        const pendingApprovals = getPendingApprovals(client).length;
 
-        previewTitle.textContent = `${client.company} Demo Portal preview`;
-        previewText.textContent = `A premium workspace for ${client.service.toLowerCase()} delivery, invoice visibility, shared files, and direct communication with ${client.contactName}.`;
+        previewTitle.textContent = portalMode === 'demo'
+            ? `${client.company} demo workspace preview`
+            : `${client.company} workspace overview`;
+        previewText.textContent = portalMode === 'demo'
+            ? `A premium workspace for ${client.service.toLowerCase()} delivery, approvals, invoice visibility, shared files, and direct communication with ${client.contactName}.`
+            : `A private client environment for milestones, approvals, invoice visibility, shared files, and direct communication with ${client.contactName}.`;
         previewMetrics.innerHTML = `
             <article>
                 <span>Milestone</span>
                 <strong>${escapeHtml(client.currentPhase)}</strong>
             </article>
             <article>
-                <span>Outstanding</span>
-                <strong>${openInvoices} open / ${scheduledInvoices} scheduled</strong>
+                <span>Approvals</span>
+                <strong>${pendingApprovals} awaiting review</strong>
             </article>
             <article>
                 <span>Files</span>
@@ -699,9 +784,10 @@ function initPortalWorkspace() {
         `;
         previewList.innerHTML = [
             `${client.progress}% progress visibility inside the workspace`,
+            `${pendingApprovals} approval checkpoint${pendingApprovals === 1 ? '' : 's'} awaiting review`,
             `${client.messages.length} saved conversation updates`,
             `${client.files.length} organized files and reference items`,
-            openInvoices ? `${openInvoices} invoice${openInvoices === 1 ? '' : 's'} ready for payment review` : 'No open invoices at the moment'
+            openInvoices ? `${openInvoices} invoice${openInvoices === 1 ? '' : 's'} open / ${scheduledInvoices} scheduled` : 'No open invoices at the moment'
         ].map((item) => `<li>${escapeHtml(item)}</li>`).join('');
     }
 
@@ -709,6 +795,7 @@ function initPortalWorkspace() {
         const openInvoices = getOpenInvoices(client);
         const scheduledInvoices = getScheduledInvoices(client);
         const paidInvoices = getPaidInvoices(client);
+        const pendingApprovals = getPendingApprovals(client);
         const nextInvoice = openInvoices[0] || scheduledInvoices[0];
 
         clientName.textContent = client.company;
@@ -730,7 +817,7 @@ function initPortalWorkspace() {
             </article>
             <article class="workspace-kpi-card">
                 <span>Open items</span>
-                <strong>${client.nextActions.length} tracked client actions</strong>
+                <strong>${pendingApprovals.length} approvals / ${client.nextActions.length} actions</strong>
             </article>
             <article class="workspace-kpi-card">
                 <span>Launch target</span>
@@ -749,6 +836,40 @@ function initPortalWorkspace() {
                 </div>
             </article>
         `).join('');
+        if (approvalSummary) {
+            approvalSummary.textContent = `${pendingApprovals.length} awaiting review`;
+        }
+        if (approvalList) {
+            approvalList.innerHTML = client.approvals.map((approval) => {
+                const statusLabel = getApprovalStatusLabel(approval.status);
+                const statusClass = getApprovalStatusClass(approval.status);
+                const actions = approval.status === 'approved'
+                    ? '<button type="button" class="btn btn-outline btn-sm" disabled>Approved</button>'
+                    : `
+                        <div class="workspace-approval-actions">
+                            <button type="button" class="btn btn-primary btn-sm" data-approval-action="approve" data-approval-id="${escapeHtml(approval.id)}">Approve</button>
+                            <button type="button" class="btn btn-outline btn-sm" data-approval-action="revise" data-approval-id="${escapeHtml(approval.id)}">Request Changes</button>
+                        </div>
+                    `;
+
+                return `
+                    <article class="workspace-approval-card">
+                        <div class="workspace-approval-head">
+                            <div>
+                                <span>${escapeHtml(approval.owner)}</span>
+                                <h3>${escapeHtml(approval.title)}</h3>
+                            </div>
+                            <span class="workspace-pill ${statusClass}">${escapeHtml(statusLabel)}</span>
+                        </div>
+                        <p>${escapeHtml(approval.note)}</p>
+                        <div class="workspace-approval-foot">
+                            <strong>${escapeHtml(approval.due)}</strong>
+                            ${actions}
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
         invoiceSummary.textContent = `${paidInvoices.length} paid / ${openInvoices.length} open / ${scheduledInvoices.length} scheduled`;
         invoiceGrid.innerHTML = client.invoices.map((invoice) => {
             const statusClass = invoice.status === 'paid' ? 'paid' : invoice.status === 'open' ? 'open' : 'upcoming';
@@ -814,7 +935,7 @@ function initClientLoginWorkspace() {
     if (activeClient) {
         setSelectedClientId(activeClient.id);
         fillClient(activeClient);
-        setStatus(`You're already signed in for ${activeClient.company}. Use the form below to re-enter the Demo Portal or switch accounts.`, true);
+        setStatus(`You're already signed in for ${activeClient.company}. Use the form below to re-enter the Client Workspace or switch accounts.`, true);
     }
 
     demoFillButton?.addEventListener('click', () => {
@@ -840,9 +961,9 @@ function initClientLoginWorkspace() {
 
         setPortalSession(client.id);
         setSelectedClientId(client.id);
-        setStatus(`Access granted for ${client.company}. Redirecting to the Demo Portal.`, true);
+        setStatus(`Access granted for ${client.company}. Redirecting to the Client Workspace.`, true);
         window.setTimeout(() => {
-            window.location.href = 'client-portal.html';
+            window.location.href = 'client-workspace.html';
         }, 220);
     });
 }
@@ -1067,6 +1188,9 @@ function initOpsWorkspace() {
                 { id: createId('timeline'), date: 'Today', title: 'Portal access created', body: 'Client credentials were generated and the private workspace is ready.', state: 'complete' },
                 { id: createId('timeline'), date: 'Next', title: 'Kickoff and discovery review', body: 'Align scope, priorities, and timeline for the engagement.', state: 'current' }
             ],
+            approvals: [
+                { id: createId('approval'), title: 'Kickoff scope confirmation', owner: 'Onboarding review', due: 'Review before kickoff', status: 'pending', note: 'Approve the kickoff scope and confirm the first review window.' }
+            ],
             messages: [
                 { id: createId('msg'), sender: 'Architech', role: 'team', time: formatNowLabel(), body: `Welcome to your Architech workspace, ${contactName}. We will use this portal for status updates, files, invoices, and next steps.` }
             ],
@@ -1080,7 +1204,7 @@ function initOpsWorkspace() {
         clientForm.reset();
 
         if (clientFormNote) {
-            clientFormNote.innerHTML = `Access created for <strong>${escapeHtml(company)}</strong>. Email: <code>${escapeHtml(email)}</code> Key: <code>${escapeHtml(accessKey)}</code>.`;
+            clientFormNote.innerHTML = `Workspace access created for <strong>${escapeHtml(company)}</strong>. Email: <code>${escapeHtml(email)}</code> Key: <code>${escapeHtml(accessKey)}</code>.`;
         }
 
         renderAll();
@@ -1127,7 +1251,8 @@ function initOpsWorkspace() {
 
     function openPortalAsClient(clientId) {
         setPortalSession(clientId);
-        window.location.href = 'client-portal.html';
+        setSelectedClientId(clientId);
+        window.location.href = 'client-workspace.html';
     }
 
     function renderAll() {
@@ -1269,7 +1394,7 @@ function initOpsWorkspace() {
                     <span>${escapeHtml(item.projectName)}</span>
                     <span>${item.progress}% progress</span>
                 </div>
-                <button type="button" class="btn btn-outline btn-sm" data-open-portal-as="${escapeHtml(item.id)}">Open Demo Portal</button>
+                <button type="button" class="btn btn-outline btn-sm" data-open-portal-as="${escapeHtml(item.id)}">Open Client Workspace</button>
             </article>
         `).join('');
 
@@ -1280,7 +1405,10 @@ function initOpsWorkspace() {
                     <h3>${escapeHtml(client.company)}</h3>
                     <p>${escapeHtml(client.contactName)} | ${escapeHtml(client.service)} | ${escapeHtml(client.projectName)}</p>
                 </div>
-                <button type="button" class="btn btn-primary btn-sm" data-open-portal-as="${escapeHtml(client.id)}">Open Demo Portal</button>
+                <div class="client-summary-actions">
+                    <button type="button" class="btn btn-primary btn-sm" data-open-portal-as="${escapeHtml(client.id)}">Open Client Workspace</button>
+                    <a href="client-portal.html" class="btn btn-outline btn-sm">View Demo Workspace</a>
+                </div>
             </div>
             <div class="client-credential-pills">
                 <span class="client-credential-pill"><strong>Email</strong>${escapeHtml(client.email)}</span>
@@ -1294,9 +1422,9 @@ function initOpsWorkspace() {
                     <p>${escapeHtml(client.currentPhase)}</p>
                 </article>
                 <article class="client-desk-stat">
-                    <span>Files</span>
-                    <strong>${client.files.length}</strong>
-                    <p>Shared workspace items</p>
+                    <span>Approvals</span>
+                    <strong>${client.approvals.length}</strong>
+                    <p>${getPendingApprovals(client).length} awaiting review</p>
                 </article>
                 <article class="client-desk-stat">
                     <span>Invoices</span>

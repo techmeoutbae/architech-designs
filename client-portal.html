@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1e3a5f">
-    <title>Client Portal | Architech Designs</title>
-    <meta name="description" content="Explore the premium Client Portal by Architech Designs with project status, invoices, messaging, deliverables, and structured communication in one polished workspace.">
+    <title>Demo Workspace | Architech Designs</title>
+    <meta name="description" content="Preview the premium demo workspace by Architech Designs with project status, approvals, invoices, messaging, deliverables, and structured communication in one polished environment.">
     <link rel="canonical" href="https://www.architechdesigns.net/client-portal.html">
     <link rel="icon" type="image/png" href="images/updated-ad-logo.png">
     <link rel="apple-touch-icon" href="images/updated-ad-logo.png">
@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="workspace-page demo-page" data-app="portal">
+<body class="workspace-page demo-page" data-app="portal" data-workspace-mode="demo">
     <nav class="navbar">
         <div class="container">
             <div class="navbar-inner">
@@ -50,12 +50,12 @@
     <section class="page-header workspace-header">
         <div class="container">
             <div class="page-header-content">
-                <span class="section-label">Demo Client Portal</span>
-                <h1>A premium Client Portal with the same standard as the public-facing site.</h1>
-                <p class="section-subtitle">Explore a polished client workspace for project visibility, deliverables, invoices, messaging, and structured communication until the full CRM ecosystem is complete.</p>
+                <span class="section-label">Portal Demo</span>
+                <h1>Preview the demo workspace without entering the live client path.</h1>
+                <p class="section-subtitle">A prospect-safe showcase of the same premium workspace layer used for project visibility, approvals, invoicing, messaging, and shared deliverables.</p>
                 <div class="workspace-header-actions">
-                    <a href="#portal-access" class="btn btn-primary btn-lg">Open Client Portal</a>
-                    <a href="ops-suite.html" class="btn btn-outline btn-lg">View Ops Suite</a>
+                    <a href="#portal-access" class="btn btn-primary btn-lg">Open Demo Workspace</a>
+                    <a href="client-login.html" class="btn btn-outline btn-lg">Client Login</a>
                 </div>
             </div>
         </div>
@@ -65,24 +65,24 @@
         <div class="container">
             <div class="portal-auth-shell" id="portalAuthShell">
                 <article class="portal-auth-card">
-                    <span class="workspace-eyebrow">Protected Client Access</span>
-                    <h2>Sign in to your private workspace.</h2>
-                    <p>Use one of the client accounts below to test the portal end-to-end. Messages, files, invoices, and access credentials persist in your browser so you can preview a more realistic client experience.</p>
+                    <span class="workspace-eyebrow">Demo Access</span>
+                    <h2>Open the curated demo workspace.</h2>
+                    <p>Use one of the demo accounts below to preview the workspace end-to-end. Messages, files, invoices, and approvals persist in your browser so the product flow feels more realistic while staying separate from the live client path.</p>
                     <form class="portal-auth-form" id="portalAuthForm">
-                        <label for="portalEmail">Client email</label>
+                        <label for="portalEmail">Demo email</label>
                         <input id="portalEmail" name="portalEmail" type="email" placeholder="client@architechdesigns.net" required>
-                        <label for="portalKey">Access key</label>
+                        <label for="portalKey">Demo access key</label>
                         <input id="portalKey" name="portalKey" type="password" placeholder="ARCHI-2026" required>
-                        <button type="submit" class="btn btn-primary btn-block">Enter Client Portal</button>
+                        <button type="submit" class="btn btn-primary btn-block">Enter Demo Workspace</button>
                         <button type="button" class="btn btn-outline btn-block" id="portalDemoFill">Use Demo Credentials</button>
                     </form>
                     <div class="portal-auth-note" id="portalAuthNote" aria-live="polite">Demo access: <code>client@architechdesigns.net</code> with key <code>ARCHI-2026</code>.</div>
                     <div class="portal-access-cards" id="portalDemoAccounts"></div>
                 </article>
                 <aside class="portal-preview-card">
-                    <span class="workspace-eyebrow">What Clients See</span>
-                    <h3 id="portalPreviewTitle">Sterling &amp; Associates Client Portal preview</h3>
-                    <p id="portalPreviewText">A polished workspace for project visibility, invoice tracking, shared files, and direct communication.</p>
+                    <span class="workspace-eyebrow">What The Demo Mirrors</span>
+                    <h3 id="portalPreviewTitle">Sterling &amp; Associates demo workspace preview</h3>
+                    <p id="portalPreviewText">A polished workspace for project visibility, approvals, invoice tracking, shared files, and direct communication.</p>
                     <div class="portal-preview-metrics" id="portalPreviewMetrics">
                         <article>
                             <span>Milestone</span>
@@ -109,7 +109,7 @@
             <div class="workspace-shell workspace-app-shell is-hidden" id="portalAppShell">
                 <aside class="workspace-sidebar">
                     <div class="workspace-user-card">
-                        <span class="workspace-user-kicker">Client Workspace</span>
+                        <span class="workspace-user-kicker">Demo Workspace</span>
                         <strong id="portalClientName">Sterling &amp; Associates</strong>
                         <p id="portalClientEmail">client@architechdesigns.net</p>
                         <p id="portalClientMeta">Growth System engagement</p>
@@ -117,6 +117,7 @@
                     <div class="workspace-nav">
                         <button class="workspace-nav-button active" type="button" data-workspace-tab="portal-overview">Overview</button>
                         <button class="workspace-nav-button" type="button" data-workspace-tab="portal-timeline">Timeline</button>
+                        <button class="workspace-nav-button" type="button" data-workspace-tab="portal-approvals">Approvals</button>
                         <button class="workspace-nav-button" type="button" data-workspace-tab="portal-invoices">Invoices</button>
                         <button class="workspace-nav-button" type="button" data-workspace-tab="portal-messages">Messages</button>
                         <button class="workspace-nav-button" type="button" data-workspace-tab="portal-files">Files</button>
@@ -128,7 +129,7 @@
                     <div class="workspace-toolbar">
                         <div>
                             <span class="workspace-toolbar-label">Active Project</span>
-                            <h2 id="portalProjectTitle">Sterling &amp; Associates Website + Client Portal</h2>
+                            <h2 id="portalProjectTitle">Sterling &amp; Associates Website + Demo Workspace</h2>
                         </div>
                         <div class="workspace-toolbar-meta" id="portalToolbarMeta">
                             <span class="workspace-pill success">On track</span>
@@ -203,6 +204,17 @@
                                 </div>
                             </article>
                         </div>
+                    </section>
+
+                    <section class="workspace-view" id="portal-approvals">
+                        <div class="workspace-section-head">
+                            <div>
+                                <span class="workspace-panel-kicker">Approval Flow</span>
+                                <h3>Checkpoint reviews without messy email loops.</h3>
+                            </div>
+                            <span class="workspace-pill" id="portalApprovalSummary">2 awaiting review</span>
+                        </div>
+                        <div class="workspace-approval-grid" id="portalApprovalList"></div>
                     </section>
 
                     <section class="workspace-view" id="portal-invoices">
@@ -299,7 +311,7 @@
             <button type="button" class="workspace-modal-close" id="portalInvoiceModalClose" aria-label="Close invoice modal">&times;</button>
             <span class="workspace-panel-kicker">Invoice Payment</span>
             <h3>Confirm payment for this milestone.</h3>
-            <p id="portalInvoiceModalBody">This action marks the invoice as paid inside the demo workspace.</p>
+            <p id="portalInvoiceModalBody">This action marks the invoice as paid inside the demo workspace preview.</p>
             <div class="workspace-modal-actions">
                 <button type="button" class="btn btn-outline" data-close-portal-modal>Cancel</button>
                 <button type="button" class="btn btn-primary" id="portalInvoiceConfirm">Mark as Paid</button>
@@ -328,7 +340,8 @@
                 <div class="footer-col">
                     <h4>Systems</h4>
                     <ul>
-                        <li><a href="client-portal.html">Demo Portal</a></li>
+                        <li><a href="client-portal.html">Demo Workspace</a></li>
+                        <li><a href="client-login.html">Client Login</a></li>
                         <li><a href="ops-suite.html">Ops Suite</a></li>
                         <li><a href="services.html">Custom Software</a></li>
                         <li><a href="packages.html">Pricing</a></li>

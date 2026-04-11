@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const portalItem = document.createElement('li');
             portalItem.className = 'mobile-nav-link-item mobile-only-portal';
-            portalItem.innerHTML = '<a href="client-portal.html">Demo Portal</a>';
+            portalItem.innerHTML = '<a href="client-portal.html">Demo Workspace</a>';
 
             const consultItem = document.createElement('li');
             consultItem.className = 'mobile-nav-link-item mobile-only-book';
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             const item = document.createElement('li');
-            item.innerHTML = '<a href="client-portal.html">Demo Portal</a>';
+            item.innerHTML = '<a href="client-portal.html">Demo Workspace</a>';
             list.appendChild(item);
         }
 
