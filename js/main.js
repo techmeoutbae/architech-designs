@@ -12,6 +12,21 @@ const Logger = {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
+    try {
+        if (!document.querySelector('link[data-premium-refresh]')) {
+            const currentPath = window.location.pathname.split('/').filter(Boolean);
+            const pathDepth = Math.max(currentPath.length - 1, 0);
+            const prefix = '../'.repeat(pathDepth);
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = `${prefix}css/premium-refresh.css`;
+            link.dataset.premiumRefresh = 'true';
+            document.head.appendChild(link);
+        }
+    } catch (e) {
+        Logger.error('Styles', 'Failed to load premium refresh stylesheet', e);
+    }
+
     Logger.info('App', 'Application initializing...');
 
     // ========== NAVIGATION COMPONENT ==========
@@ -20,151 +35,242 @@ document.addEventListener('DOMContentLoaded', function() {
         const mobileToggle = document.querySelector('.mobile-toggle');
         const navLinks = document.querySelector('.nav-links');
         const currentPath = window.location.pathname.split('/').pop() || 'index.html';
-        const isMarketingShell = !window.location.pathname.includes('/medspa-beauty/');
+        const pathSegments = window.location.pathname.split('/').filter(Boolean);
+        const pathDepth = Math.max(pathSegments.length - 1, 0);
+        const relativePrefix = '../'.repeat(pathDepth);
         let menuOverlay = null;
-        
-        if (!navbar) {
-            Logger.error('Navigation', 'Navbar element not found');
-        }
 
-        function ensureNavItem(href, label, className = '') {
-            if (!navLinks || navLinks.querySelector(`a[href="${href}"]`)) {
-                return;
-            }
-
-            const item = document.createElement('li');
-            if (className) {
-                item.className = className;
-            }
-            item.innerHTML = `<a href="${href}">${label}</a>`;
-            navLinks.appendChild(item);
-        }
-
-        function ensureMobileMenuLinks() {
-            if (!navLinks || navLinks.querySelector('.mobile-nav-link-item')) {
-                return;
-            }
-
-            const portalItem = document.createElement('li');
-            portalItem.className = 'mobile-nav-link-item mobile-only-portal';
-            portalItem.innerHTML = '<a href="client-portal.html">Demo Workspace</a>';
-
-            const consultItem = document.createElement('li');
-            consultItem.className = 'mobile-nav-link-item mobile-only-book';
-            consultItem.innerHTML = '<a href="contact.html">Book Consultation</a>';
-
-            navLinks.appendChild(portalItem);
-            navLinks.appendChild(consultItem);
-        }
-
-        function ensureFooterPortalLink() {
-            if (!isMarketingShell) {
-                return;
-            }
-
-            const resourceHeadings = Array.from(document.querySelectorAll('.footer-col h4'));
-            const resourcesHeading = resourceHeadings.find((heading) => /resources/i.test(heading.textContent));
-            const list = resourcesHeading?.nextElementSibling;
-
-            if (!list || list.querySelector('a[href="client-portal.html"]')) {
-                return;
-            }
-
-            const item = document.createElement('li');
-            item.innerHTML = '<a href="client-portal.html">Demo Workspace</a>';
-            list.appendChild(item);
-        }
-
-        function updateActiveNavLinks() {
-            const normalizedPath = currentPath === '' ? 'index.html' : currentPath;
-            document.querySelectorAll('.nav-links a').forEach((link) => {
-                const href = link.getAttribute('href');
-                link.classList.toggle('active', href === normalizedPath);
-            });
-        }
-
-        function closeMenu() {
-            navLinks?.classList.remove('active');
-            mobileToggle?.classList.remove('active');
-            menuOverlay?.classList.remove('active');
-            document.body.classList.remove('nav-open');
-            document.body.style.overflow = '';
-        }
-
-        function openMenu() {
-            navLinks?.classList.add('active');
-            mobileToggle?.classList.add('active');
-            menuOverlay?.classList.add('active');
-            document.body.classList.add('nav-open');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function toggleMenu() {
-            if (navLinks?.classList.contains('active')) {
-                closeMenu();
-            } else {
-                openMenu();
-            }
-        }
-
-        if (isMarketingShell && navLinks) {
-            ensureNavItem('client-login.html', 'Client Login', 'nav-login-item');
-            ensureMobileMenuLinks();
-            ensureFooterPortalLink();
-            updateActiveNavLinks();
-        }
-
-        if (mobileToggle && !document.querySelector('.menu-overlay')) {
-            menuOverlay = document.createElement('button');
-            menuOverlay.type = 'button';
-            menuOverlay.className = 'menu-overlay';
-            menuOverlay.setAttribute('aria-label', 'Close navigation menu');
-            document.body.appendChild(menuOverlay);
+        if (!navbar || !navLinks || !mobileToggle) {
+            Logger.info('Navigation', 'Premium navigation skipped on this page');
         } else {
-            menuOverlay = document.querySelector('.menu-overlay');
-        }
-        
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 50) {
-                navbar?.classList.add('scrolled');
-            } else {
-                navbar?.classList.remove('scrolled');
+            function resolveHref(href) {
+                return /^https?:/i.test(href) ? href : `${relativePrefix}${href}`;
             }
-        });
-        
-        if (mobileToggle) {
+
+            const navigationModel = [
+                {
+                    type: 'link',
+                    label: 'Home',
+                    href: 'index.html',
+                    match: ['index.html', '']
+                },
+                {
+                    type: 'link',
+                    label: 'Services',
+                    href: 'services.html',
+                    match: ['services.html']
+                },
+                {
+                    type: 'dropdown',
+                    label: 'Work',
+                    match: ['portfolio.html', 'projects.html', 'project-sterling-law.html', 'project-apex-hvac.html', 'project-luxe-med-spa.html'],
+                    items: [
+                        { label: 'Portfolio', href: 'portfolio.html', description: 'Selected engagements and premium website launches.' },
+                        { label: 'Projects', href: 'projects.html', description: 'Active project case overviews and featured builds.' },
+                        { label: 'Sterling Law', href: 'project-sterling-law.html', description: 'Premium legal website and authority positioning.' },
+                        { label: 'Apex HVAC', href: 'project-apex-hvac.html', description: 'Operations-led service business systems and routing.' },
+                        { label: 'Luxe Med Spa', href: 'project-luxe-med-spa.html', description: 'Luxury beauty brand launch and conversion flow.' }
+                    ]
+                },
+                {
+                    type: 'dropdown',
+                    label: 'Company',
+                    match: ['about.html', 'process.html', 'faq.html', 'contact.html', 'why-choose-us.html'],
+                    items: [
+                        { label: 'About', href: 'about.html', description: 'Who Architech Designs is and how we work.' },
+                        { label: 'Process', href: 'process.html', description: 'Delivery structure from strategy through launch.' },
+                        { label: 'FAQ', href: 'faq.html', description: 'Answers to timing, pricing, and scope questions.' },
+                        { label: 'Contact', href: 'contact.html', description: 'Book a consultation or start the conversation.' }
+                    ]
+                },
+                {
+                    type: 'link',
+                    label: 'Pricing',
+                    href: 'packages.html',
+                    match: ['packages.html', 'quiz.html']
+                },
+                {
+                    type: 'link',
+                    label: 'Demo',
+                    href: 'client-portal.html',
+                    match: ['client-portal.html']
+                }
+            ];
+
+            const clientPortalPaths = ['client-login.html', 'client-workspace.html', 'ops-suite.html'];
+            const isClientPortalPage = clientPortalPaths.includes(currentPath);
+
+            function isItemActive(item) {
+                if (item.match && item.match.includes(currentPath)) {
+                    return true;
+                }
+
+                if (item.type === 'dropdown') {
+                    return item.items.some((entry) => entry.href === currentPath);
+                }
+
+                return item.href === currentPath;
+            }
+
+            function renderNavItem(item) {
+                const activeClass = isItemActive(item) ? ' is-current' : '';
+
+                if (item.type === 'dropdown') {
+                    return `
+                        <li class="nav-item nav-dropdown${activeClass}">
+                            <button class="nav-link nav-dropdown-toggle" type="button" aria-expanded="false">
+                                <span>${item.label}</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </button>
+                            <div class="nav-dropdown-menu">
+                                ${item.items.map((entry) => `
+                                    <a href="${resolveHref(entry.href)}" class="nav-dropdown-link${entry.href === currentPath ? ' active' : ''}">
+                                        <strong>${entry.label}</strong>
+                                        <span>${entry.description}</span>
+                                    </a>
+                                `).join('')}
+                            </div>
+                        </li>
+                    `;
+                }
+
+                return `
+                    <li class="nav-item${activeClass}">
+                        <a href="${resolveHref(item.href)}" class="nav-link">${item.label}</a>
+                    </li>
+                `;
+            }
+
+            function closeMenu() {
+                navLinks.classList.remove('active');
+                mobileToggle.classList.remove('active');
+                menuOverlay?.classList.remove('active');
+                document.body.classList.remove('nav-open');
+                document.body.style.overflow = '';
+                document.querySelectorAll('.nav-dropdown.is-open').forEach((item) => {
+                    item.classList.remove('is-open');
+                    item.querySelector('.nav-dropdown-toggle')?.setAttribute('aria-expanded', 'false');
+                });
+            }
+
+            function openMenu() {
+                navLinks.classList.add('active');
+                mobileToggle.classList.add('active');
+                menuOverlay?.classList.add('active');
+                document.body.classList.add('nav-open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function toggleMenu() {
+                if (navLinks.classList.contains('active')) {
+                    closeMenu();
+                } else {
+                    openMenu();
+                }
+            }
+
+            function renderNavigation() {
+                navLinks.innerHTML = [
+                    ...navigationModel.map(renderNavItem),
+                    `<li class="nav-mobile-action"><a href="${resolveHref('contact.html')}" class="nav-mobile-link">Book Consultation</a></li>`,
+                    `<li class="nav-mobile-action nav-mobile-action-primary"><a href="${resolveHref('client-login.html')}" class="nav-mobile-link">Client Portal</a></li>`
+                ].join('');
+
+                const navCta = document.querySelector('.nav-cta');
+                if (navCta) {
+                    navCta.innerHTML = `
+                        <a href="${resolveHref('contact.html')}" class="btn btn-outline btn-sm nav-secondary-cta">Book Consultation</a>
+                        <a href="${resolveHref('client-login.html')}" class="btn btn-primary btn-sm nav-primary-cta${isClientPortalPage ? ' active' : ''}">Client Portal</a>
+                    `;
+                }
+
+                navbar.classList.add('navbar-premium');
+            }
+
+            renderNavigation();
+
+            if (!document.querySelector('.menu-overlay')) {
+                menuOverlay = document.createElement('button');
+                menuOverlay.type = 'button';
+                menuOverlay.className = 'menu-overlay';
+                menuOverlay.setAttribute('aria-label', 'Close navigation menu');
+                document.body.appendChild(menuOverlay);
+            } else {
+                menuOverlay = document.querySelector('.menu-overlay');
+            }
+
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
             mobileToggle.addEventListener('click', function(e) {
                 e.stopPropagation();
                 toggleMenu();
             });
 
-            navLinks?.addEventListener('click', function(e) {
+            navLinks.addEventListener('click', function(e) {
+                const dropdownTrigger = e.target.closest('.nav-dropdown-toggle');
+                if (dropdownTrigger && window.innerWidth <= 1080) {
+                    const parent = dropdownTrigger.closest('.nav-dropdown');
+                    const isOpen = parent.classList.contains('is-open');
+                    document.querySelectorAll('.nav-dropdown.is-open').forEach((item) => {
+                        item.classList.remove('is-open');
+                        item.querySelector('.nav-dropdown-toggle')?.setAttribute('aria-expanded', 'false');
+                    });
+                    parent.classList.toggle('is-open', !isOpen);
+                    dropdownTrigger.setAttribute('aria-expanded', String(!isOpen));
+                    return;
+                }
+
                 if (e.target.closest('a')) {
                     closeMenu();
                 }
             });
 
             menuOverlay?.addEventListener('click', closeMenu);
-            
-            // Close menu when clicking outside
+
             document.addEventListener('click', function(e) {
-                if (navLinks?.classList.contains('active') && 
-                    !navLinks.contains(e.target) && 
+                if (navLinks.classList.contains('active') &&
+                    !navLinks.contains(e.target) &&
                     !mobileToggle.contains(e.target)) {
                     closeMenu();
                 }
             });
 
             window.addEventListener('resize', function() {
-                if (window.innerWidth > 768) {
+                if (window.innerWidth > 1080) {
                     closeMenu();
                 }
             });
-            
+
             Logger.info('Navigation', 'Mobile toggle initialized');
         }
     } catch (e) {
         Logger.error('Navigation', 'Failed to initialize navigation', e);
+    }
+
+    // ========== HONEST SOCIAL LINKS ==========
+    try {
+        document.querySelectorAll('[aria-label="LinkedIn"]').forEach((link) => {
+            link.href = 'https://www.linkedin.com/company/architechdesigns';
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+        });
+
+        ['Twitter', 'Instagram'].forEach((label) => {
+            document.querySelectorAll(`[aria-label="${label}"]`).forEach((link) => {
+                link.setAttribute('aria-hidden', 'true');
+                link.hidden = true;
+            });
+        });
+    } catch (e) {
+        Logger.error('Social', 'Failed to normalize social links', e);
     }
 
     // ========== SMOOTH SCROLL COMPONENT ==========

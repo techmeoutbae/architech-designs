@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#1e3a5f">
-    <title>Demo Workspace | Architech Designs</title>
-    <meta name="description" content="Preview the premium demo workspace by Architech Designs with project status, approvals, invoices, messaging, deliverables, and structured communication in one polished environment.">
+    <meta name="theme-color" content="#102138">
+    <title>Demo Portal | Architech Designs</title>
+    <meta name="description" content="Preview the luxury demo portal by Architech Designs without entering the live client system.">
     <link rel="canonical" href="https://www.architechdesigns.net/client-portal.html">
     <link rel="icon" type="image/png" href="images/updated-ad-logo.png">
     <link rel="apple-touch-icon" href="images/updated-ad-logo.png">
@@ -13,311 +13,220 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/premium-refresh.css">
 </head>
-<body class="workspace-page demo-page" data-app="portal" data-workspace-mode="demo">
-    <nav class="navbar">
-        <div class="container">
-            <div class="navbar-inner">
-                <div class="header-logo-wrapper">
-                    <a href="index.html" class="header-logo-link">
-                        <img src="images/updated-ad-logo.png" alt="Architech Designs" class="header-building">
-                    </a>
-                    <a href="index.html" class="header-logo-text">
-                        <img src="images/updated-ad-logo.png" alt="Architech Designs">
-                    </a>
+<body class="workspace-page demo-page portal-gateway-page" data-app="demo-portal">
+    <header class="portal-gateway-header portal-preview-header">
+        <div class="container portal-gateway-inner">
+            <a href="index.html" class="portal-gateway-brand">
+                <img src="images/updated-ad-logo.png" alt="Architech Designs">
+                <div class="portal-gateway-copy">
+                    <span>Architech Designs</span>
+                    <strong>Demo Workspace Preview</strong>
                 </div>
-                <ul class="nav-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="about.html">About</a></li>
-                    <li><a href="services.html">Services</a></li>
-                    <li><a href="packages.html">Packages</a></li>
-                    <li><a href="portfolio.html">Portfolio</a></li>
-                    <li><a href="process.html">Process</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                </ul>
-                <div class="nav-cta">
-                    <a href="contact.html" class="btn btn-primary btn-sm">Book Consultation</a>
-                </div>
-                <button class="mobile-toggle" aria-label="Toggle menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
+            </a>
+            <div class="portal-gateway-badges">
+                <span class="portal-gateway-pill">Public Demo</span>
+                <span class="portal-gateway-pill subtle">Preview Only</span>
+            </div>
+            <div class="portal-gateway-actions">
+                <a href="client-login.html" class="btn btn-outline btn-sm">Client Login</a>
+                <a href="contact.html" class="btn btn-primary btn-sm">Book Consultation</a>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <section class="page-header workspace-header">
+    <section class="page-header workspace-header demo-portal-hero">
         <div class="container">
             <div class="page-header-content">
-                <span class="section-label">Portal Demo</span>
-                <h1>Preview the demo workspace without entering the live client path.</h1>
-                <p class="section-subtitle">A prospect-safe showcase of the same premium workspace layer used for project visibility, approvals, invoicing, messaging, and shared deliverables.</p>
-                <div class="workspace-header-actions">
-                    <a href="#portal-access" class="btn btn-primary btn-lg">Open Demo Workspace</a>
-                    <a href="client-login.html" class="btn btn-outline btn-lg">Client Login</a>
+                <span class="section-label">Demo Portal</span>
+                <h1>Preview the product layer without entering the live client system.</h1>
+                <p class="section-subtitle">This route is a curated showcase for prospects. It mirrors the level of experience Architech can build, while the real client portal stays private and fully separate.</p>
+                <div class="workspace-header-actions demo-hero-actions">
+                    <a href="#demo-showcase" class="btn btn-primary btn-lg">Explore The Demo</a>
+                    <a href="client-login.html" class="btn btn-primary btn-lg">Client Portal Login</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="section workspace-demo-section" id="portal-access">
+    <section class="section workspace-demo-section" id="demo-showcase">
         <div class="container">
-            <div class="portal-auth-shell" id="portalAuthShell">
-                <article class="portal-auth-card">
-                    <span class="workspace-eyebrow">Demo Access</span>
-                    <h2>Open the curated demo workspace.</h2>
-                    <p>Use one of the demo accounts below to preview the workspace end-to-end. Messages, files, invoices, and approvals persist in your browser so the product flow feels more realistic while staying separate from the live client path.</p>
-                    <form class="portal-auth-form" id="portalAuthForm">
-                        <label for="portalEmail">Demo email</label>
-                        <input id="portalEmail" name="portalEmail" type="email" placeholder="client@architechdesigns.net" required>
-                        <label for="portalKey">Demo access key</label>
-                        <input id="portalKey" name="portalKey" type="password" placeholder="ARCHI-2026" required>
-                        <button type="submit" class="btn btn-primary btn-block">Enter Demo Workspace</button>
-                        <button type="button" class="btn btn-outline btn-block" id="portalDemoFill">Use Demo Credentials</button>
-                    </form>
-                    <div class="portal-auth-note" id="portalAuthNote" aria-live="polite">Demo access: <code>client@architechdesigns.net</code> with key <code>ARCHI-2026</code>.</div>
-                    <div class="portal-access-cards" id="portalDemoAccounts"></div>
-                </article>
-                <aside class="portal-preview-card">
-                    <span class="workspace-eyebrow">What The Demo Mirrors</span>
-                    <h3 id="portalPreviewTitle">Sterling &amp; Associates demo workspace preview</h3>
-                    <p id="portalPreviewText">A polished workspace for project visibility, approvals, invoice tracking, shared files, and direct communication.</p>
-                    <div class="portal-preview-metrics" id="portalPreviewMetrics">
+            <div class="demo-disclaimer-bar">
+                <span>Preview only</span>
+                <p>No live client data, credentials, or billing actions are shown in this route.</p>
+            </div>
+
+            <div class="demo-showcase-shell">
+                <article class="demo-hero-card reveal">
+                    <span class="workspace-eyebrow">Luxury Product Preview</span>
+                    <h2>What your own client portal could feel like.</h2>
+                    <p>A premium, restrained workspace experience for project visibility, document delivery, milestone updates, billing coordination, and direct communication.</p>
+                    <div class="demo-stat-grid">
                         <article>
-                            <span>Milestone</span>
-                            <strong>UI review ready</strong>
+                            <span>Workspace model</span>
+                            <strong>Private + role-based</strong>
                         </article>
                         <article>
-                            <span>Outstanding</span>
-                            <strong>1 invoice open</strong>
+                            <span>Backend stack</span>
+                            <strong>Supabase Auth + RLS</strong>
                         </article>
                         <article>
-                            <span>Files</span>
-                            <strong>7 deliverables shared</strong>
+                            <span>Use case</span>
+                            <strong>Premium client delivery</strong>
                         </article>
                     </div>
-                    <ul class="portal-preview-list" id="portalPreviewList">
-                        <li>Project status and milestone visibility</li>
-                        <li>Invoice center with payment prompts</li>
-                        <li>Threaded project messaging</li>
-                        <li>File access and upload requests</li>
+                </article>
+
+                <aside class="portal-preview-card reveal">
+                    <span class="workspace-eyebrow">Positioning</span>
+                    <h3>Cleanly separated from the real portal.</h3>
+                    <p>This public demo is designed for sales conversations and portfolio proof, not for real client operations. The live client portal uses secure authentication, private storage, and role-specific data access.</p>
+                    <ul class="portal-preview-list">
+                        <li>Public showcase route with demo-only content</li>
+                        <li>Mobile-first luxury presentation and centered hero</li>
+                        <li>Clear path into consultation or private portal login</li>
+                        <li>No fake payment, messaging, or credential behavior</li>
                     </ul>
                 </aside>
             </div>
 
-            <div class="workspace-shell workspace-app-shell is-hidden" id="portalAppShell">
-                <aside class="workspace-sidebar">
-                    <div class="workspace-user-card">
-                        <span class="workspace-user-kicker">Demo Workspace</span>
-                        <strong id="portalClientName">Sterling &amp; Associates</strong>
-                        <p id="portalClientEmail">client@architechdesigns.net</p>
-                        <p id="portalClientMeta">Growth System engagement</p>
+            <div class="demo-tab-shell">
+                <div class="workspace-nav demo-nav">
+                    <button class="workspace-nav-button active" type="button" data-demo-tab="overview">Overview</button>
+                    <button class="workspace-nav-button" type="button" data-demo-tab="milestones">Milestones</button>
+                    <button class="workspace-nav-button" type="button" data-demo-tab="files">Files</button>
+                    <button class="workspace-nav-button" type="button" data-demo-tab="billing">Billing</button>
+                    <button class="workspace-nav-button" type="button" data-demo-tab="messages">Messages</button>
+                </div>
+
+                <div class="demo-panel active" data-demo-panel="overview">
+                    <div class="workspace-kpi-grid">
+                        <article class="workspace-kpi-card">
+                            <span>Current phase</span>
+                            <strong>Design review + portal refinement</strong>
+                        </article>
+                        <article class="workspace-kpi-card">
+                            <span>Client view</span>
+                            <strong>Progress, files, billing, messaging</strong>
+                        </article>
+                        <article class="workspace-kpi-card">
+                            <span>Admin view</span>
+                            <strong>Clients, projects, access control</strong>
+                        </article>
+                        <article class="workspace-kpi-card">
+                            <span>Storage</span>
+                            <strong>Private Supabase documents</strong>
+                        </article>
                     </div>
-                    <div class="workspace-nav">
-                        <button class="workspace-nav-button active" type="button" data-workspace-tab="portal-overview">Overview</button>
-                        <button class="workspace-nav-button" type="button" data-workspace-tab="portal-timeline">Timeline</button>
-                        <button class="workspace-nav-button" type="button" data-workspace-tab="portal-approvals">Approvals</button>
-                        <button class="workspace-nav-button" type="button" data-workspace-tab="portal-invoices">Invoices</button>
-                        <button class="workspace-nav-button" type="button" data-workspace-tab="portal-messages">Messages</button>
-                        <button class="workspace-nav-button" type="button" data-workspace-tab="portal-files">Files</button>
+                    <div class="workspace-panel-grid">
+                        <article class="workspace-panel workspace-panel-highlight">
+                            <span class="workspace-panel-kicker">Preview Summary</span>
+                            <h3>Luxury front-end polish with production-grade data separation.</h3>
+                            <p>Prospects can understand the portal capability without ever touching the real client path. The actual portal remains a secure workspace for paying clients and internal admins.</p>
+                        </article>
+                        <article class="workspace-panel">
+                            <span class="workspace-panel-kicker">Ideal Uses</span>
+                            <ul class="workspace-list">
+                                <li>Premium web design retainers</li>
+                                <li>Custom software and internal tool builds</li>
+                                <li>High-touch delivery with client visibility</li>
+                            </ul>
+                        </article>
                     </div>
-                    <button class="workspace-logout" type="button" id="portalLogout">Sign out</button>
-                </aside>
+                </div>
 
-                <div class="workspace-main">
-                    <div class="workspace-toolbar">
-                        <div>
-                            <span class="workspace-toolbar-label">Active Project</span>
-                            <h2 id="portalProjectTitle">Sterling &amp; Associates Website + Demo Workspace</h2>
-                        </div>
-                        <div class="workspace-toolbar-meta" id="portalToolbarMeta">
-                            <span class="workspace-pill success">On track</span>
-                            <span class="workspace-pill">Next review in 2 days</span>
-                        </div>
+                <div class="demo-panel" data-demo-panel="milestones">
+                    <div class="workspace-card-stack">
+                        <article class="workspace-data-card workspace-timeline-card">
+                            <div class="workspace-data-card-head">
+                                <div>
+                                    <span>Milestone</span>
+                                    <h3>Discovery + architecture approved</h3>
+                                </div>
+                                <span class="workspace-pill success">Complete</span>
+                            </div>
+                            <p>Strategy, positioning, and the core portal structure have been approved for production.</p>
+                        </article>
+                        <article class="workspace-data-card workspace-timeline-card">
+                            <div class="workspace-data-card-head">
+                                <div>
+                                    <span>Milestone</span>
+                                    <h3>Navigation and systems layer refinement</h3>
+                                </div>
+                                <span class="workspace-pill warning">In Review</span>
+                            </div>
+                            <p>Luxury navigation behavior, admin workflows, and mobile polish are being validated.</p>
+                        </article>
                     </div>
+                </div>
 
-                    <section class="workspace-view active" id="portal-overview">
-                        <div class="workspace-kpi-grid" id="portalOverviewMetrics">
-                            <article class="workspace-kpi-card">
-                                <span>Current phase</span>
-                                <strong>UI review + content refinement</strong>
-                            </article>
-                            <article class="workspace-kpi-card">
-                                <span>Next invoice</span>
-                                <strong>$1,250 due after approval</strong>
-                            </article>
-                            <article class="workspace-kpi-card">
-                                <span>Open items</span>
-                                <strong>2 feedback requests awaiting reply</strong>
-                            </article>
-                            <article class="workspace-kpi-card">
-                                <span>Launch target</span>
-                                <strong>April 24, 2026</strong>
-                            </article>
-                        </div>
-                        <div class="workspace-panel-grid">
-                            <article class="workspace-panel workspace-panel-highlight">
-                                <span class="workspace-panel-kicker">Project Summary</span>
-                                <h3 id="portalSummaryTitle">Design approved. Development pass in progress.</h3>
-                                <p id="portalSummaryText">We are finalizing responsive refinements, portal access flows, and invoice-triggered milestone logic before the next review window opens.</p>
-                            </article>
-                            <article class="workspace-panel">
-                                <span class="workspace-panel-kicker">Next Client Actions</span>
-                                <ul class="workspace-list" id="portalNextActions">
-                                    <li>Approve refined mobile homepage layout</li>
-                                    <li>Review final consultation CTA copy</li>
-                                    <li>Confirm invoice release after feedback round</li>
-                                </ul>
-                            </article>
-                        </div>
-                    </section>
+                <div class="demo-panel" data-demo-panel="files">
+                    <div class="workspace-file-grid">
+                        <article class="workspace-file-card">
+                            <span class="workspace-file-type">Review package</span>
+                            <h3>Homepage Review Deck.pdf</h3>
+                            <p>Illustrative file card showing how premium deliverables can be organized.</p>
+                            <span class="workspace-pill">Preview State</span>
+                        </article>
+                        <article class="workspace-file-card">
+                            <span class="workspace-file-type">Portal spec</span>
+                            <h3>Client Portal Architecture.pdf</h3>
+                            <p>Secure download behavior lives only in the real, authenticated portal.</p>
+                            <span class="workspace-pill">Preview State</span>
+                        </article>
+                    </div>
+                </div>
 
-                    <section class="workspace-view" id="portal-timeline">
-                        <div class="workspace-timeline" id="portalTimelineList">
-                            <article class="workspace-timeline-item complete">
-                                <span class="workspace-timeline-date">April 03</span>
+                <div class="demo-panel" data-demo-panel="billing">
+                    <div class="invoice-card-grid">
+                        <article class="invoice-card upcoming">
+                            <div class="invoice-card-head">
                                 <div>
-                                    <h3>Discovery and conversion planning completed</h3>
-                                    <p>Audience priorities, service architecture, and systems scope locked for production.</p>
+                                    <span>Invoice Example</span>
+                                    <strong>Development milestone</strong>
                                 </div>
-                            </article>
-                            <article class="workspace-timeline-item complete">
-                                <span class="workspace-timeline-date">April 07</span>
-                                <div>
-                                    <h3>Premium UI direction approved</h3>
-                                    <p>Visual hierarchy, premium card system, and mobile art direction signed off.</p>
-                                </div>
-                            </article>
-                            <article class="workspace-timeline-item current">
-                                <span class="workspace-timeline-date">Now</span>
-                                <div>
-                                    <h3>Development and portal integration pass</h3>
-                                    <p>Responsive implementation, portal shell wiring, and client messaging flow in progress.</p>
-                                </div>
-                            </article>
-                            <article class="workspace-timeline-item">
-                                <span class="workspace-timeline-date">Next</span>
-                                <div>
-                                    <h3>Client review and invoice release</h3>
-                                    <p>Deliver milestone review package, open invoice, and queue launch checklist.</p>
-                                </div>
-                            </article>
-                        </div>
-                    </section>
-
-                    <section class="workspace-view" id="portal-approvals">
-                        <div class="workspace-section-head">
-                            <div>
-                                <span class="workspace-panel-kicker">Approval Flow</span>
-                                <h3>Checkpoint reviews without messy email loops.</h3>
+                                <span class="workspace-pill warning">Issued</span>
                             </div>
-                            <span class="workspace-pill" id="portalApprovalSummary">2 awaiting review</span>
-                        </div>
-                        <div class="workspace-approval-grid" id="portalApprovalList"></div>
-                    </section>
-
-                    <section class="workspace-view" id="portal-invoices">
-                        <div class="workspace-section-head">
-                            <div>
-                                <span class="workspace-panel-kicker">Invoice Center</span>
-                                <h3>Payment visibility without back-and-forth.</h3>
+                            <p>In the real portal, invoices and payment records are tied to the correct client and project via Supabase.</p>
+                            <div class="invoice-card-foot">
+                                <strong>$1,250</strong>
+                                <span class="workspace-inline-note">Preview only</span>
                             </div>
-                            <span class="workspace-pill" id="portalInvoiceSummary">2 paid / 1 open</span>
-                        </div>
-                        <div class="invoice-card-grid" id="portalInvoiceGrid">
-                            <article class="invoice-card paid" data-invoice-id="inv-1001">
-                                <div class="invoice-card-head">
-                                    <div>
-                                        <span>Invoice 1001</span>
-                                        <strong>Discovery + strategy deposit</strong>
-                                    </div>
-                                    <span class="workspace-pill success">Paid</span>
-                                </div>
-                                <p>Paid on April 04, 2026</p>
-                                <div class="invoice-card-foot">
-                                    <strong>$1,500</strong>
-                                    <button type="button" class="btn btn-outline btn-sm" disabled>Settled</button>
-                                </div>
-                            </article>
-                            <article class="invoice-card open" data-invoice-id="inv-1002">
-                                <div class="invoice-card-head">
-                                    <div>
-                                        <span>Invoice 1002</span>
-                                        <strong>Design + development milestone</strong>
-                                    </div>
-                                    <span class="workspace-pill warning">Open</span>
-                                </div>
-                                <p>Due after current feedback round is approved</p>
-                                <div class="invoice-card-foot">
-                                    <strong>$1,250</strong>
-                                    <button type="button" class="btn btn-primary btn-sm" data-pay-invoice="inv-1002">Pay Invoice</button>
-                                </div>
-                            </article>
-                            <article class="invoice-card upcoming" data-invoice-id="inv-1003">
-                                <div class="invoice-card-head">
-                                    <div>
-                                        <span>Invoice 1003</span>
-                                        <strong>Launch + transition handoff</strong>
-                                    </div>
-                                    <span class="workspace-pill">Scheduled</span>
-                                </div>
-                                <p>Queued for release after launch approval</p>
-                                <div class="invoice-card-foot">
-                                    <strong>$950</strong>
-                                    <button type="button" class="btn btn-outline btn-sm" disabled>Scheduled</button>
-                                </div>
-                            </article>
-                        </div>
-                    </section>
+                        </article>
+                    </div>
+                </div>
 
-                    <section class="workspace-view" id="portal-messages">
-                        <div class="workspace-section-head">
-                            <div>
-                                <span class="workspace-panel-kicker">Project Messaging</span>
-                                <h3>Structured communication inside the project itself.</h3>
+                <div class="demo-panel" data-demo-panel="messages">
+                    <div class="workspace-thread">
+                        <article class="workspace-message team">
+                            <div class="workspace-message-meta">
+                                <strong>Architech</strong>
+                                <span>Demo update</span>
                             </div>
-                        </div>
-                        <div class="workspace-thread" id="portalMessageThread"></div>
-                        <form class="workspace-composer" id="portalMessageForm">
-                            <label for="portalMessageInput">Send a message</label>
-                            <textarea id="portalMessageInput" rows="4" placeholder="Share approval notes, content updates, or questions for the team."></textarea>
-                            <button type="submit" class="btn btn-primary">Send Update</button>
-                        </form>
-                    </section>
+                            <p>This preview demonstrates how a premium project thread can live inside a clean client workspace.</p>
+                        </article>
+                        <article class="workspace-message client">
+                            <div class="workspace-message-meta">
+                                <strong>Prospective Client View</strong>
+                                <span>Preview</span>
+                            </div>
+                            <p>Real messaging is reserved for the authenticated client portal. This route stays non-deceptive and showcase-only.</p>
+                        </article>
+                    </div>
+                </div>
+            </div>
 
-                    <section class="workspace-view" id="portal-files">
-                        <div class="workspace-section-head">
-                            <div>
-                                <span class="workspace-panel-kicker">Deliverables + Files</span>
-                                <h3>One place for assets, approvals, and handoff files.</h3>
-                            </div>
-                        </div>
-                        <div class="workspace-file-grid" id="portalFileList"></div>
-                        <div class="workspace-upload-card">
-                            <label for="portalUploadInput">Upload reference files for the project</label>
-                            <input id="portalUploadInput" type="file" multiple>
-                            <p>Uploaded files are stored in this preview session so the interaction can be reviewed end-to-end.</p>
-                        </div>
-                    </section>
+            <div class="cta">
+                <h2>Want this capability for your business?</h2>
+                <p>We can build the same premium delivery experience for your organization with your own roles, projects, files, billing records, and internal admin controls.</p>
+                <div class="cta-buttons" style="justify-content: center;">
+                    <a href="contact.html" class="btn btn-primary btn-lg">Book Consultation</a>
+                    <a href="client-login.html" class="btn btn-primary btn-lg">Client Portal Login</a>
                 </div>
             </div>
         </div>
     </section>
-
-    <div class="workspace-modal" id="portalInvoiceModal" aria-hidden="true">
-        <div class="workspace-modal-backdrop" data-close-portal-modal></div>
-        <div class="workspace-modal-card">
-            <button type="button" class="workspace-modal-close" id="portalInvoiceModalClose" aria-label="Close invoice modal">&times;</button>
-            <span class="workspace-panel-kicker">Invoice Payment</span>
-            <h3>Confirm payment for this milestone.</h3>
-            <p id="portalInvoiceModalBody">This action marks the invoice as paid inside the demo workspace preview.</p>
-            <div class="workspace-modal-actions">
-                <button type="button" class="btn btn-outline" data-close-portal-modal>Cancel</button>
-                <button type="button" class="btn btn-primary" id="portalInvoiceConfirm">Mark as Paid</button>
-            </div>
-        </div>
-    </div>
 
     <footer class="footer">
         <div class="container">
@@ -338,13 +247,11 @@
                     </ul>
                 </div>
                 <div class="footer-col">
-                    <h4>Systems</h4>
+                    <h4>Portals</h4>
                     <ul>
-                        <li><a href="client-portal.html">Demo Workspace</a></li>
-                        <li><a href="client-login.html">Client Login</a></li>
-                        <li><a href="ops-suite.html">Ops Suite</a></li>
-                        <li><a href="services.html">Custom Software</a></li>
-                        <li><a href="packages.html">Pricing</a></li>
+                        <li><a href="client-portal.html">Demo Portal</a></li>
+                        <li><a href="client-login.html">Client Portal</a></li>
+                        <li><a href="ops-suite.html">Admin Portal</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
@@ -370,6 +277,6 @@
     </footer>
 
     <script src="js/main.js"></script>
-    <script src="js/workspace-premium.js"></script>
+    <script src="js/workspace-demo.js"></script>
 </body>
 </html>

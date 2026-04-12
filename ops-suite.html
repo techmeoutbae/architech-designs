@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#1e3a5f">
-    <title>Ops Suite | Architech Designs</title>
-    <meta name="description" content="A lightweight CRM-like operations suite by Architech Designs with lead capture, consultation tracking, project visibility, and finance status in one premium interface.">
+    <meta name="theme-color" content="#102138">
+    <title>Admin Portal | Architech Designs</title>
+    <meta name="description" content="Internal Architech Designs admin portal for managing clients, projects, documents, invoices, messages, and portal permissions.">
+    <meta name="robots" content="noindex, follow">
     <link rel="canonical" href="https://www.architechdesigns.net/ops-suite.html">
     <link rel="icon" type="image/png" href="images/updated-ad-logo.png">
     <link rel="apple-touch-icon" href="images/updated-ad-logo.png">
@@ -13,258 +14,430 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/premium-refresh.css">
 </head>
-<body class="workspace-page ops-page" data-app="ops">
-    <nav class="navbar">
-        <div class="container">
-            <div class="navbar-inner">
-                <div class="header-logo-wrapper">
-                    <a href="index.html" class="header-logo-link">
-                        <img src="images/updated-ad-logo.png" alt="Architech Designs" class="header-building">
-                    </a>
-                    <a href="index.html" class="header-logo-text">
-                        <img src="images/updated-ad-logo.png" alt="Architech Designs">
-                    </a>
-                </div>
-                <ul class="nav-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="about.html">About</a></li>
-                    <li><a href="services.html">Services</a></li>
-                    <li><a href="packages.html">Packages</a></li>
-                    <li><a href="portfolio.html">Portfolio</a></li>
-                    <li><a href="process.html">Process</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                    <li><a href="client-login.html" class="nav-login-link">Client Login</a></li>
-                </ul>
-                <div class="nav-cta">
-                    <a href="contact.html" class="btn btn-primary btn-sm">Book Consultation</a>
-                </div>
-                <button class="mobile-toggle" aria-label="Toggle menu">
+<body class="workspace-page ops-page workspace-product-page" data-app="ops">
+    <header class="workspace-app-header">
+        <div class="container workspace-app-header-inner">
+            <div class="workspace-app-leading">
+                <button class="workspace-drawer-toggle" type="button" id="workspaceDrawerToggle" aria-label="Open admin navigation" aria-expanded="false" aria-controls="workspaceSidebar">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
+                <a href="index.html" class="workspace-app-brand">
+                    <img src="images/updated-ad-logo.png" alt="Architech Designs">
+                    <div class="workspace-app-brand-copy">
+                        <span>Architech Designs</span>
+                        <strong>Admin Suite</strong>
+                    </div>
+                </a>
+                <div class="workspace-app-context">
+                    <span class="workspace-app-context-label">Internal control layer</span>
+                    <strong id="workspaceHeaderProject">Loading admin suite...</strong>
+                </div>
             </div>
-        </div>
-    </nav>
-
-    <section class="page-header workspace-header ops-header">
-        <div class="container">
-            <div class="page-header-content">
-                <span class="section-label">Ops Suite</span>
-                <h1>A lightweight CRM-like command center until the full platform is deployed.</h1>
-                <p class="section-subtitle">Track inquiries, consultations, projects, client health, invoice visibility, and next actions in a premium internal workspace built to demonstrate real systems capability.</p>
-                <div class="workspace-header-actions">
-                    <a href="#ops-suite" class="btn btn-primary btn-lg">Open Ops Suite</a>
-                    <a href="client-portal.html" class="btn btn-outline btn-lg">View Demo Workspace</a>
+            <div class="workspace-app-trailing">
+                <span class="workspace-pill" id="workspaceStatusPill">Loading</span>
+                <div class="workspace-account-shell" id="workspaceAccountShell">
+                    <button class="workspace-account-trigger" type="button" id="workspaceAccountTrigger" aria-haspopup="menu" aria-expanded="false">
+                        <span class="workspace-account-avatar" id="workspaceAccountInitials">AD</span>
+                        <span class="workspace-account-copy">
+                            <strong id="workspaceHeaderName">Loading...</strong>
+                            <span id="workspaceHeaderEmail">Checking access</span>
+                        </span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="workspace-account-menu" id="workspaceAccountMenu" role="menu">
+                        <button type="button" class="workspace-menu-link" data-open-workspace-tab="ops-clients">Client roster</button>
+                        <button type="button" class="workspace-menu-link" data-open-workspace-tab="ops-access">Access controls</button>
+                        <button type="button" class="workspace-menu-link workspace-menu-link-danger" id="portalSignOut">Sign Out</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
+    </header>
 
-    <section class="section workspace-demo-section" id="ops-suite">
-        <div class="container">
-            <div class="workspace-shell ops-shell">
-                <aside class="workspace-sidebar">
-                    <div class="workspace-user-card">
-                        <span class="workspace-user-kicker">Internal Workspace</span>
-                        <strong>Architech Ops Desk</strong>
-                        <p>Preview data for structured delivery operations</p>
-                    </div>
-                    <div class="workspace-nav">
-                        <button class="workspace-nav-button active" type="button" data-workspace-tab="ops-dashboard">Dashboard</button>
-                        <button class="workspace-nav-button" type="button" data-workspace-tab="ops-leads">Leads</button>
-                        <button class="workspace-nav-button" type="button" data-workspace-tab="ops-consults">Consultations</button>
-                        <button class="workspace-nav-button" type="button" data-workspace-tab="ops-projects">Projects</button>
-                        <button class="workspace-nav-button" type="button" data-workspace-tab="ops-clients">Client Desk</button>
-                        <button class="workspace-nav-button" type="button" data-workspace-tab="ops-finance">Finance</button>
-                    </div>
-                    <div class="workspace-side-note">
-                        <span class="workspace-panel-kicker">Why this matters</span>
-                        <p>This interface now acts as the control layer for portal credentials, client messaging, files, and invoice visibility across the site.</p>
-                    </div>
-                </aside>
+    <button class="workspace-drawer-backdrop" type="button" id="workspaceDrawerBackdrop" aria-label="Close admin navigation"></button>
 
-                <div class="workspace-main">
-                    <div class="workspace-toolbar">
-                        <div>
-                            <span class="workspace-toolbar-label">Operations Snapshot</span>
-                            <h2>Lead flow, delivery, and invoicing in one premium environment.</h2>
+    <main class="workspace-product-main">
+        <section class="section workspace-demo-section" id="ops-suite">
+            <div class="container">
+                <div class="workspace-empty-state workspace-access-gate is-hidden" id="adminAccessGate"></div>
+                <div class="workspace-shell ops-shell is-hidden" id="adminAppShell">
+                    <aside class="workspace-sidebar" id="workspaceSidebar" aria-label="Admin navigation">
+                        <div class="workspace-sidebar-topbar">
+                            <div class="workspace-sidebar-head">
+                                <span class="workspace-sidebar-kicker">Internal control</span>
+                                <strong>Ops navigation</strong>
+                                <p>Manage the live client portal with a quieter, product-style workspace instead of a public-site header.</p>
+                            </div>
+                            <button class="workspace-drawer-close" type="button" id="workspaceDrawerClose" aria-label="Close admin navigation">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
                         </div>
-                        <div class="workspace-toolbar-meta">
-                            <span class="workspace-pill success">3 active projects</span>
-                            <span class="workspace-pill">Pipeline value $21.4k</span>
+                        <div class="workspace-user-card">
+                            <span class="workspace-user-kicker">Internal Admin</span>
+                            <strong id="workspaceClientName">Loading admin...</strong>
+                            <p id="workspaceClientEmail">Checking access...</p>
+                            <p id="workspaceClientMeta">Preparing admin tools</p>
                         </div>
-                    </div>
+                        <div class="workspace-nav">
+                            <button class="workspace-nav-button active" type="button" data-workspace-tab="ops-dashboard">Dashboard</button>
+                            <button class="workspace-nav-button" type="button" data-workspace-tab="ops-clients">Clients</button>
+                            <button class="workspace-nav-button" type="button" data-workspace-tab="ops-projects">Projects</button>
+                            <button class="workspace-nav-button" type="button" data-workspace-tab="ops-deliverables">Deliverables</button>
+                            <button class="workspace-nav-button" type="button" data-workspace-tab="ops-finance">Finance</button>
+                            <button class="workspace-nav-button" type="button" data-workspace-tab="ops-messages">Messages</button>
+                            <button class="workspace-nav-button" type="button" data-workspace-tab="ops-access">Access</button>
+                        </div>
+                        <div class="workspace-side-note">
+                            <span class="workspace-panel-kicker">Production controls only</span>
+                            <p>This suite governs the live portal. Demo content and public showcase pages never live inside the admin workspace.</p>
+                        </div>
+                    </aside>
+
+                    <div class="workspace-main">
+                        <div class="workspace-toolbar">
+                            <div>
+                                <span class="workspace-toolbar-label">Selected Project</span>
+                                <h2 id="workspaceProjectTitle">Loading admin data...</h2>
+                                <p class="workspace-toolbar-copy" id="workspaceProjectSynopsis">Create clients, manage project delivery, update billing, and control portal access from one polished internal command layer.</p>
+                            </div>
+                            <div class="workspace-toolbar-meta portal-toolbar-selects">
+                                <label class="workspace-select">
+                                    <span>Client</span>
+                                    <select id="adminClientSelect"></select>
+                                </label>
+                                <label class="workspace-select">
+                                    <span>Project</span>
+                                    <select id="adminProjectSelect"></select>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="workspace-alert is-hidden" id="adminAlert" aria-live="polite"></div>
 
                     <section class="workspace-view active" id="ops-dashboard">
-                        <div class="workspace-kpi-grid">
-                            <article class="workspace-kpi-card">
-                                <span>New inquiries</span>
-                                <strong id="opsMetricNewLeads">4 this week</strong>
-                            </article>
-                            <article class="workspace-kpi-card">
-                                <span>Booked consultations</span>
-                                <strong id="opsMetricConsults">3 scheduled</strong>
-                            </article>
-                            <article class="workspace-kpi-card">
-                                <span>Projects in production</span>
-                                <strong id="opsMetricProjects">3 active builds</strong>
-                            </article>
-                            <article class="workspace-kpi-card">
-                                <span>Open invoice value</span>
-                                <strong id="opsMetricRevenue">$4,150 outstanding</strong>
-                            </article>
-                        </div>
-                        <div class="workspace-panel-grid">
-                            <article class="workspace-panel workspace-panel-highlight">
-                                <span class="workspace-panel-kicker">Today's Priorities</span>
-                                <h3>Close the loop on qualified demand and delivery milestones.</h3>
-                                <p>Follow up with two proposal-stage leads, confirm tomorrow's strategy call, and release the current milestone invoice after the homepage QA review.</p>
-                            </article>
-                            <article class="workspace-panel">
-                                <span class="workspace-panel-kicker">Workflow Notes</span>
-                                <ul class="workspace-list">
-                                    <li>All new leads route into a structured intake pipeline</li>
-                                    <li>Consults move automatically into project or nurture stages</li>
-                                    <li>Invoice visibility stays attached to the active client record</li>
-                                </ul>
-                            </article>
-                        </div>
-                    </section>
-
-                    <section class="workspace-view" id="ops-leads">
-                        <div class="workspace-section-head">
-                            <div>
-                                <span class="workspace-panel-kicker">Lead Intake + Pipeline</span>
-                                <h3>Track inquiries without waiting for the full CRM build.</h3>
-                            </div>
-                        </div>
-                        <form class="ops-intake-form" id="opsLeadForm">
-                            <input type="text" id="opsLeadName" placeholder="Lead name" required>
-                            <input type="text" id="opsLeadCompany" placeholder="Company">
-                            <select id="opsLeadService">
-                                <option value="Signature Website">Signature Website</option>
-                                <option value="Growth System">Growth System</option>
-                                <option value="Custom Software Build">Custom Software Build</option>
-                            </select>
-                            <input type="number" id="opsLeadValue" placeholder="Estimated value" min="0" step="100">
-                            <button type="submit" class="btn btn-primary">Add Lead</button>
-                        </form>
-                        <div class="ops-pipeline" id="opsPipelineBoard"></div>
-                    </section>
-
-                    <section class="workspace-view" id="ops-consults">
-                        <div class="workspace-section-head">
-                            <div>
-                                <span class="workspace-panel-kicker">Consultation Tracking</span>
-                                <h3>Keep scheduled calls, notes, and follow-up next actions visible.</h3>
-                            </div>
-                        </div>
-                        <div class="workspace-card-stack" id="opsConsultList"></div>
-                    </section>
-
-                    <section class="workspace-view" id="ops-projects">
-                        <div class="workspace-section-head">
-                            <div>
-                                <span class="workspace-panel-kicker">Project Status</span>
-                                <h3>Client health, stage visibility, and milestone context in one view.</h3>
-                            </div>
-                        </div>
-                        <div class="workspace-card-stack" id="opsProjectList"></div>
+                        <div class="workspace-kpi-grid" id="adminMetricsGrid"></div>
+                        <div class="workspace-card-stack" id="adminRecentActivity"></div>
                     </section>
 
                     <section class="workspace-view" id="ops-clients">
                         <div class="workspace-section-head">
                             <div>
-                                <span class="workspace-panel-kicker">Client Desk</span>
-                                <h3>Manage portal access, communication, files, and invoices in one place.</h3>
+                                <span class="workspace-panel-kicker">Client Accounts</span>
+                                <h3>Create real client access through Supabase-backed onboarding.</h3>
                             </div>
-                             <a href="client-portal.html" class="btn btn-outline btn-sm">Open Demo Workspace</a>
                         </div>
-                        <div class="client-desk-layout">
-                            <aside class="workspace-panel client-roster-panel">
-                                <span class="workspace-panel-kicker">Client Workspace Access</span>
-                                <h3>Choose an active client.</h3>
-                                <p>Review credentials, open the live workspace, and keep each client thread organized.</p>
-                                <div class="client-roster" id="opsClientList"></div>
-                            </aside>
-
-                            <div class="client-desk-main">
-                                <article class="workspace-panel client-desk-summary" id="opsClientSummary"></article>
-
-                                <div class="client-desk-grid">
-                                    <article class="workspace-panel client-desk-thread-panel">
-                                        <span class="workspace-panel-kicker">Conversation</span>
-                                        <h3>Client communication in one premium thread.</h3>
-                                        <div class="workspace-thread client-desk-thread" id="opsClientThread"></div>
-                                        <form class="workspace-composer" id="opsClientMessageForm">
-                                            <label for="opsClientMessageInput">Send a client update</label>
-                                            <textarea id="opsClientMessageInput" rows="4" placeholder="Share the latest milestone update, approval request, or next step."></textarea>
-                                            <button type="submit" class="btn btn-primary">Send Update</button>
-                                        </form>
-                                    </article>
-
-                                    <div class="client-desk-side">
-                                        <form class="workspace-upload-card client-share-form" id="opsClientFileForm">
-                                            <label for="opsClientFileName">Share a deliverable</label>
-                                            <input id="opsClientFileName" type="text" placeholder="Homepage Review Deck.pdf" required>
-                                            <input id="opsClientFileType" type="text" placeholder="Review package">
-                                            <button type="submit" class="btn btn-outline">Share File</button>
-                                            <p>Shared files appear in the client workspace immediately in this browser.</p>
-                                        </form>
-
-                                        <form class="workspace-upload-card client-invoice-form" id="opsClientInvoiceForm">
-                                            <label for="opsClientInvoiceTitle">Create invoice</label>
-                                            <input id="opsClientInvoiceTitle" type="text" placeholder="Phase 2 milestone invoice" required>
-                                            <div class="client-inline-grid">
-                                                <input id="opsClientInvoiceAmount" type="number" placeholder="1250" min="0" step="50" required>
-                                                <select id="opsClientInvoiceStatus">
-                                                    <option value="open">Open now</option>
-                                                    <option value="scheduled">Schedule next</option>
-                                                </select>
-                                            </div>
-                                            <button type="submit" class="btn btn-outline">Add Invoice</button>
-                                            <p>Create a live invoice card the client can see and pay inside the client workspace.</p>
-                                        </form>
-
-                                        <form class="workspace-upload-card ops-client-form" id="opsClientForm">
-                                            <label for="opsClientCompany">Create client workspace access</label>
-                                            <div class="client-inline-grid">
-                                                <input id="opsClientCompany" type="text" placeholder="Company name" required>
-                                                <input id="opsClientContact" type="text" placeholder="Primary contact" required>
-                                            </div>
-                                            <div class="client-inline-grid">
-                                                <input id="opsClientEmail" type="email" placeholder="client@company.com" required>
-                                                <select id="opsClientService">
-                                                    <option value="Signature Website">Signature Website</option>
-                                                    <option value="Growth System">Growth System</option>
-                                                    <option value="Custom Software Build">Custom Software Build</option>
-                                                </select>
-                                            </div>
-                                            <input id="opsClientProject" type="text" placeholder="Project name" required>
-                                            <button type="submit" class="btn btn-primary">Create Client Workspace Access</button>
-                                            <p class="workspace-form-note" id="opsClientFormNote" aria-live="polite">New client accounts get a generated access key and become available in the client workspace immediately.</p>
-                                        </form>
+                        <div class="workspace-form-layout">
+                            <form class="workspace-form-card" id="adminClientForm">
+                                <div class="workspace-form-grid">
+                                    <div class="form-group">
+                                        <label for="adminClientFullName">Primary Contact</label>
+                                        <input id="adminClientFullName" type="text" required placeholder="Jordan Sterling">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="adminClientEmail">Portal Email</label>
+                                        <input id="adminClientEmail" type="email" required placeholder="jordan@company.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="adminClientCompany">Company Name</label>
+                                        <input id="adminClientCompany" type="text" required placeholder="Sterling &amp; Associates">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="adminClientBillingEmail">Billing Email</label>
+                                        <input id="adminClientBillingEmail" type="email" placeholder="billing@company.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="adminClientProjectName">Initial Project</label>
+                                        <input id="adminClientProjectName" type="text" required placeholder="Authority website build">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="adminClientServiceLine">Service Line</label>
+                                        <input id="adminClientServiceLine" type="text" placeholder="Growth System">
                                     </div>
                                 </div>
+                                <div class="workspace-form-actions">
+                                    <button type="submit" class="btn btn-primary">Send Invite + Create Client</button>
+                                </div>
+                            </form>
+                            <div class="workspace-card-stack" id="adminClientRoster"></div>
+                        </div>
+                    </section>
+
+                    <section class="workspace-view" id="ops-projects">
+                        <div class="workspace-section-head">
+                            <div>
+                                <span class="workspace-panel-kicker">Projects + Delivery</span>
+                                <h3>Create projects, milestones, and project updates for the selected client.</h3>
                             </div>
+                        </div>
+                        <div class="workspace-form-layout">
+                            <div class="workspace-form-stack">
+                                <form class="workspace-form-card" id="adminProjectForm">
+                                    <h3>Create Project</h3>
+                                    <div class="workspace-form-grid">
+                                        <div class="form-group">
+                                            <label for="adminProjectClient">Client</label>
+                                            <select id="adminProjectClient"></select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminProjectName">Project Name</label>
+                                            <input id="adminProjectName" type="text" required placeholder="Premium redesign + systems layer">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminProjectService">Service Line</label>
+                                            <input id="adminProjectService" type="text" placeholder="Signature Website">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminProjectPhase">Current Phase</label>
+                                            <input id="adminProjectPhase" type="text" placeholder="Design refinement">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminProjectLaunch">Launch Target</label>
+                                            <input id="adminProjectLaunch" type="date">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminProjectDescription">Project Summary</label>
+                                            <textarea id="adminProjectDescription" rows="3" placeholder="Premium positioning, stronger navigation, portal implementation, and mobile refinement."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="workspace-form-actions">
+                                        <button type="submit" class="btn btn-primary">Create Project</button>
+                                    </div>
+                                </form>
+
+                                <form class="workspace-form-card" id="adminMilestoneForm">
+                                    <h3>Add Milestone</h3>
+                                    <div class="workspace-form-grid">
+                                        <div class="form-group">
+                                            <label for="adminMilestoneTitle">Title</label>
+                                            <input id="adminMilestoneTitle" type="text" required placeholder="Homepage review package">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminMilestoneDue">Due Date</label>
+                                            <input id="adminMilestoneDue" type="date">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminMilestoneStatus">Status</label>
+                                            <select id="adminMilestoneStatus">
+                                                <option value="upcoming">Upcoming</option>
+                                                <option value="in_progress">In Progress</option>
+                                                <option value="review">In Review</option>
+                                                <option value="approved">Approved</option>
+                                                <option value="complete">Complete</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminMilestoneDescription">Description</label>
+                                            <textarea id="adminMilestoneDescription" rows="3" placeholder="Summarize the milestone and what the client should expect."></textarea>
+                                        </div>
+                                    </div>
+                                    <label class="workspace-checkbox">
+                                        <input id="adminMilestoneApproval" type="checkbox">
+                                        <span>Requires client approval</span>
+                                    </label>
+                                    <div class="workspace-form-actions">
+                                        <button type="submit" class="btn btn-outline">Add Milestone</button>
+                                    </div>
+                                </form>
+
+                                <form class="workspace-form-card" id="adminUpdateForm">
+                                    <h3>Publish Project Update</h3>
+                                    <div class="workspace-form-grid">
+                                        <div class="form-group">
+                                            <label for="adminUpdateTitle">Update Title</label>
+                                            <input id="adminUpdateTitle" type="text" required placeholder="Responsive pass completed">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminUpdateStatus">Label</label>
+                                            <select id="adminUpdateStatus">
+                                                <option value="update">Update</option>
+                                                <option value="decision">Decision</option>
+                                                <option value="review">Review</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminUpdateBody">Update Body</label>
+                                            <textarea id="adminUpdateBody" rows="4" required placeholder="Explain what changed, what is ready, and what comes next."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="workspace-form-actions">
+                                        <button type="submit" class="btn btn-outline">Publish Update</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="workspace-form-stack">
+                                <div class="workspace-card-stack" id="adminProjectList"></div>
+                                <div class="workspace-card-stack" id="adminMilestoneList"></div>
+                                <div class="workspace-card-stack" id="adminUpdateList"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="workspace-view" id="ops-deliverables">
+                        <div class="workspace-section-head">
+                            <div>
+                                <span class="workspace-panel-kicker">Documents</span>
+                                <h3>Upload secure client files into private Supabase Storage.</h3>
+                            </div>
+                        </div>
+                        <div class="workspace-form-layout">
+                            <form class="workspace-form-card" id="adminDocumentForm">
+                                <div class="workspace-form-grid">
+                                    <div class="form-group">
+                                        <label for="adminDocumentCategory">Category</label>
+                                        <input id="adminDocumentCategory" type="text" placeholder="Review deck">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="adminDocumentFile">File</label>
+                                        <input id="adminDocumentFile" type="file" required>
+                                    </div>
+                                </div>
+                                <div class="workspace-form-actions">
+                                    <button type="submit" class="btn btn-primary">Upload Document</button>
+                                </div>
+                            </form>
+                            <div class="workspace-file-grid" id="adminDocumentList"></div>
                         </div>
                     </section>
 
                     <section class="workspace-view" id="ops-finance">
                         <div class="workspace-section-head">
                             <div>
-                                <span class="workspace-panel-kicker">Finance Visibility</span>
-                                <h3>Outstanding invoices and payment status connected to the delivery workflow.</h3>
+                                <span class="workspace-panel-kicker">Billing</span>
+                                <h3>Create invoices and attach payment records to the selected project.</h3>
                             </div>
                         </div>
-                        <div class="workspace-card-stack" id="opsFinanceList"></div>
+                        <div class="workspace-form-layout">
+                            <div class="workspace-form-stack">
+                                <form class="workspace-form-card" id="adminInvoiceForm">
+                                    <h3>Create Invoice</h3>
+                                    <div class="workspace-form-grid">
+                                        <div class="form-group">
+                                            <label for="adminInvoiceTitle">Invoice Title</label>
+                                            <input id="adminInvoiceTitle" type="text" required placeholder="Phase 2 development milestone">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminInvoiceAmount">Amount</label>
+                                            <input id="adminInvoiceAmount" type="number" min="0" step="50" required placeholder="1250">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminInvoiceStatus">Status</label>
+                                            <select id="adminInvoiceStatus">
+                                                <option value="issued">Issued</option>
+                                                <option value="overdue">Overdue</option>
+                                                <option value="paid">Paid</option>
+                                                <option value="void">Void</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminInvoiceDue">Due Date</label>
+                                            <input id="adminInvoiceDue" type="date">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminInvoicePaymentUrl">Payment Link</label>
+                                            <input id="adminInvoicePaymentUrl" type="url" placeholder="https://payment-link.example">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminInvoiceDescription">Description</label>
+                                            <textarea id="adminInvoiceDescription" rows="3" placeholder="Optional invoice summary or milestone note."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="workspace-form-actions">
+                                        <button type="submit" class="btn btn-primary">Create Invoice</button>
+                                    </div>
+                                </form>
+
+                                <form class="workspace-form-card" id="adminPaymentForm">
+                                    <h3>Record Payment</h3>
+                                    <div class="workspace-form-grid">
+                                        <div class="form-group">
+                                            <label for="adminPaymentInvoice">Invoice</label>
+                                            <select id="adminPaymentInvoice"></select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminPaymentAmount">Amount</label>
+                                            <input id="adminPaymentAmount" type="number" min="0" step="50" required placeholder="1250">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminPaymentMethod">Method</label>
+                                            <input id="adminPaymentMethod" type="text" placeholder="ACH transfer">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminPaymentReference">Reference</label>
+                                            <input id="adminPaymentReference" type="text" placeholder="INV-2026-04">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminPaymentPaidAt">Paid At</label>
+                                            <input id="adminPaymentPaidAt" type="datetime-local">
+                                        </div>
+                                    </div>
+                                    <div class="workspace-form-actions">
+                                        <button type="submit" class="btn btn-outline">Record Payment</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="invoice-card-grid" id="adminInvoiceList"></div>
+                        </div>
                     </section>
+
+                    <section class="workspace-view" id="ops-messages">
+                        <div class="workspace-section-head">
+                            <div>
+                                <span class="workspace-panel-kicker">Project Messaging</span>
+                                <h3>Send client-facing updates or internal notes tied to the selected project.</h3>
+                            </div>
+                        </div>
+                        <div class="workspace-thread" id="adminMessageThread"></div>
+                        <form class="workspace-composer" id="adminMessageForm">
+                            <label for="adminMessageBody">Message Body</label>
+                            <textarea id="adminMessageBody" rows="4" placeholder="Share a project update, review note, or client response."></textarea>
+                            <label class="workspace-checkbox">
+                                <input id="adminMessageInternal" type="checkbox">
+                                <span>Save as internal note only</span>
+                            </label>
+                            <button type="submit" class="btn btn-primary">Post Message</button>
+                        </form>
+                    </section>
+
+                    <section class="workspace-view" id="ops-access">
+                        <div class="workspace-section-head">
+                            <div>
+                                <span class="workspace-panel-kicker">Portal Access</span>
+                                <h3>Control which client accounts can see which projects.</h3>
+                            </div>
+                        </div>
+                        <div class="workspace-form-layout">
+                            <form class="workspace-form-card" id="adminAccessForm">
+                                <div class="workspace-form-grid">
+                                    <div class="form-group">
+                                        <label for="adminAccessClient">Client</label>
+                                        <select id="adminAccessClient"></select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="adminAccessProject">Project</label>
+                                        <select id="adminAccessProject"></select>
+                                    </div>
+                                </div>
+                                <div class="workspace-form-actions">
+                                    <button type="submit" class="btn btn-primary">Grant Project Access</button>
+                                </div>
+                            </form>
+                            <div class="workspace-card-stack" id="adminAccessList"></div>
+                        </div>
+                    </section>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
     <footer class="footer">
         <div class="container">
@@ -285,13 +458,11 @@
                     </ul>
                 </div>
                 <div class="footer-col">
-                    <h4>Systems</h4>
+                    <h4>Portals</h4>
                     <ul>
-                        <li><a href="client-workspace.html">Client Workspace</a></li>
-                        <li><a href="client-portal.html">Demo Workspace</a></li>
-                        <li><a href="ops-suite.html">Ops Suite</a></li>
-                        <li><a href="services.html">Custom Software</a></li>
-                        <li><a href="packages.html">Pricing</a></li>
+                        <li><a href="client-login.html">Client Portal</a></li>
+                        <li><a href="client-portal.html">Demo Portal</a></li>
+                        <li><a href="ops-suite.html">Admin Portal</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
@@ -317,6 +488,7 @@
     </footer>
 
     <script src="js/main.js"></script>
-    <script src="js/workspace-premium.js"></script>
+    <script src="js/portal-config.js"></script>
+    <script type="module" src="js/portal-app.js"></script>
 </body>
 </html>

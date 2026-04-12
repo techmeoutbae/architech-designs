@@ -446,8 +446,8 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 .btn-outline {
-    background: transparent;
-    color: var(--primary);
+    background: var(--white);
+    color: var(--primary-dark);
     border: 2px solid var(--primary);
     position: relative;
     overflow: hidden;
