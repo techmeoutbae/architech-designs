@@ -45,13 +45,19 @@ Deno.serve(async (request: Request) => {
         return json({ error: 'Method not allowed.' }, 405);
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') || Deno.env.get('SUPABASE_PROJECT_URL');
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     const authHeader = request.headers.get('Authorization');
 
-    if (!supabaseUrl || !supabaseAnonKey || !serviceRoleKey) {
-        return json({ error: 'Supabase environment variables are missing.' }, 500);
+    const missingSecrets = [
+        ['SUPABASE_URL', supabaseUrl],
+        ['SUPABASE_ANON_KEY', supabaseAnonKey],
+        ['SUPABASE_SERVICE_ROLE_KEY', serviceRoleKey]
+    ].filter(([, value]) => !value).map(([name]) => name);
+
+    if (missingSecrets.length) {
+        return json({ error: `Missing environment variables: ${missingSecrets.join(', ')}.` }, 500);
     }
 
     if (!authHeader) {

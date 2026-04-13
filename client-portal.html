@@ -60,7 +60,7 @@
             <div class="demo-showcase-shell">
                 <article class="demo-hero-card reveal">
                     <span class="workspace-eyebrow">Luxury Product Preview</span>
-                    <h2>What your own client portal could feel like.</h2>
+                    <h2 style="color: rgba(255,255,255,0.9);">What your own client portal could feel like.</h2>
                     <p>A premium, restrained workspace experience for project visibility, document delivery, milestone updates, billing coordination, and direct communication.</p>
                     <div class="demo-stat-grid">
                         <article>
@@ -92,12 +92,20 @@
             </div>
 
             <div class="demo-tab-shell">
-                <div class="workspace-nav demo-nav">
-                    <button class="workspace-nav-button active" type="button" data-demo-tab="overview">Overview</button>
-                    <button class="workspace-nav-button" type="button" data-demo-tab="milestones">Milestones</button>
-                    <button class="workspace-nav-button" type="button" data-demo-tab="files">Files</button>
-                    <button class="workspace-nav-button" type="button" data-demo-tab="billing">Billing</button>
-                    <button class="workspace-nav-button" type="button" data-demo-tab="messages">Messages</button>
+                <div class="workspace-nav demo-nav" style="position: relative; display: inline-block;">
+                    <button class="workspace-nav-button" id="demoMenuTrigger" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="demoMenuDropdown" style="display: flex; align-items: center; gap: 8px;">
+                        <span data-demo-menu-label>Overview</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transition: transform 0.3s;">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="demo-menu-dropdown" id="demoMenuDropdown" role="menu" hidden style="position: absolute; top: 100%; left: 0; background: white; border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.08); min-width: 220px; z-index: 1000; margin-top: 8px;">
+                        <button class="demo-menu-item active" type="button" data-demo-tab="overview" style="display: block; width: 100%; padding: 12px 16px; text-align: left; border: none; background: transparent; cursor: pointer; color: #1e3a5f; font-weight: 500; transition: all 0.2s; font-size: 0.95rem;">Overview</button>
+                        <button class="demo-menu-item" type="button" data-demo-tab="milestones" style="display: block; width: 100%; padding: 12px 16px; text-align: left; border: none; background: transparent; cursor: pointer; color: #1e3a5f; font-weight: 500; transition: all 0.2s; font-size: 0.95rem;">Milestones</button>
+                        <button class="demo-menu-item" type="button" data-demo-tab="files" style="display: block; width: 100%; padding: 12px 16px; text-align: left; border: none; background: transparent; cursor: pointer; color: #1e3a5f; font-weight: 500; transition: all 0.2s; font-size: 0.95rem;">Files</button>
+                        <button class="demo-menu-item" type="button" data-demo-tab="billing" style="display: block; width: 100%; padding: 12px 16px; text-align: left; border: none; background: transparent; cursor: pointer; color: #1e3a5f; font-weight: 500; transition: all 0.2s; font-size: 0.95rem;">Billing</button>
+                        <button class="demo-menu-item" type="button" data-demo-tab="messages" style="display: block; width: 100%; padding: 12px 16px; text-align: left; border: none; background: transparent; cursor: pointer; color: #1e3a5f; font-weight: 500; transition: all 0.2s; font-size: 0.95rem;">Messages</button>
+                    </div>
                 </div>
 
                 <div class="demo-panel active" data-demo-panel="overview">
@@ -217,12 +225,12 @@
                 </div>
             </div>
 
-            <div class="cta">
+            <div class="cta" style="margin-top: 80px;">
                 <h2>Want this capability for your business?</h2>
                 <p>We can build the same premium delivery experience for your organization with your own roles, projects, files, billing records, and internal admin controls.</p>
                 <div class="cta-buttons" style="justify-content: center;">
                     <a href="contact.html" class="btn btn-primary btn-lg">Book Consultation</a>
-                    <a href="client-login.html" class="btn btn-primary btn-lg">Client Portal Login</a>
+                    <a href="client-login.html" class="btn btn-secondary btn-lg">Client Portal Login</a>
                 </div>
             </div>
         </div>
@@ -242,7 +250,7 @@
                     <ul>
                         <li><a href="about.html">About</a></li>
                         <li><a href="process.html">Our Process</a></li>
-                        <li><a href="portfolio.html">Portfolio</a></li>
+                        <li><a href="portfolio.html">Projects</a></li>
                         <li><a href="contact.html">Contact</a></li>
                     </ul>
                 </div>

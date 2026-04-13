@@ -63,13 +63,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 {
                     type: 'dropdown',
                     label: 'Work',
-                    match: ['portfolio.html', 'projects.html', 'project-sterling-law.html', 'project-apex-hvac.html', 'project-luxe-med-spa.html'],
+                    match: ['portfolio.html', 'live-demo.html', 'case-study-luxe-med-spa.html', 'case-study-apex-hvac.html'],
                     items: [
-                        { label: 'Portfolio', href: 'portfolio.html', description: 'Selected engagements and premium website launches.' },
-                        { label: 'Projects', href: 'projects.html', description: 'Active project case overviews and featured builds.' },
-                        { label: 'Sterling Law', href: 'project-sterling-law.html', description: 'Premium legal website and authority positioning.' },
-                        { label: 'Apex HVAC', href: 'project-apex-hvac.html', description: 'Operations-led service business systems and routing.' },
-                        { label: 'Luxe Med Spa', href: 'project-luxe-med-spa.html', description: 'Luxury beauty brand launch and conversion flow.' }
+                        { label: 'Projects', href: 'portfolio.html', description: 'Project case overviews and featured builds.' },
+                        { label: 'Med Spa Demo', href: 'live-demo.html?demo=medspa-beauty', description: 'Embedded beauty demo powered by the restored med spa site bundle.' }
                     ]
                 },
                 {
@@ -182,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (navCta) {
                     navCta.innerHTML = `
                         <a href="${resolveHref('contact.html')}" class="btn btn-outline btn-sm nav-secondary-cta">Book Consultation</a>
-                        <a href="${resolveHref('client-login.html')}" class="btn btn-primary btn-sm nav-primary-cta${isClientPortalPage ? ' active' : ''}">Client Portal</a>
+                        <a href="${resolveHref('client-login.html')}" class="btn btn-sm nav-primary-cta${isClientPortalPage ? ' active' : ''}" style="background: linear-gradient(135deg, #f2ddab 0%, #d6b35e 48%, #c79b25 100%); color: #102138 !important; box-shadow: 0 20px 44px rgba(7, 12, 20, 0.24);">Client Portal</a>
                     `;
                 }
 
@@ -253,6 +250,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     } catch (e) {
         Logger.error('Navigation', 'Failed to initialize navigation', e);
+    }
+
+    try {
+        const medspaDemoCard = document.querySelector('.project-card[data-href="live-demo.html?demo=medspa-beauty"]');
+        const medspaDescription = medspaDemoCard?.querySelector('.project-desc');
+        if (medspaDescription) {
+            medspaDescription.textContent = 'Live demo showcasing interactive treatments, quiz flow, booking paths, and the kind of premium customer journey we build for service businesses.';
+        }
+
+        const medspaTrustLabel = medspaDemoCard?.querySelector('.mini-mockup-trust span');
+        if (medspaTrustLabel) {
+            medspaTrustLabel.textContent = '4.9 Rating';
+        }
+    } catch (e) {
+        Logger.error('Portfolio', 'Failed to normalize demo card copy', e);
     }
 
     // ========== HONEST SOCIAL LINKS ==========
@@ -1062,5 +1074,77 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     } catch (e) {
         Logger.error('Quiz', 'Failed to initialize website quiz', e);
+    }
+
+    // ========== DEMO PORTAL DROPDOWN MENU ==========
+    try {
+        const demoMenuTrigger = document.getElementById('demoMenuTrigger');
+        const demoMenuDropdown = document.getElementById('demoMenuDropdown');
+        
+        if (demoMenuTrigger && demoMenuDropdown) {
+            const demoMenuLabel = demoMenuTrigger.querySelector('[data-demo-menu-label]') || demoMenuTrigger.querySelector('span');
+            const arrow = demoMenuTrigger.querySelector('svg');
+            const demoPanels = document.querySelectorAll('.demo-panel');
+
+            function setDemoMenuOpen(isOpen) {
+                demoMenuDropdown.hidden = !isOpen;
+                demoMenuTrigger.setAttribute('aria-expanded', String(isOpen));
+
+                if (arrow) {
+                    arrow.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+                }
+            }
+
+            function setActiveDemoPanel(tabName, label) {
+                demoMenuDropdown.querySelectorAll('.demo-menu-item').forEach((item) => {
+                    item.classList.toggle('active', item.dataset.demoTab === tabName);
+                });
+
+                demoPanels.forEach((panel) => {
+                    panel.classList.toggle('active', panel.dataset.demoPanel === tabName);
+                });
+
+                if (demoMenuLabel && label) {
+                    demoMenuLabel.textContent = label;
+                }
+            }
+
+            const activeMenuItem = demoMenuDropdown.querySelector('.demo-menu-item.active');
+            if (activeMenuItem) {
+                setActiveDemoPanel(activeMenuItem.dataset.demoTab, activeMenuItem.textContent.trim());
+            }
+
+            demoMenuTrigger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                setDemoMenuOpen(demoMenuDropdown.hidden);
+            });
+
+            demoMenuDropdown.addEventListener('click', function(e) {
+                const menuItem = e.target.closest('.demo-menu-item');
+                if (!menuItem) {
+                    return;
+                }
+
+                e.stopPropagation();
+                setActiveDemoPanel(menuItem.dataset.demoTab, menuItem.textContent.trim());
+                setDemoMenuOpen(false);
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!demoMenuDropdown.contains(e.target) && !demoMenuTrigger.contains(e.target)) {
+                    setDemoMenuOpen(false);
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    setDemoMenuOpen(false);
+                }
+            });
+            
+            Logger.info('DemoPortal', 'Portal dropdown menu initialized');
+        }
+    } catch (e) {
+        Logger.error('DemoPortal', 'Failed to initialize dropdown menu', e);
     }
 });

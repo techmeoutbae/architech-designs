@@ -7,6 +7,92 @@ const APP = document.body.dataset.app;
 const CONFIG = window.ARCHITECH_PORTAL_CONFIG || {};
 const SUPPORT_EMAIL = CONFIG.supportEmail || 'hello@architechdesigns.net';
 const STORAGE_BUCKET = CONFIG.storageBucket || 'client-documents';
+const DEFAULT_STRIPE_API_URL = 'https://api.stripe.com/v1';
+const STRIPE_PUBLISHABLE_KEY = CONFIG.stripePublishableKey || '';
+const STRIPE_PAYMENT_LINK_URL = resolveConfiguredStripePaymentUrl(CONFIG);
+
+// Real-time message polling
+let messagePollInterval = null;
+function startMessagePolling(supabase, projectId) {
+    if (messagePollInterval) clearInterval(messagePollInterval);
+    if (!projectId) return;
+    
+    messagePollInterval = setInterval(async () => {
+        try {
+            const { data } = await supabase
+                .from('messages')
+                .select('*')
+                .eq('project_id', projectId)
+                .order('created_at', { ascending: true });
+            
+            if (data && data.length > 0) {
+                renderMessageThread(data);
+            }
+        } catch (err) {
+            console.log('[Portal] Message poll:', err.message);
+        }
+    }, 10000);
+}
+
+function renderMessageThread(messages) {
+    const thread = document.getElementById('workspaceMessageThread');
+    if (!thread) return;
+    
+    if (!messages || messages.length === 0) {
+        thread.innerHTML = renderEmptyState('No messages yet', 'Use the composer to send a question or project note to the team.');
+        return;
+    }
+    
+    const currentUserId = window.currentUserId || '';
+    
+    thread.innerHTML = messages.map(message => {
+        const ownMessage = message.sender_id === currentUserId;
+        return `
+            <article class="workspace-message ${ownMessage ? 'client' : 'team'}">
+                <div class="workspace-message-meta">
+                    <strong>${ownMessage ? 'You' : 'Architech Team'}</strong>
+                    <span>${formatDateTime(message.created_at)}</span>
+                </div>
+                <p>${escapeHtml(message.body)}</p>
+            </article>
+        `;
+    }).join('');
+    
+    thread.scrollTop = thread.scrollHeight;
+}
+
+// Stripe Payment Handler
+async function handleStripePayment(invoiceId, amount, invoiceNumber, invoiceTitle, paymentUrl) {
+    const alert = byId('workspaceAlert');
+
+    const resolvedPaymentUrl = sanitizeExternalUrl(paymentUrl) || STRIPE_PAYMENT_LINK_URL;
+
+    if (!resolvedPaymentUrl) {
+        setAlert(alert, 'No Stripe payment link is attached to this invoice yet. Please contact support for the secure payment URL.', 'error');
+        return;
+    }
+
+    const newWindow = window.open(resolvedPaymentUrl, '_blank', 'noopener,noreferrer');
+    if (!newWindow) {
+        window.location.href = resolvedPaymentUrl;
+        return;
+    }
+
+    setAlert(alert, `Secure Stripe payment opened for ${invoiceNumber || invoiceTitle || 'this invoice'} in a new tab.`, 'success');
+}
+
+function bindPaymentHandlers() {
+    document.querySelectorAll('[data-pay-invoice]').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            const invoiceId = e.target.dataset.payInvoice;
+            const amount = e.target.dataset.invoiceAmount;
+            const invoiceNumber = e.target.dataset.invoiceNumber;
+            const invoiceTitle = e.target.dataset.invoiceTitle;
+            const paymentUrl = e.target.dataset.paymentUrl;
+            await handleStripePayment(invoiceId, amount, invoiceNumber, invoiceTitle, paymentUrl);
+        });
+    });
+}
 
 if (['client-login', 'client-workspace', 'ops'].includes(APP)) {
     initPortalApplication().catch((error) => {
@@ -266,6 +352,7 @@ async function initClientWorkspacePage(supabase, userContext) {
         setAlert(alert, 'Refreshing project data...', 'info');
         state.projectDetail = await fetchProjectDetail(supabase, state.selectedProjectId);
         renderClientWorkspace(state);
+        startMessagePolling(supabase, state.selectedProjectId);
         clearAlert(alert);
     }
 }
@@ -438,7 +525,7 @@ async function initAdminWorkspacePage(supabase, userContext) {
             });
 
             if (error) {
-                setAlert(byId('adminAlert'), error.message || 'The client account could not be provisioned.', 'error');
+                setAlert(byId('adminAlert'), formatProvisioningError(error), 'error');
                 setButtonBusy(submitButton, false, 'Send Invite + Create Client');
                 return;
             }
@@ -916,6 +1003,7 @@ function renderClientWorkspace(state) {
     byId('workspaceInvoiceList').innerHTML = detail.invoices.length
         ? detail.invoices.map((invoice) => {
             const invoicePayments = detail.payments.filter((item) => item.invoice_id === invoice.id);
+            const invoicePaymentUrl = getInvoicePaymentUrl(invoice);
             const summaryText = invoice.description
                 ? invoice.description
                 : invoice.due_at
@@ -934,7 +1022,11 @@ function renderClientWorkspace(state) {
                     <p>${escapeHtml(summaryText)}</p>
                     <div class="invoice-card-foot">
                         <strong>${formatCurrency(invoice.amount)}</strong>
-                        ${invoice.payment_url ? `<a class="btn btn-primary btn-sm" href="${escapeHtml(invoice.payment_url)}" target="_blank" rel="noopener">Open Payment Link</a>` : '<span class="workspace-inline-note">Payment link will be shared when available.</span>'}
+                        ${invoice.status === 'paid'
+                            ? '<span class="workspace-inline-note">Paid</span>'
+                            : invoicePaymentUrl
+                                ? `<button type="button" class="btn btn-primary btn-sm" data-pay-invoice="${escapeHtml(invoice.id)}" data-payment-url="${escapeHtml(invoicePaymentUrl)}" data-invoice-amount="${invoice.amount}" data-invoice-number="${escapeHtml(invoice.invoice_number || 'Invoice')}" data-invoice-title="${escapeHtml(invoice.title)}">Pay Securely</button>`
+                                : '<span class="workspace-inline-note">Payment link pending</span>'}
                     </div>
                     ${invoicePayments.length ? `<div class="workspace-inline-records">${invoicePayments.map((payment) => `<span class="workspace-pill success">${escapeHtml(formatCurrency(payment.amount))} received ${escapeHtml(formatDate(payment.paid_at))}</span>`).join('')}</div>` : ''}
                 </article>
@@ -960,6 +1052,7 @@ function renderClientWorkspace(state) {
     byId('workspaceMessageThread').innerHTML = messageMarkup;
 
     fillProfileForm(state.profile);
+    bindPaymentHandlers();
 }
 
 function renderClientWorkspaceEmptyState(profile, client) {
@@ -1122,6 +1215,7 @@ function renderAdminWorkspace(state) {
     byId('adminInvoiceList').innerHTML = selectedProjectInvoices.length
         ? selectedProjectInvoices.map((invoice) => {
             const invoicePayments = state.payments.filter((payment) => payment.invoice_id === invoice.id);
+            const invoicePaymentUrl = getInvoicePaymentUrl(invoice);
             return `
                 <article class="invoice-card ${invoice.status === 'paid' ? 'paid' : invoice.status === 'overdue' ? 'open' : 'upcoming'}">
                     <div class="invoice-card-head">
@@ -1134,8 +1228,9 @@ function renderAdminWorkspace(state) {
                     <p>${escapeHtml(invoice.description || 'No invoice description added yet.')}</p>
                     <div class="invoice-card-foot">
                         <strong>${formatCurrency(invoice.amount)}</strong>
-                        <span class="workspace-inline-note">${invoice.due_at ? `Due ${formatDate(invoice.due_at)}` : 'No due date set'}</span>
+                        <span class="workspace-inline-note">${invoicePaymentUrl ? 'Stripe link attached' : invoice.due_at ? `Due ${formatDate(invoice.due_at)}` : 'No due date set'}</span>
                     </div>
+                    ${invoicePaymentUrl ? `<div class="workspace-inline-records"><a class="workspace-pill" href="${escapeHtml(invoicePaymentUrl)}" target="_blank" rel="noopener noreferrer">Open payment link</a></div>` : ''}
                     ${invoicePayments.length ? `<div class="workspace-inline-records">${invoicePayments.map((payment) => `<span class="workspace-pill success">${escapeHtml(formatCurrency(payment.amount))} ${escapeHtml(payment.method || 'recorded')}</span>`).join('')}</div>` : ''}
                 </article>
             `;
@@ -1412,20 +1507,23 @@ function initWorkspaceChrome() {
         }
     });
 
+    document.addEventListener('click', (event) => {
+        const closeTrigger = event.target.closest('.workspace-nav-button, [data-open-workspace-tab], #portalSignOut, #workspaceAccountMenu a');
+        if (!closeTrigger) {
+            return;
+        }
+
+        closeAccountMenu();
+        if (window.innerWidth <= 1100) {
+            closeDrawer();
+        }
+    });
+
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
             closeDrawer();
             closeAccountMenu();
         }
-    });
-
-    document.querySelectorAll('.workspace-nav-button, [data-open-workspace-tab], #portalSignOut, #workspaceAccountMenu a').forEach((control) => {
-        control.addEventListener('click', () => {
-            closeAccountMenu();
-            if (window.innerWidth <= 1100) {
-                closeDrawer();
-            }
-        });
     });
 
     window.addEventListener('resize', () => {
@@ -1516,6 +1614,51 @@ function renderEmptyState(title, body, actionMarkup = '') {
             ${actionMarkup ? `<div class="workspace-empty-actions">${actionMarkup}</div>` : ''}
         </div>
     `;
+}
+
+function resolveConfiguredStripePaymentUrl(config) {
+    const configuredApiUrl = String(config.stripeApiUrl || '').trim();
+    const legacyStripeUrl = configuredApiUrl && configuredApiUrl !== DEFAULT_STRIPE_API_URL
+        ? configuredApiUrl
+        : '';
+
+    return [
+        config.stripePaymentLinkUrl,
+        config.stripeCheckoutUrl,
+        config.stripeUrl,
+        legacyStripeUrl
+    ].map((value) => sanitizeExternalUrl(value))
+        .find(Boolean) || '';
+}
+
+function sanitizeExternalUrl(value) {
+    if (!value) {
+        return '';
+    }
+
+    try {
+        const url = new URL(String(value).trim(), window.location.origin);
+        return ['http:', 'https:'].includes(url.protocol) ? url.toString() : '';
+    } catch (error) {
+        return '';
+    }
+}
+
+function getInvoicePaymentUrl(invoice) {
+    return sanitizeExternalUrl(invoice?.payment_url) || STRIPE_PAYMENT_LINK_URL;
+}
+
+function formatProvisioningError(error) {
+    if (!error) {
+        return 'The client account could not be provisioned.';
+    }
+
+    const message = String(error.message || '').trim();
+    if (message.includes('Failed to send a request to the Edge Function')) {
+        return 'The Supabase Edge Function is not responding. Redeploy `admin-provision-user` after setting `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY`.';
+    }
+
+    return message || 'The client account could not be provisioned.';
 }
 
 function setInlineStatus(element, message, kind = 'info') {

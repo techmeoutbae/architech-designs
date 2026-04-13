@@ -139,7 +139,7 @@
                                 <div class="workspace-form-grid">
                                     <div class="form-group">
                                         <label for="adminClientFullName">Primary Contact</label>
-                                        <input id="adminClientFullName" type="text" required placeholder="Jordan Sterling">
+                                        <input id="adminClientFullName" type="text" required placeholder="Maya Patel">
                                     </div>
                                     <div class="form-group">
                                         <label for="adminClientEmail">Portal Email</label>
@@ -147,7 +147,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="adminClientCompany">Company Name</label>
-                                        <input id="adminClientCompany" type="text" required placeholder="Sterling &amp; Associates">
+                                        <input id="adminClientCompany" type="text" required placeholder="Northline Medspa">
                                     </div>
                                     <div class="form-group">
                                         <label for="adminClientBillingEmail">Billing Email</label>
@@ -342,14 +342,15 @@
                                             <input id="adminInvoiceDue" type="date">
                                         </div>
                                         <div class="form-group">
-                                            <label for="adminInvoicePaymentUrl">Payment Link</label>
-                                            <input id="adminInvoicePaymentUrl" type="url" placeholder="https://payment-link.example">
+                                            <label for="adminInvoicePaymentUrl">Stripe Payment Link</label>
+                                            <input id="adminInvoicePaymentUrl" type="url" placeholder="https://buy.stripe.com/...">
                                         </div>
                                         <div class="form-group">
                                             <label for="adminInvoiceDescription">Description</label>
                                             <textarea id="adminInvoiceDescription" rows="3" placeholder="Optional invoice summary or milestone note."></textarea>
                                         </div>
                                     </div>
+                                    <p class="workspace-inline-note">Leave the Stripe field blank only if you want invoices to use the default payment link from `js/portal-config.js`.</p>
                                     <div class="workspace-form-actions">
                                         <button type="submit" class="btn btn-primary">Create Invoice</button>
                                     </div>
@@ -453,7 +454,7 @@
                     <ul>
                         <li><a href="about.html">About</a></li>
                         <li><a href="process.html">Our Process</a></li>
-                        <li><a href="portfolio.html">Portfolio</a></li>
+                        <li><a href="portfolio.html">Projects</a></li>
                         <li><a href="contact.html">Contact</a></li>
                     </ul>
                 </div>
