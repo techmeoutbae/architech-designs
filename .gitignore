@@ -3,3 +3,9 @@ node_modules/
 *.log
 
 .vercel
+supabase/.temp/
+.tmp-chrome*/
+.tmp-http-server*.pid
+audit-*.png
+qa-local-*.png
+verify-*.png

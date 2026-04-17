@@ -1,25 +1,23 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio | Architech Designs</title>
-    <meta name="description" content="View our portfolio of website design projects for local businesses. Strategic, conversion-focused web design.">
+    <title>Demo Space & Case Studies | Architech Designs</title>
+    <meta name="description" content="Explore Architech Designs demo space with live Vercel showcases, a package builder, portal previews, and premium case study highlights.">
     <link rel="canonical" href="https://www.architechdesigns.net/portfolio.html">
     <link rel="icon" type="image/png" href="images/updated-ad-logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-    <!-- Navigation -->
+<body class="demo-space-page">
     <nav class="navbar">
         <div class="container">
             <div class="navbar-inner">
                 <div class="header-logo-wrapper">
                     <a href="index.html" class="header-logo-link">
-                        <img src="images/updated-ad-logo.png" alt="Architech Building" class="header-building">
+                        <img src="images/updated-ad-logo.png" alt="Architech Designs" class="header-building">
                     </a>
                     <a href="index.html" class="header-logo-text">
                         <img src="images/updated-ad-logo.png" alt="Architech Designs">
@@ -47,126 +45,178 @@
         </div>
     </nav>
 
-    <!-- Page Header -->
-    <section class="page-header">
+    <section class="page-header demo-space-hero">
         <div class="container">
             <div class="page-header-content">
-                <span class="section-label">Our Work</span>
-                <h1 style="color: #FFFFFF !important;">Projects</h1>
-                <p style="color: rgba(255,255,255,0.85) !important;">Live demonstrations and design concepts showcasing our development capabilities and the features we can provide for your site.</p>
+                <span class="section-label">Demo Space</span>
+                <h1>Interactive product-style demos, portal previews, and premium capability proof.</h1>
+                <p class="section-subtitle">This is the curated testing environment for Architech Designs. Prospects can move through live Vercel demos, estimate project scope, preview the portal experience, and review selected case-study outcomes without leaving the brand experience.</p>
+                <div class="hero-buttons">
+                    <a href="#demo-gallery" class="btn btn-primary btn-lg">Explore Live Demos</a>
+                    <a href="#builder-lab" class="btn btn-secondary btn-lg">Open Estimate Builder</a>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Portfolio Intro -->
-    <section class="section">
+    <section class="section demo-gallery-section" id="demo-gallery">
         <div class="container">
             <div class="section-header reveal">
-                <h2 class="section-title">Featured Live Demo</h2>
-                <p class="section-subtitle">Explore a working example of the functionality, design polish, and customer experience we can deliver for premium brands.</p>
+                <span class="section-label">Vercel Live Demos</span>
+                <h2 class="section-title">Tap any demo to open the full brief.</h2>
+                <p class="section-subtitle">Each card stays lightweight here. Specs, features, and benefits live on a dedicated detail page.</p>
+            </div>
+            <div class="demo-gallery-grid mobile-rail rail-featured" data-mobile-rail data-mobile-rail-label="Swipe through live demo showcases">
+                <a href="demo-details.html?demo=beauty-service" class="demo-gallery-card demo-gallery-card-link reveal" id="beauty-service">
+                    <div class="demo-gallery-visual demo-gallery-visual-beauty">
+                        <img src="images/medspa-preview.png" alt="Beauty service demo preview">
+                        <span class="demo-gallery-pill">Vercel Live</span>
+                        <div class="demo-gallery-overlay">
+                            <span class="demo-gallery-kicker">Beauty Service Demo</span>
+                            <h3>Luxury booking experience for beauty brands.</h3>
+                            <p>View specs, features, and benefits.</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="demo-details.html?demo=product-brand" class="demo-gallery-card demo-gallery-card-link reveal" id="product-brand">
+                    <div class="demo-gallery-visual demo-gallery-visual-product">
+                        <div class="demo-gallery-product-mark">NOIR ATELIER</div>
+                        <span class="demo-gallery-pill">Vercel Live</span>
+                        <div class="demo-gallery-overlay">
+                            <span class="demo-gallery-kicker">Product Brand Demo</span>
+                            <h3>Luxury storytelling with checkout-ready structure.</h3>
+                            <p>View specs, features, and benefits.</p>
+                        </div>
+                    </div>
+                </a>
             </div>
         </div>
     </section>
-
-    <!-- Portfolio Grid -->
-    <section class="section" style="background: var(--off-white);">
-        <div class="container">
-            <div class="portfolio-grid">
-                <!-- Live Demo Card -->
-                <div class="project-card reveal" data-category="medical" data-href="live-demo.html?demo=medspa-beauty">
-                    <div class="project-image">
-                        <img src="images/medspa-preview.png" alt="Luxury Med Spa Demo Preview" class="project-preview-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="project-placeholder demo-placeholder-card" style="display:none;">
-                            <div class="mini-mockup">
-                                <div class="mini-mockup-nav">
-                                    <span class="mini-mockup-logo">Glow</span>
-                                    <div class="mini-mockup-menu"><span>Home</span><span>About</span><span>Book</span></div>
-                                </div>
-                                <div class="mini-mockup-hero luxe">
-                                    <h4>Reveal Your Beauty</h4>
-                                    <p>Medical Aesthetics</p>
-                                    <span class="mini-mockup-cta">Book Now</span>
-                                </div>
-                                <div class="mini-mockup-services">
-                                    <div class="mini-mockup-service"><span>Botox</span></div>
-                                    <div class="mini-mockup-service"><span>Fillers</span></div>
-                                    <div class="mini-mockup-service"><span>Facials</span></div>
-                                </div>
-                                <div class="mini-mockup-trust">
-                                    <span>⭐ 4.9</span>
-                                    <span>Live Demo</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="project-overlay">
-                            <a href="live-demo.html?demo=medspa-beauty"><span>Open Embedded Demo</span></a>
-                        </div>
-                        <span class="demo-badge">Live Demo</span>
-                    </div>
-                    <div class="project-info">
-                        <span class="project-industry">Medical Aesthetics</span>
-                        <h3 class="project-title">Luxury Med Spa Demo</h3>
-                        <p class="project-desc">Live demo showcasing custom features including booking system, client quiz, and interactive treatments gallery—demonstrating the level of functionality we deliver.</p>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-
-
-    <!-- Approach Section -->
-    <section class="section">
+    <section class="section builder-lab-section" id="builder-lab">
         <div class="container">
             <div class="section-header reveal">
-                <span class="section-label">Our Approach</span>
-                <h2 class="section-title">Every Project Starts With Strategy</h2>
-                <p class="section-subtitle">We don't just design websites. We develop digital strategies tailored to your business goals.</p>
+                <span class="section-label">Interactive Builder</span>
+                <h2 class="section-title">Estimate builder for premium scoping conversations.</h2>
+                <p class="section-subtitle">A cleaner way to demonstrate productized thinking: prospects can explore package fit, page scope, and advanced feature combinations without getting pushed into a cluttered quote form.</p>
             </div>
-            <div class="services-grid portfolio-approach-grid mobile-rail rail-featured" data-mobile-rail data-mobile-rail-label="Swipe through our approach">
-                <div class="service-card reveal">
-                    <div class="service-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="12"></line>
-                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
+            <div class="builder-lab-grid">
+                <form class="workspace-form-card reveal" id="estimateBuilder">
+                    <h3>Project Builder</h3>
+                    <div class="workspace-form-grid">
+                        <div class="form-group">
+                            <label for="estimateBasePackage">Starting package</label>
+                            <select id="estimateBasePackage">
+                                <option value="launch">Launch Site</option>
+                                <option value="growth" selected>Growth Site</option>
+                                <option value="premium">Premium Growth System</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="estimatePageCount">Estimated page count</label>
+                            <select id="estimatePageCount">
+                                <option value="5">5 pages</option>
+                                <option value="8" selected>8 pages</option>
+                                <option value="12">12 pages</option>
+                                <option value="16">16+ pages</option>
+                            </select>
+                        </div>
                     </div>
-                    <h3>Discovery & Research</h3>
-                    <p>We start by understanding your business, target audience, and competitive landscape to inform our strategy.</p>
-                </div>
-                <div class="service-card reveal">
-                    <div class="service-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-                            <path d="M2 17l10 5 10-5"></path>
-                            <path d="M2 12l10 5 10-5"></path>
-                        </svg>
+                    <div class="builder-option-grid">
+                        <label class="builder-option"><input type="checkbox" id="estimatePortal"> Client portal or dashboard</label>
+                        <label class="builder-option"><input type="checkbox" id="estimateAutomation"> Automation or integrations</label>
+                        <label class="builder-option"><input type="checkbox" id="estimateSeo" checked> Advanced SEO setup</label>
+                        <label class="builder-option"><input type="checkbox" id="estimateCopy"> Copy structure support</label>
+                        <label class="builder-option"><input type="checkbox" id="estimateCalculator"> Calculator or interactive tool</label>
+                        <label class="builder-option"><input type="checkbox" id="estimateCommerce"> Product or checkout flow</label>
                     </div>
-                    <h3>Strategic Planning</h3>
-                    <p>We develop a custom website strategy aligned with your business goals, from lead generation to brand building.</p>
-                </div>
-                <div class="service-card reveal">
-                    <div class="service-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
+                </form>
+
+                <article class="builder-output-card reveal">
+                    <span class="builder-output-kicker">Estimated Planning Range</span>
+                    <strong class="builder-output-range" id="estimateRange">$0 - $0</strong>
+                    <h3 id="estimatePackageRecommendation">Growth Site</h3>
+                    <p id="estimateSummary">Use the builder to generate a live planning range for your project structure.</p>
+                    <ul class="builder-feature-list" id="estimateFeatureList"></ul>
+                    <div class="builder-output-actions">
+                        <a href="contact.html" class="btn btn-primary">Book Consultation</a>
+                        <a href="packages.html" class="btn btn-outline">View Packages</a>
                     </div>
-                    <h3>Conversion Focus</h3>
-                    <p>Every design element is optimized to convert visitors into leads and customers for your business.</p>
-                </div>
+                </article>
             </div>
         </div>
     </section>
 
-    <!-- CTA -->
+    <section class="section demo-tools-section">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Testing Space</span>
+                <h2 class="section-title">More product-style demos prospects can test.</h2>
+            </div>
+            <div class="demo-tool-grid mobile-rail rail-featured" data-mobile-rail data-mobile-rail-label="Swipe through interactive demo tools">
+                <article class="demo-tool-card reveal">
+                    <span class="demo-tool-kicker">Quiz</span>
+                    <h3>Website fit quiz</h3>
+                    <p>Guides prospects toward the right package with a more strategic intake experience.</p>
+                    <a href="quiz.html" class="link-with-arrow">Open quiz</a>
+                </article>
+                <article class="demo-tool-card reveal">
+                    <span class="demo-tool-kicker">Portal Preview</span>
+                    <h3>Client workspace showcase</h3>
+                    <p>Demonstrates milestones, files, billing, messaging, and private project visibility.</p>
+                    <a href="client-portal.html" class="link-with-arrow">Open portal preview</a>
+                </article>
+                <article class="demo-tool-card reveal">
+                    <span class="demo-tool-kicker">Admin Preview</span>
+                    <h3>Operational dashboard view</h3>
+                    <p>Shows how client management, delivery, finance, and access controls can live inside one suite.</p>
+                    <a href="ops-suite.html" class="link-with-arrow">Open admin suite</a>
+                </article>
+                <article class="demo-tool-card reveal">
+                    <span class="demo-tool-kicker">Consulting Use</span>
+                    <h3>Sales-friendly demo wrapper</h3>
+                    <p>External demos are framed inside a branded wrapper so they feel intentional and premium during calls.</p>
+                    <a href="live-demo.html?demo=beauty-service" class="link-with-arrow">View wrapper</a>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section case-study-preview-section" id="case-studies">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Case Study Preview</span>
+                <h2 class="section-title">Selected outcomes and positioning examples.</h2>
+            </div>
+            <div class="case-study-preview-grid mobile-rail rail-featured" data-mobile-rail data-mobile-rail-label="Swipe through case study previews">
+                <article class="case-study-preview-card reveal">
+                    <span class="case-study-kicker">Luxe Med Spa</span>
+                    <h3>Sharper premium positioning for a beauty-forward service brand.</h3>
+                    <ul class="demo-check-list">
+                        <li>Elevated service hierarchy and treatment merchandising</li>
+                        <li>Stronger trust flow through proof, FAQs, and content structure</li>
+                        <li>Customer journey designed around booking confidence</li>
+                    </ul>
+                    <a href="case-study-luxe-med-spa.html" class="btn btn-outline">View case study</a>
+                </article>
+                <article class="case-study-preview-card reveal">
+                    <span class="case-study-kicker">Apex HVAC</span>
+                    <h3>More credible service positioning for a conversion-focused local business site.</h3>
+                    <ul class="demo-check-list">
+                        <li>Cleaner navigation and faster service discovery</li>
+                        <li>Lead-path clarity for estimate and emergency calls</li>
+                        <li>Operational credibility with stronger service architecture</li>
+                    </ul>
+                    <a href="case-study-apex-hvac.html" class="btn btn-outline">View case study</a>
+                </article>
+            </div>
+        </div>
+    </section>
     <section class="section cta-section">
         <div class="container">
             <div class="cta-content reveal">
-                <h2>Ready to Build Your Website?</h2>
-                <p>Let's create a website that helps your business grow. Book your free consultation today.</p>
+                <h2>Need a website that feels premium and proves deeper technical capability?</h2>
+                <p>We design the front-end experience, the conversion path, and the systems layer behind it so your site looks stronger and works harder.</p>
                 <div class="cta-buttons">
                     <a href="contact.html" class="btn btn-primary btn-lg">Book Consultation</a>
                     <a href="packages.html" class="btn btn-secondary btn-lg">View Packages</a>
@@ -175,23 +225,6 @@
         </div>
     </section>
 
-    <!-- Card Modal -->
-    <div class="card-modal" id="cardModal">
-        <div class="card-modal-overlay" id="cardModalOverlay"></div>
-        <div class="card-modal-content">
-            <button class="card-modal-close" id="cardModalClose" aria-label="Close">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
-            <div class="card-modal-icon" id="cardModalIcon"></div>
-            <h3 id="cardModalTitle"></h3>
-            <p id="cardModalText"></p>
-        </div>
-    </div>
-
-    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
@@ -199,33 +232,33 @@
                     <a href="index.html" class="logo">
                         <img src="images/updated-ad-logo.png" alt="Architech Designs">
                     </a>
-                    <p>Strategic web design for businesses that want to grow. We build modern, conversion-focused websites that actually work.</p>
+                    <p>Premium websites, conversion-focused systems, client portals, and advanced digital experiences for businesses that need more than a basic redesign.</p>
                 </div>
                 <div class="footer-col">
-                    <h4>Company</h4>
+                    <h4>Demo Space</h4>
                     <ul>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="process.html">Our Process</a></li>
-                        <li><a href="portfolio.html">Projects</a></li>
-                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="#demo-gallery">Live Demos</a></li>
+                        <li><a href="#builder-lab">Estimate Builder</a></li>
+                        <li><a href="client-portal.html">Portal Preview</a></li>
+                        <li><a href="ops-suite.html">Admin Suite</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
-                    <h4>Services</h4>
+                    <h4>Work</h4>
                     <ul>
-                        <li><a href="services.html">Web Design</a></li>
-                        <li><a href="services.html">Redesign</a></li>
-                        <li><a href="services.html">Landing Pages</a></li>
-                        <li><a href="services.html">Support</a></li>
+                        <li><a href="case-study-luxe-med-spa.html">Luxe Med Spa</a></li>
+                        <li><a href="case-study-apex-hvac.html">Apex HVAC</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="packages.html">Packages</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
                     <h4>Resources</h4>
                     <ul>
                         <li><a href="faq.html">FAQ</a></li>
-                        <li><a href="packages.html">Pricing</a></li>
                         <li><a href="privacy-policy.html">Privacy Policy</a></li>
                         <li><a href="terms.html">Terms of Service</a></li>
+                        <li><a href="contact.html">Contact</a></li>
                     </ul>
                 </div>
             </div>
@@ -237,17 +270,6 @@
                     <a href="disclaimer.html">Disclaimer</a>
                     <a href="cookie-policy.html">Cookies</a>
                 </div>
-                <div class="footer-social">
-                    <a href="#" aria-label="LinkedIn">
-                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                    </a>
-                    <a href="#" aria-label="Twitter">
-                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                    </a>
-                    <a href="#" aria-label="Instagram">
-                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-                    </a>
-                </div>
             </div>
         </div>
     </footer>
@@ -255,4 +277,3 @@
     <script src="js/main.js"></script>
 </body>
 </html>
-

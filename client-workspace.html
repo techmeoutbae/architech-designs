@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,9 +12,7 @@
     <link rel="apple-touch-icon" href="images/updated-ad-logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/premium-refresh.css">
 </head>
 <body class="workspace-page client-workspace-page workspace-product-page" data-app="client-workspace">
     <header class="workspace-app-header">
@@ -65,7 +63,11 @@
     <main class="workspace-product-main">
         <section class="section workspace-demo-section" id="client-workspace">
             <div class="container">
-                <div class="workspace-shell workspace-app-shell client-portal-shell">
+                <div class="workspace-empty-state workspace-access-gate" id="workspaceAccessGate">
+                    <h3>Checking secure access...</h3>
+                    <p>Verifying your client session and preparing the live workspace.</p>
+                </div>
+                <div class="workspace-shell workspace-app-shell client-portal-shell is-hidden" id="clientWorkspaceShell">
                     <aside class="workspace-sidebar" id="workspaceSidebar" aria-label="Portal navigation">
                         <div class="workspace-sidebar-topbar">
                             <div class="workspace-sidebar-head">
@@ -153,6 +155,22 @@
                                 <h3>Signed downloads for deliverables, decks, and project files.</h3>
                             </div>
                         </div>
+                        <form class="workspace-form-card" id="workspaceDocumentUploadForm">
+                            <div class="workspace-form-grid">
+                                <div class="form-group">
+                                    <label for="workspaceDocumentCategory">Category</label>
+                                    <input id="workspaceDocumentCategory" type="text" placeholder="Reference file, approval, asset, copy deck">
+                                </div>
+                                <div class="form-group">
+                                    <label for="workspaceDocumentFile">File</label>
+                                    <input id="workspaceDocumentFile" type="file" required>
+                                </div>
+                            </div>
+                            <div class="workspace-form-actions">
+                                <button type="submit" class="btn btn-outline">Upload Document</button>
+                                <span class="workspace-inline-note">Upload client-side reference files, approvals, or supporting assets directly to the live project.</span>
+                            </div>
+                        </form>
                         <div class="workspace-file-grid" id="workspaceDocumentList"></div>
                     </section>
 

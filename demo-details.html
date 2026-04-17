@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#102138">
-    <title>Live Demo | Architech Designs</title>
-    <meta name="description" content="Embedded live demo showcase for Architech Designs projects.">
-    <link rel="canonical" href="https://www.architechdesigns.net/live-demo.html">
+    <title>Demo Details | Architech Designs</title>
+    <meta name="description" content="Detailed feature brief for Architech Designs live demo experiences.">
+    <link rel="canonical" href="https://www.architechdesigns.net/demo-details.html">
     <link rel="icon" type="image/png" href="images/updated-ad-logo.png">
     <link rel="apple-touch-icon" href="images/updated-ad-logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="demo-shell-page">
+<body class="demo-detail-page">
     <nav class="navbar">
         <div class="container">
             <div class="navbar-inner">
@@ -47,58 +47,59 @@
         </div>
     </nav>
 
-    <section class="page-header demo-shell-hero">
+    <section class="page-header demo-detail-hero">
         <div class="container">
-            <div class="page-header-content demo-shell-copy">
-                <span class="section-label" id="demoEyebrow">Embedded Demo</span>
-                <h1 id="demoTitle">Loading project demo...</h1>
-                <p class="section-subtitle" id="demoSubtitle">Preparing the embedded showcase experience.</p>
+            <div class="page-header-content demo-detail-copy">
+                <span class="section-label" id="demoDetailEyebrow">Demo Brief</span>
+                <h1 id="demoDetailTitle">Loading demo brief...</h1>
+                <p class="section-subtitle" id="demoDetailSubtitle">Preparing feature details and benefit breakdown.</p>
                 <div class="demo-shell-actions">
-                    <a href="portfolio.html" class="btn btn-primary btn-lg">Back to Projects</a>
-                    <a href="portfolio.html" class="btn btn-primary btn-lg" id="demoOpenLink" target="_blank" rel="noopener noreferrer">Open Fullscreen</a>
-                    <a href="portfolio.html" class="btn btn-primary btn-lg" id="demoCaseStudy">View Case Study</a>
+                    <a href="portfolio.html#demo-gallery" class="btn btn-primary btn-lg">Back to Demo Gallery</a>
+                    <a href="live-demo.html" class="btn btn-primary btn-lg" id="demoDetailEmbeddedLink">Open Embedded Demo</a>
+                    <a href="portfolio.html" class="btn btn-secondary btn-lg" id="demoDetailLiveLink" target="_blank" rel="noopener noreferrer">Open Live Site</a>
                 </div>
-                <div class="demo-shell-badges" id="demoShellBadges"></div>
+                <div class="demo-shell-badges" id="demoDetailBadges"></div>
             </div>
         </div>
     </section>
 
-    <section class="section demo-embed-section">
+    <section class="section demo-detail-overview">
         <div class="container">
-            <div class="demo-embed-shell reveal">
-                <div class="demo-embed-toolbar">
-                    <div class="demo-embed-toolbar-copy">
-                        <span id="demoToolbarLabel">Embedded route</span>
-                        <strong id="demoToolbarTitle">Preparing embedded experience</strong>
-                    </div>
-                    <span class="demo-embed-status" id="demoEmbedStatus">Checking demo source</span>
-                </div>
-                <div class="demo-embed-frame-shell">
-                    <iframe
-                        id="demoEmbedFrame"
-                        class="demo-embed-frame"
-                        title="Embedded project demo"
-                        loading="lazy"
-                        referrerpolicy="strict-origin-when-cross-origin"></iframe>
-                </div>
+            <div class="demo-detail-grid">
+                <article class="demo-detail-story reveal">
+                    <span class="demo-detail-kicker">Overview</span>
+                    <h2 id="demoDetailHeadline">Preparing strategic overview</h2>
+                    <p id="demoDetailDescription">Loading narrative and positioning for this demo.</p>
+                    <div class="demo-detail-metrics" id="demoDetailMetrics"></div>
+                </article>
+
+                <aside class="demo-detail-specs reveal">
+                    <span class="demo-detail-kicker">Specs</span>
+                    <div class="demo-detail-spec-grid" id="demoDetailSpecs"></div>
+                </aside>
             </div>
-            <div class="demo-embed-note" id="demoEmbedNote"></div>
-            <div class="demo-embed-meta">
-                <article class="demo-embed-meta-card">
-                    <span>Delivery Model</span>
-                    <h3 id="demoMetaHeadline">Embedded within your main site</h3>
-                    <p id="demoMetaBody">This route keeps the project experience inside your portfolio instead of bouncing visitors out to a separate deployment.</p>
-                </article>
-                <article class="demo-embed-meta-card">
-                    <span>Routing</span>
-                    <h3>Next.js-ready wrapper</h3>
-                    <p id="demoRoutingBody">When the exported app folder exists locally, this page loads it first. Otherwise it uses your existing polished fallback showcase.</p>
-                </article>
-                <article class="demo-embed-meta-card">
-                    <span>Use Case</span>
-                    <h3 id="demoUseCaseTitle">Premium sales presentation</h3>
-                    <p id="demoUseCaseBody">You can share a clean demo route during consultations without deploying the underlying app to a public production URL.</p>
-                </article>
+        </div>
+    </section>
+
+    <section class="section demo-detail-features">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Feature Breakdown</span>
+                <h2 class="section-title">All specs, features, and benefits in one cleaner brief.</h2>
+                <p class="section-subtitle">Use this page during sales conversations when someone wants the full strategic breakdown behind the preview card.</p>
+            </div>
+            <div class="demo-detail-feature-grid" id="demoDetailFeatureGrid"></div>
+        </div>
+    </section>
+
+    <section class="section demo-detail-architecture">
+        <div class="container">
+            <div class="demo-detail-architecture-shell reveal">
+                <div>
+                    <span class="section-label">Build Shape</span>
+                    <h2>How the experience is structured.</h2>
+                </div>
+                <div class="demo-detail-architecture-list" id="demoDetailArchitecture"></div>
             </div>
         </div>
     </section>
@@ -124,8 +125,8 @@
                 <div class="footer-col">
                     <h4>Demos</h4>
                     <ul>
-                        <li><a href="live-demo.html?demo=beauty-service">Beauty Service Demo</a></li>
-                        <li><a href="live-demo.html?demo=product-brand">Product Brand Demo</a></li>
+                        <li><a href="demo-details.html?demo=beauty-service">Beauty Demo Brief</a></li>
+                        <li><a href="demo-details.html?demo=product-brand">Product Demo Brief</a></li>
                         <li><a href="client-portal.html">Portal Demo</a></li>
                         <li><a href="portfolio.html#builder-lab">Estimate Builder</a></li>
                     </ul>
@@ -153,6 +154,6 @@
     </footer>
 
     <script src="js/main.js"></script>
-    <script type="module" src="js/live-demo.js"></script>
+    <script type="module" src="js/demo-details.js"></script>
 </body>
 </html>

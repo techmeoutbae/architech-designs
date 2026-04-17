@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,9 +12,7 @@
     <link rel="apple-touch-icon" href="images/updated-ad-logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/premium-refresh.css">
 </head>
 <body class="workspace-page ops-page workspace-product-page" data-app="ops">
     <header class="workspace-app-header">
@@ -65,7 +63,10 @@
     <main class="workspace-product-main">
         <section class="section workspace-demo-section" id="ops-suite">
             <div class="container">
-                <div class="workspace-empty-state workspace-access-gate is-hidden" id="adminAccessGate"></div>
+                <div class="workspace-empty-state workspace-access-gate" id="adminAccessGate">
+                    <h3>Checking secure access...</h3>
+                    <p>Verifying your admin session before loading the live operations suite.</p>
+                </div>
                 <div class="workspace-shell ops-shell is-hidden" id="adminAppShell">
                     <aside class="workspace-sidebar" id="workspaceSidebar" aria-label="Admin navigation">
                         <div class="workspace-sidebar-topbar">
@@ -89,6 +90,7 @@
                         </div>
                         <div class="workspace-nav">
                             <button class="workspace-nav-button active" type="button" data-workspace-tab="ops-dashboard">Dashboard</button>
+                            <button class="workspace-nav-button" type="button" data-workspace-tab="ops-consultations">Consultations</button>
                             <button class="workspace-nav-button" type="button" data-workspace-tab="ops-clients">Clients</button>
                             <button class="workspace-nav-button" type="button" data-workspace-tab="ops-projects">Projects</button>
                             <button class="workspace-nav-button" type="button" data-workspace-tab="ops-deliverables">Deliverables</button>
@@ -125,6 +127,53 @@
                     <section class="workspace-view active" id="ops-dashboard">
                         <div class="workspace-kpi-grid" id="adminMetricsGrid"></div>
                         <div class="workspace-card-stack" id="adminRecentActivity"></div>
+                    </section>
+
+                    <section class="workspace-view" id="ops-consultations">
+                        <div class="workspace-section-head">
+                            <div>
+                                <span class="workspace-panel-kicker">Consultation Calendar</span>
+                                <h3>Review incoming consultation requests, confirm the schedule, and attach them to live projects.</h3>
+                            </div>
+                        </div>
+                        <div class="workspace-form-layout">
+                            <div class="workspace-card-stack" id="adminConsultationList"></div>
+                            <div class="workspace-form-stack">
+                                <article class="workspace-form-card">
+                                    <h3>Selected Consultation</h3>
+                                    <div id="adminConsultationDetail" class="workspace-empty-state">
+                                        <h3>No consultation selected</h3>
+                                        <p>Choose a consultation request to review the brief, contact details, and preferred time.</p>
+                                    </div>
+                                </article>
+                                <form class="workspace-form-card" id="adminConsultationForm">
+                                    <h3>Update Consultation</h3>
+                                    <input type="hidden" id="adminConsultationId">
+                                    <div class="workspace-form-grid">
+                                        <div class="form-group">
+                                            <label for="adminConsultationStatus">Status</label>
+                                            <select id="adminConsultationStatus">
+                                                <option value="new">New</option>
+                                                <option value="confirmed">Confirmed</option>
+                                                <option value="completed">Completed</option>
+                                                <option value="archived">Archived</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminConsultationProject">Linked Project</label>
+                                            <select id="adminConsultationProject"></select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminConsultationNotes">Internal Notes</label>
+                                            <textarea id="adminConsultationNotes" rows="4" placeholder="Add follow-up notes, scope hints, or call outcomes."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="workspace-form-actions">
+                                        <button type="submit" class="btn btn-primary">Save Consultation</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </section>
 
                     <section class="workspace-view" id="ops-clients">
@@ -342,15 +391,15 @@
                                             <input id="adminInvoiceDue" type="date">
                                         </div>
                                         <div class="form-group">
-                                            <label for="adminInvoicePaymentUrl">Stripe Payment Link</label>
-                                            <input id="adminInvoicePaymentUrl" type="url" placeholder="https://buy.stripe.com/...">
+                                            <label for="adminInvoicePaymentUrl">External Payment URL</label>
+                                            <input id="adminInvoicePaymentUrl" type="url" placeholder="Optional override like https://buy.stripe.com/...">
                                         </div>
                                         <div class="form-group">
                                             <label for="adminInvoiceDescription">Description</label>
                                             <textarea id="adminInvoiceDescription" rows="3" placeholder="Optional invoice summary or milestone note."></textarea>
                                         </div>
                                     </div>
-                                    <p class="workspace-inline-note">Leave the Stripe field blank only if you want invoices to use the default payment link from `js/portal-config.js`.</p>
+                                    <p class="workspace-inline-note">Leave this blank to let the portal generate Stripe Checkout sessions automatically. Only use this field when you intentionally want an external payment link override.</p>
                                     <div class="workspace-form-actions">
                                         <button type="submit" class="btn btn-primary">Create Invoice</button>
                                     </div>

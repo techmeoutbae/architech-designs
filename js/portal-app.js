@@ -3,6 +3,8 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const PORTAL_STORAGE_KEY = 'architech.portal.selectedProjectId';
 const ADMIN_CLIENT_STORAGE_KEY = 'architech.admin.selectedClientId';
 const ADMIN_PROJECT_STORAGE_KEY = 'architech.admin.selectedProjectId';
+const PROFILE_SYNC_DISABLED_STORAGE_KEY = 'architech.portal.profileSyncDisabled';
+const OPTIONAL_TABLE_CACHE_KEY = 'architech.portal.optionalTables';
 const APP = document.body.dataset.app;
 const CONFIG = window.ARCHITECH_PORTAL_CONFIG || {};
 const SUPPORT_EMAIL = CONFIG.supportEmail || 'hello@architechdesigns.net';
@@ -10,28 +12,75 @@ const STORAGE_BUCKET = CONFIG.storageBucket || 'client-documents';
 const DEFAULT_STRIPE_API_URL = 'https://api.stripe.com/v1';
 const STRIPE_PUBLISHABLE_KEY = CONFIG.stripePublishableKey || '';
 const STRIPE_PAYMENT_LINK_URL = resolveConfiguredStripePaymentUrl(CONFIG);
+const ADMIN_PROVISION_ENDPOINT = resolveAdminProvisionEndpoint(CONFIG);
+const PROFILE_SYNC_ENDPOINT = resolvePortalProfileSyncEndpoint(CONFIG);
 
-// Real-time message polling
+// Realtime project feed with polling fallback
 let messagePollInterval = null;
-function startMessagePolling(supabase, projectId) {
-    if (messagePollInterval) clearInterval(messagePollInterval);
-    if (!projectId) return;
-    
-    messagePollInterval = setInterval(async () => {
-        try {
+let messageRealtimeChannel = null;
+
+function stopMessageFeed(supabase) {
+    if (messagePollInterval) {
+        window.clearInterval(messagePollInterval);
+        messagePollInterval = null;
+    }
+
+    if (messageRealtimeChannel) {
+        supabase.removeChannel(messageRealtimeChannel);
+        messageRealtimeChannel = null;
+    }
+}
+
+function startMessagePolling(supabase, projectId, onRefresh) {
+    stopMessageFeed(supabase);
+
+    if (!projectId) {
+        return;
+    }
+
+    const refresh = typeof onRefresh === 'function'
+        ? onRefresh
+        : async () => {
             const { data } = await supabase
                 .from('messages')
                 .select('*')
                 .eq('project_id', projectId)
                 .order('created_at', { ascending: true });
-            
-            if (data && data.length > 0) {
-                renderMessageThread(data);
-            }
-        } catch (err) {
-            console.log('[Portal] Message poll:', err.message);
+
+            renderMessageThread(data || []);
+        };
+
+    const startPollingFallback = () => {
+        if (messagePollInterval) {
+            return;
         }
-    }, 10000);
+
+        messagePollInterval = window.setInterval(async () => {
+            try {
+                await refresh();
+            } catch (error) {
+                console.log('[Portal] Message refresh fallback:', error?.message || error);
+            }
+        }, 10000);
+    };
+
+    messageRealtimeChannel = supabase
+        .channel(`portal-feed-${APP}-${projectId}`)
+        .on('postgres_changes', {
+            event: '*',
+            schema: 'public',
+            table: 'messages',
+            filter: `project_id=eq.${projectId}`
+        }, async () => {
+            await refresh();
+        })
+        .subscribe((status) => {
+            if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+                startPollingFallback();
+            }
+        });
+
+    startPollingFallback();
 }
 
 function renderMessageThread(messages) {
@@ -62,36 +111,127 @@ function renderMessageThread(messages) {
 }
 
 // Stripe Payment Handler
-async function handleStripePayment(invoiceId, amount, invoiceNumber, invoiceTitle, paymentUrl) {
+async function handleStripePayment(supabase, invoiceId, invoiceNumber, invoiceTitle, paymentUrl) {
     const alert = byId('workspaceAlert');
+    const directPaymentUrl = sanitizeExternalUrl(paymentUrl);
 
-    const resolvedPaymentUrl = sanitizeExternalUrl(paymentUrl) || STRIPE_PAYMENT_LINK_URL;
+    if (directPaymentUrl) {
+        const newWindow = window.open(directPaymentUrl, '_blank', 'noopener,noreferrer');
+        if (!newWindow) {
+            window.location.href = directPaymentUrl;
+            return;
+        }
 
-    if (!resolvedPaymentUrl) {
-        setAlert(alert, 'No Stripe payment link is attached to this invoice yet. Please contact support for the secure payment URL.', 'error');
+        setAlert(alert, `External payment link opened for ${invoiceNumber || invoiceTitle || 'this invoice'}.`, 'info');
         return;
     }
 
-    const newWindow = window.open(resolvedPaymentUrl, '_blank', 'noopener,noreferrer');
-    if (!newWindow) {
-        window.location.href = resolvedPaymentUrl;
+    setAlert(alert, 'Preparing secure Stripe checkout...', 'info');
+
+    const checkout = await createStripeCheckoutSession(supabase, invoiceId);
+    if (!checkout.ok || !checkout.url) {
+        const fallbackUrl = STRIPE_PAYMENT_LINK_URL;
+        if (fallbackUrl) {
+            const newWindow = window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
+            if (!newWindow) {
+                window.location.href = fallbackUrl;
+                return;
+            }
+
+            setAlert(alert, 'Fallback Stripe payment link opened in a new tab.', 'info');
+            return;
+        }
+
+        setAlert(alert, checkout.message || 'Stripe checkout could not be started for this invoice.', 'error');
         return;
     }
 
-    setAlert(alert, `Secure Stripe payment opened for ${invoiceNumber || invoiceTitle || 'this invoice'} in a new tab.`, 'success');
+    window.location.href = checkout.url;
 }
 
-function bindPaymentHandlers() {
+function bindPaymentHandlers(supabase) {
     document.querySelectorAll('[data-pay-invoice]').forEach(button => {
         button.addEventListener('click', async (e) => {
             const invoiceId = e.target.dataset.payInvoice;
-            const amount = e.target.dataset.invoiceAmount;
             const invoiceNumber = e.target.dataset.invoiceNumber;
             const invoiceTitle = e.target.dataset.invoiceTitle;
             const paymentUrl = e.target.dataset.paymentUrl;
-            await handleStripePayment(invoiceId, amount, invoiceNumber, invoiceTitle, paymentUrl);
+            await handleStripePayment(supabase, invoiceId, invoiceNumber, invoiceTitle, paymentUrl);
         });
     });
+}
+
+async function createStripeCheckoutSession(supabase, invoiceId) {
+    try {
+        const returnBaseUrl = new URL(window.location.href);
+        returnBaseUrl.searchParams.delete('checkout');
+        returnBaseUrl.searchParams.delete('invoice');
+        returnBaseUrl.searchParams.delete('session_id');
+
+        const successUrl = new URL(returnBaseUrl.toString());
+        successUrl.searchParams.set('checkout', 'success');
+        successUrl.searchParams.set('invoice', invoiceId);
+        successUrl.searchParams.set('session_id', '{CHECKOUT_SESSION_ID}');
+
+        const cancelUrl = new URL(returnBaseUrl.toString());
+        cancelUrl.searchParams.set('checkout', 'cancel');
+        cancelUrl.searchParams.set('invoice', invoiceId);
+
+        const { data, error } = await supabase.functions.invoke('stripe-create-checkout-session', {
+            body: {
+                invoiceId,
+                successUrl: successUrl.toString(),
+                cancelUrl: cancelUrl.toString()
+            }
+        });
+
+        if (error) {
+            return {
+                ok: false,
+                message: error.message || 'Stripe checkout could not be created.'
+            };
+        }
+
+        return {
+            ok: true,
+            url: sanitizeExternalUrl(data?.data?.url || data?.url || ''),
+            sessionId: data?.data?.sessionId || data?.sessionId || ''
+        };
+    } catch (error) {
+        return {
+            ok: false,
+            message: error?.message || 'Stripe checkout could not be created.'
+        };
+    }
+}
+
+function renderCheckoutStatusFromUrl(alert) {
+    if (!alert) {
+        return;
+    }
+
+    let url;
+    try {
+        url = new URL(window.location.href);
+    } catch (error) {
+        return;
+    }
+
+    const checkoutState = url.searchParams.get('checkout');
+    if (!checkoutState) {
+        return;
+    }
+
+    if (checkoutState === 'success') {
+        setAlert(alert, 'Payment submitted successfully. Your invoice status will refresh automatically.', 'success');
+    } else if (checkoutState === 'cancel') {
+        setAlert(alert, 'Stripe checkout was cancelled. You can retry payment at any time.', 'info');
+    }
+
+    url.searchParams.delete('checkout');
+    url.searchParams.delete('invoice');
+    url.searchParams.delete('session_id');
+    window.history.replaceState({}, document.title, url.toString());
 }
 
 if (['client-login', 'client-workspace', 'ops'].includes(APP)) {
@@ -154,7 +294,7 @@ async function initClientLoginPage(supabase) {
 
     const existingSession = await getSession(supabase);
     if (existingSession) {
-        const userContext = await getCurrentUserContext(supabase, existingSession.user.id);
+        const userContext = await getCurrentUserContext(supabase, existingSession.user.id, existingSession);
         if (userContext?.profile?.role === 'admin') {
             redirectTo('ops-suite.html');
             return;
@@ -188,7 +328,7 @@ async function initClientLoginPage(supabase) {
         }
 
         const session = await getSession(supabase);
-        const userContext = session ? await getCurrentUserContext(supabase, session.user.id) : null;
+        const userContext = session ? await getCurrentUserContext(supabase, session.user.id, session) : null;
         setInlineStatus(loginStatus, 'Access granted. Redirecting to your workspace.', 'success');
 
         window.setTimeout(() => {
@@ -225,6 +365,11 @@ async function initClientLoginPage(supabase) {
 }
 
 async function initClientWorkspacePage(supabase, userContext) {
+    const accessGate = byId('workspaceAccessGate');
+    const appShell = byId('clientWorkspaceShell');
+    accessGate?.classList.add('is-hidden');
+    appShell?.classList.remove('is-hidden');
+
     const state = {
         profile: userContext.profile,
         client: null,
@@ -233,11 +378,14 @@ async function initClientWorkspacePage(supabase, userContext) {
         projectDetail: null
     };
 
+    window.currentUserId = state.profile.id;
+
     const signOutButton = byId('portalSignOut');
     const projectSelect = byId('workspaceProjectSelect');
     const alert = byId('workspaceAlert');
     const messageForm = byId('workspaceMessageForm');
     const profileForm = byId('workspaceProfileForm');
+    const documentUploadForm = byId('workspaceDocumentUploadForm');
     const documentList = byId('workspaceDocumentList');
 
     bindWorkspaceTabs(document);
@@ -245,6 +393,7 @@ async function initClientWorkspacePage(supabase, userContext) {
     setLoadingWorkspaceState();
 
     signOutButton?.addEventListener('click', async () => {
+        stopMessageFeed(supabase);
         await supabase.auth.signOut();
         redirectTo('client-login.html');
     });
@@ -302,6 +451,56 @@ async function initClientWorkspacePage(supabase, userContext) {
         setInlineStatus(byId('workspaceProfileStatus'), 'Profile updated successfully.', 'success');
     });
 
+    documentUploadForm?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        if (!state.selectedProjectId) {
+            setAlert(alert, 'Select a project before uploading a document.', 'error');
+            return;
+        }
+
+        const file = byId('workspaceDocumentFile')?.files?.[0];
+        if (!file) {
+            setAlert(alert, 'Choose a file to upload.', 'error');
+            return;
+        }
+
+        const category = byId('workspaceDocumentCategory')?.value.trim() || 'Client upload';
+        const storagePath = `${state.selectedProjectId}/${Date.now()}-${sanitizeFileName(file.name)}`;
+
+        setAlert(alert, 'Uploading your document...', 'info');
+
+        const { error: uploadError } = await supabase.storage.from(STORAGE_BUCKET).upload(storagePath, file, {
+            cacheControl: '3600',
+            upsert: false
+        });
+
+        if (uploadError) {
+            setAlert(alert, uploadError.message || 'The file could not be uploaded.', 'error');
+            return;
+        }
+
+        const { error: documentError } = await supabase.from('documents').insert({
+            project_id: state.selectedProjectId,
+            uploaded_by: state.profile.id,
+            file_name: file.name,
+            storage_path: storagePath,
+            mime_type: file.type || 'application/octet-stream',
+            file_size: file.size,
+            category
+        });
+
+        if (documentError) {
+            await supabase.storage.from(STORAGE_BUCKET).remove([storagePath]);
+            setAlert(alert, documentError.message || 'The document record could not be saved.', 'error');
+            return;
+        }
+
+        documentUploadForm.reset();
+        await loadSelectedProject();
+        setAlert(alert, 'Document uploaded successfully.', 'success');
+    });
+
     documentList?.addEventListener('click', async (event) => {
         const trigger = event.target.closest('[data-download-document]');
         if (!trigger) {
@@ -333,6 +532,7 @@ async function initClientWorkspacePage(supabase, userContext) {
     state.projects = workspaceData.projects;
 
     if (!state.projects.length) {
+        stopMessageFeed(supabase);
         renderClientWorkspaceEmptyState(state.profile, state.client);
         return;
     }
@@ -351,9 +551,13 @@ async function initClientWorkspacePage(supabase, userContext) {
 
         setAlert(alert, 'Refreshing project data...', 'info');
         state.projectDetail = await fetchProjectDetail(supabase, state.selectedProjectId);
-        renderClientWorkspace(state);
-        startMessagePolling(supabase, state.selectedProjectId);
+        renderClientWorkspace(state, supabase);
+        startMessagePolling(supabase, state.selectedProjectId, async () => {
+            state.projectDetail = await fetchProjectDetail(supabase, state.selectedProjectId);
+            renderClientWorkspace(state, supabase);
+        });
         clearAlert(alert);
+        renderCheckoutStatusFromUrl(alert);
     }
 }
 
@@ -375,14 +579,31 @@ async function initAdminWorkspacePage(supabase, userContext) {
         invoices: [],
         payments: [],
         messages: [],
+        consultations: [],
+        availability: {
+            consultations: {
+                available: true,
+                message: ''
+            }
+        },
         selectedClientId: localStorage.getItem(ADMIN_CLIENT_STORAGE_KEY) || '',
-        selectedProjectId: localStorage.getItem(ADMIN_PROJECT_STORAGE_KEY) || ''
+        selectedProjectId: localStorage.getItem(ADMIN_PROJECT_STORAGE_KEY) || '',
+        selectedConsultationId: ''
     };
+
+    window.currentUserId = state.profile.id;
 
     bindWorkspaceTabs(document);
     initWorkspaceChrome();
     bindAdminEventHandlers();
     await refreshAdminData();
+
+    function bindAdminRealtimeForSelectedProject() {
+        startMessagePolling(supabase, state.selectedProjectId, async () => {
+            state.messages = await fetchTable(supabase, 'messages', '*', (query) => query.order('created_at', { ascending: true }));
+            renderAdminWorkspace(state);
+        });
+    }
 
     async function refreshAdminData() {
         setAlert(byId('adminAlert'), 'Refreshing admin data...', 'info');
@@ -396,6 +617,12 @@ async function initAdminWorkspacePage(supabase, userContext) {
         state.invoices = await fetchTable(supabase, 'invoices', '*', (query) => query.order('issued_at', { ascending: false }));
         state.payments = await fetchTable(supabase, 'payment_records', '*', (query) => query.order('paid_at', { ascending: false }));
         state.messages = await fetchTable(supabase, 'messages', '*', (query) => query.order('created_at', { ascending: true }));
+        const consultationsResult = await fetchOptionalTable(supabase, 'consultations', '*', (query) => query.order('preferred_date', { ascending: true }).order('preferred_time', { ascending: true }));
+        state.consultations = consultationsResult.data;
+        state.availability.consultations = {
+            available: consultationsResult.available,
+            message: consultationsResult.message
+        };
 
         if (!state.clients.some((client) => client.id === state.selectedClientId)) {
             state.selectedClientId = state.clients[0]?.id || '';
@@ -408,13 +635,19 @@ async function initAdminWorkspacePage(supabase, userContext) {
                 : (state.projects[0]?.id || '');
         }
 
+        if (!state.consultations.some((consultation) => consultation.id === state.selectedConsultationId)) {
+            state.selectedConsultationId = state.consultations[0]?.id || '';
+        }
+        
         persistAdminSelection(state);
         renderAdminWorkspace(state);
+        bindAdminRealtimeForSelectedProject();
         clearAlert(byId('adminAlert'));
     }
 
     function bindAdminEventHandlers() {
         byId('portalSignOut')?.addEventListener('click', async () => {
+            stopMessageFeed(supabase);
             await supabase.auth.signOut();
             redirectTo('client-login.html');
         });
@@ -425,12 +658,14 @@ async function initAdminWorkspacePage(supabase, userContext) {
             state.selectedProjectId = visibleProjects[0]?.id || '';
             persistAdminSelection(state);
             renderAdminWorkspace(state);
+            bindAdminRealtimeForSelectedProject();
         });
 
         byId('adminProjectSelect')?.addEventListener('change', (event) => {
             state.selectedProjectId = event.target.value;
             persistAdminSelection(state);
             renderAdminWorkspace(state);
+            bindAdminRealtimeForSelectedProject();
         });
 
         byId('adminClientRoster')?.addEventListener('click', (event) => {
@@ -444,6 +679,7 @@ async function initAdminWorkspacePage(supabase, userContext) {
             state.selectedProjectId = visibleProjects[0]?.id || '';
             persistAdminSelection(state);
             renderAdminWorkspace(state);
+            bindAdminRealtimeForSelectedProject();
         });
 
         byId('adminProjectList')?.addEventListener('click', (event) => {
@@ -458,6 +694,17 @@ async function initAdminWorkspacePage(supabase, userContext) {
                 state.selectedClientId = project.client_id;
             }
             persistAdminSelection(state);
+            renderAdminWorkspace(state);
+            bindAdminRealtimeForSelectedProject();
+        });
+
+        byId('adminConsultationList')?.addEventListener('click', (event) => {
+            const trigger = event.target.closest('[data-select-consultation]');
+            if (!trigger) {
+                return;
+            }
+
+            state.selectedConsultationId = trigger.dataset.selectConsultation;
             renderAdminWorkspace(state);
         });
 
@@ -516,23 +763,20 @@ async function initAdminWorkspacePage(supabase, userContext) {
                 companyName: byId('adminClientCompany')?.value.trim(),
                 billingEmail: byId('adminClientBillingEmail')?.value.trim().toLowerCase() || null,
                 projectName: byId('adminClientProjectName')?.value.trim(),
-                serviceLine: byId('adminClientServiceLine')?.value || 'Client Portal Engagement',
-                redirectTo: `${window.location.origin}/client-login.html`
+                serviceLine: byId('adminClientServiceLine')?.value || 'Client Portal Engagement'
             };
 
-            const { error } = await supabase.functions.invoke('admin-provision-user', {
-                body: payload
-            });
-
-            if (error) {
-                setAlert(byId('adminAlert'), formatProvisioningError(error), 'error');
+            const provisioning = await invokeAdminProvisioning(supabase, payload);
+            if (!provisioning.ok) {
+                console.error('[Portal] Client provisioning failed', provisioning);
+                setAlert(byId('adminAlert'), provisioning.message, 'error');
                 setButtonBusy(submitButton, false, 'Send Invite + Create Client');
                 return;
             }
 
             form.reset();
             await refreshAdminData();
-            setAlert(byId('adminAlert'), 'Client account created and invite sent.', 'success');
+            setAlert(byId('adminAlert'), provisioning.message || 'Client account created and invite sent.', 'success');
             setButtonBusy(submitButton, false, 'Send Invite + Create Client');
         });
 
@@ -546,7 +790,7 @@ async function initAdminWorkspacePage(supabase, userContext) {
             const payload = {
                 client_id: byId('adminProjectClient').value,
                 name: byId('adminProjectName')?.value.trim(),
-                slug: slugify(byId('adminProjectName')?.value.trim()),
+                slug: buildProjectSlug(byId('adminProjectName')?.value.trim()),
                 service_line: byId('adminProjectService')?.value.trim() || null,
                 current_phase: byId('adminProjectPhase')?.value.trim() || null,
                 target_launch_date: byId('adminProjectLaunch')?.value || null,
@@ -797,19 +1041,49 @@ async function initAdminWorkspacePage(supabase, userContext) {
             await refreshAdminData();
             setAlert(byId('adminAlert'), 'Portal access updated for that client.', 'success');
         });
+
+        byId('adminConsultationForm')?.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (state.availability.consultations?.available === false) {
+                setAlert(byId('adminAlert'), state.availability.consultations.message, 'error');
+                return;
+            }
+
+            const consultationId = byId('adminConsultationId')?.value;
+            if (!consultationId) {
+                setAlert(byId('adminAlert'), 'Choose a consultation before saving updates.', 'error');
+                return;
+            }
+
+            const payload = {
+                status: byId('adminConsultationStatus')?.value || 'new',
+                notes: byId('adminConsultationNotes')?.value.trim() || null,
+                assigned_project_id: byId('adminConsultationProject')?.value || null
+            };
+
+            const { error } = await supabase.from('consultations').update(payload).eq('id', consultationId);
+            if (error) {
+                setAlert(byId('adminAlert'), error.message || 'The consultation could not be updated.', 'error');
+                return;
+            }
+
+            state.selectedConsultationId = consultationId;
+            await refreshAdminData();
+            setAlert(byId('adminAlert'), 'Consultation updated successfully.', 'success');
+        });
     }
 }
 
 async function requireAuthenticatedProfile(supabase) {
     const session = await getSession(supabase);
     if (!session) {
-        redirectTo('client-login.html');
+        renderProtectedRouteRedirectState(APP);
         return null;
     }
 
-    const userContext = await getCurrentUserContext(supabase, session.user.id);
+    const userContext = await getCurrentUserContext(supabase, session.user.id, session);
     if (!userContext?.profile) {
-        redirectTo('client-login.html');
+        renderProtectedRouteRedirectState(APP);
         return null;
     }
 
@@ -821,13 +1095,106 @@ async function getSession(supabase) {
     return data?.session || null;
 }
 
-async function getCurrentUserContext(supabase, userId) {
-    const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
+async function getCurrentUserContext(supabase, userId, session = null) {
+    const activeSession = session || await getSession(supabase);
+    let profile = await fetchProfileRecord(supabase, userId);
+    if (!profile) {
+        await synchronizePortalProfile(supabase, activeSession);
+        profile = await fetchProfileRecord(supabase, userId);
+    }
+
+    if (!profile && activeSession?.user) {
+        profile = await ensureSelfProfileRecord(supabase, activeSession.user);
+    }
+
+    return { profile };
+}
+
+async function synchronizePortalProfile(supabase, session = null) {
+    const activeSession = session || await getSession(supabase);
+    if (!activeSession?.access_token || isProfileSyncDisabled()) {
+        return null;
+    }
+
+    if (PROFILE_SYNC_ENDPOINT) {
+        try {
+            const response = await fetch(PROFILE_SYNC_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${activeSession.access_token}`
+                },
+                body: JSON.stringify({})
+            });
+
+            if (response.status === 404 || response.status === 405) {
+                setProfileSyncDisabled(true);
+            } else {
+                const body = await safeParseJson(response);
+                if (!response.ok) {
+                    console.warn('[Portal] Profile sync skipped', body?.message || response.statusText);
+                } else {
+                    setProfileSyncDisabled(false);
+                    return body?.data || body || null;
+                }
+            }
+        } catch (error) {
+            console.warn('[Portal] Same-origin profile sync failed, falling back to Edge Function.', error);
+        }
+    }
+
+    try {
+        const { data, error } = await supabase.functions.invoke('portal-sync-profile', {
+            body: {}
+        });
+
+        if (error) {
+            console.warn('[Portal] Edge profile sync failed', error);
+            return null;
+        }
+
+        setProfileSyncDisabled(false);
+        return data?.data || data || null;
+    } catch (error) {
+        console.warn('[Portal] Profile sync failed', error);
+        return null;
+    }
+}
+
+async function fetchProfileRecord(supabase, userId) {
+    const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
     if (error) {
         throw error;
     }
 
-    return { profile };
+    return data || null;
+}
+
+async function ensureSelfProfileRecord(supabase, user) {
+    const payload = {
+        id: user.id,
+        email: user.email || '',
+        full_name: resolveUserDisplayName(user)
+    };
+
+    const { data, error } = await supabase
+        .from('profiles')
+        .upsert(payload, { onConflict: 'id' })
+        .select('*')
+        .maybeSingle();
+
+    if (error) {
+        throw error;
+    }
+
+    return data || null;
+}
+
+function resolveUserDisplayName(user) {
+    return user?.user_metadata?.full_name
+        || user?.user_metadata?.fullName
+        || user?.email?.split('@')[0]
+        || '';
 }
 
 async function fetchClientWorkspaceData(supabase, userId) {
@@ -888,6 +1255,38 @@ async function fetchTable(supabase, table, columns, mutateQuery = (query) => que
     return data || [];
 }
 
+async function fetchOptionalTable(supabase, table, columns, mutateQuery = (query) => query) {
+    if (isOptionalTableCachedUnavailable(table)) {
+        return {
+            available: false,
+            message: getOptionalTableUnavailableMessage(table),
+            data: []
+        };
+    }
+
+    try {
+        const data = await fetchTable(supabase, table, columns, mutateQuery);
+        clearOptionalTableUnavailable(table);
+        return {
+            available: true,
+            message: '',
+            data
+        };
+    } catch (error) {
+        if (!isMissingTableError(error, table)) {
+            throw error;
+        }
+
+        cacheOptionalTableUnavailable(table);
+        console.warn(`[Portal] Optional table unavailable: ${table}`, error);
+        return {
+            available: false,
+            message: getOptionalTableUnavailableMessage(table),
+            data: []
+        };
+    }
+}
+
 async function fetchMaybeSingle(supabase, table, columns, mutateQuery = (query) => query) {
     const { data, error } = await mutateQuery(supabase.from(table).select(columns)).maybeSingle();
     if (error) {
@@ -897,7 +1296,7 @@ async function fetchMaybeSingle(supabase, table, columns, mutateQuery = (query) 
     return data || null;
 }
 
-function renderClientWorkspace(state) {
+function renderClientWorkspace(state, supabase) {
     const selectedProject = state.projects.find((project) => project.id === state.selectedProjectId) || state.projects[0];
     const detail = state.projectDetail;
     const openInvoices = detail.invoices.filter((invoice) => !['paid', 'void'].includes(invoice.status));
@@ -1024,9 +1423,7 @@ function renderClientWorkspace(state) {
                         <strong>${formatCurrency(invoice.amount)}</strong>
                         ${invoice.status === 'paid'
                             ? '<span class="workspace-inline-note">Paid</span>'
-                            : invoicePaymentUrl
-                                ? `<button type="button" class="btn btn-primary btn-sm" data-pay-invoice="${escapeHtml(invoice.id)}" data-payment-url="${escapeHtml(invoicePaymentUrl)}" data-invoice-amount="${invoice.amount}" data-invoice-number="${escapeHtml(invoice.invoice_number || 'Invoice')}" data-invoice-title="${escapeHtml(invoice.title)}">Pay Securely</button>`
-                                : '<span class="workspace-inline-note">Payment link pending</span>'}
+                            : `<button type="button" class="btn btn-primary btn-sm" data-pay-invoice="${escapeHtml(invoice.id)}" data-payment-url="${escapeHtml(invoicePaymentUrl)}" data-invoice-number="${escapeHtml(invoice.invoice_number || 'Invoice')}" data-invoice-title="${escapeHtml(invoice.title)}">Pay Securely</button>`}
                     </div>
                     ${invoicePayments.length ? `<div class="workspace-inline-records">${invoicePayments.map((payment) => `<span class="workspace-pill success">${escapeHtml(formatCurrency(payment.amount))} received ${escapeHtml(formatDate(payment.paid_at))}</span>`).join('')}</div>` : ''}
                 </article>
@@ -1052,7 +1449,7 @@ function renderClientWorkspace(state) {
     byId('workspaceMessageThread').innerHTML = messageMarkup;
 
     fillProfileForm(state.profile);
-    bindPaymentHandlers();
+    bindPaymentHandlers(supabase);
 }
 
 function renderClientWorkspaceEmptyState(profile, client) {
@@ -1091,11 +1488,16 @@ function renderAdminWorkspace(state) {
     byId('workspaceClientMeta').textContent = 'Internal portal administration';
 
     const selectedProject = getSelectedProject(state);
+    const selectedConsultation = getSelectedConsultation(state);
     const selectedProjectDocuments = getProjectDocuments(state, state.selectedProjectId);
     const selectedProjectInvoices = getProjectInvoices(state, state.selectedProjectId);
     const selectedProjectMessages = getProjectMessages(state, state.selectedProjectId);
     const selectedProjectMilestones = getProjectMilestones(state);
     const selectedProjectUpdates = getProjectUpdates(state);
+    const upcomingConsultations = getUpcomingConsultations(state);
+    const consultationFeedAvailable = state.availability?.consultations?.available !== false;
+    const consultationFeedMessage = state.availability?.consultations?.message
+        || 'The consultation calendar is unavailable right now, so the admin suite loaded without that feed.';
 
     byId('workspaceProjectTitle').textContent = selectedProject?.name || 'Select a project';
     if (byId('workspaceProjectSynopsis')) {
@@ -1127,9 +1529,24 @@ function renderAdminWorkspace(state) {
             <span>Client-visible files</span>
             <strong>${state.documents.length}</strong>
         </article>
+        <article class="workspace-kpi-card">
+            <span>${consultationFeedAvailable ? 'Upcoming consultations' : 'Consultation calendar'}</span>
+            <strong>${consultationFeedAvailable ? upcomingConsultations.length : 'Offline'}</strong>
+        </article>
     `;
 
     byId('adminRecentActivity').innerHTML = buildRecentActivityMarkup(state);
+    byId('adminConsultationList').innerHTML = consultationFeedAvailable
+        ? (state.consultations.length
+            ? state.consultations.map((consultation) => `
+            <button type="button" class="workspace-select-card ${consultation.id === state.selectedConsultationId ? 'active' : ''}" data-select-consultation="${escapeHtml(consultation.id)}">
+                <strong>${escapeHtml(consultation.company_name)}</strong>
+                <span>${escapeHtml(consultation.full_name)} • ${escapeHtml(consultation.preferred_time || 'Pending time')}</span>
+                <span>${escapeHtml(formatConsultationDate(consultation.preferred_date))} • ${escapeHtml(humanizeStatus(consultation.status || 'new'))}</span>
+            </button>
+        `).join('')
+            : renderEmptyState('No consultations yet', 'New consultation requests from the contact page will appear here.'))
+        : renderEmptyState('Consultation calendar unavailable', consultationFeedMessage);
     byId('adminClientRoster').innerHTML = state.clients.length
         ? state.clients.map((client) => {
             const profile = state.profiles.find((item) => item.id === client.profile_id);
@@ -1228,7 +1645,7 @@ function renderAdminWorkspace(state) {
                     <p>${escapeHtml(invoice.description || 'No invoice description added yet.')}</p>
                     <div class="invoice-card-foot">
                         <strong>${formatCurrency(invoice.amount)}</strong>
-                        <span class="workspace-inline-note">${invoicePaymentUrl ? 'Stripe link attached' : invoice.due_at ? `Due ${formatDate(invoice.due_at)}` : 'No due date set'}</span>
+                        <span class="workspace-inline-note">${invoicePaymentUrl ? 'External payment link attached' : 'Portal checkout will generate at payment time'}</span>
                     </div>
                     ${invoicePaymentUrl ? `<div class="workspace-inline-records"><a class="workspace-pill" href="${escapeHtml(invoicePaymentUrl)}" target="_blank" rel="noopener noreferrer">Open payment link</a></div>` : ''}
                     ${invoicePayments.length ? `<div class="workspace-inline-records">${invoicePayments.map((payment) => `<span class="workspace-pill success">${escapeHtml(formatCurrency(payment.amount))} ${escapeHtml(payment.method || 'recorded')}</span>`).join('')}</div>` : ''}
@@ -1258,6 +1675,36 @@ function renderAdminWorkspace(state) {
     byId('adminProjectClient').innerHTML = buildOptions(state.clients, state.selectedClientId, 'company_name', 'id', 'Select client');
     byId('adminAccessClient').innerHTML = buildOptions(state.clients, state.selectedClientId, 'company_name', 'id', 'Select client');
     byId('adminAccessProject').innerHTML = buildOptions(state.projects, state.selectedProjectId, 'name', 'id', 'Select project');
+    byId('adminConsultationProject').innerHTML = consultationFeedAvailable
+        ? buildOptions(state.projects, selectedConsultation?.assigned_project_id || '', 'name', 'id', 'No linked project')
+        : '<option value="">Calendar unavailable</option>';
+    byId('adminConsultationId').value = selectedConsultation?.id || '';
+    byId('adminConsultationStatus').value = selectedConsultation?.status || 'new';
+    byId('adminConsultationNotes').value = selectedConsultation?.notes || '';
+    toggleFormDisabled(byId('adminConsultationForm'), !consultationFeedAvailable);
+    byId('adminConsultationDetail').innerHTML = !consultationFeedAvailable
+        ? renderEmptyState('Consultation calendar unavailable', consultationFeedMessage)
+        : selectedConsultation
+        ? `
+            <div class="workspace-data-card-head">
+                <div>
+                    <span>${escapeHtml(humanizeStatus(selectedConsultation.status || 'new'))}</span>
+                    <h3>${escapeHtml(selectedConsultation.full_name)}</h3>
+                </div>
+                <span class="workspace-pill ${statusPillClass(selectedConsultation.status || 'new')}">${escapeHtml(formatConsultationDate(selectedConsultation.preferred_date))}</span>
+            </div>
+            <p>${escapeHtml(selectedConsultation.project_details || 'No project brief was added.')}</p>
+            <div class="workspace-inline-records">
+                <span class="workspace-pill">${escapeHtml(selectedConsultation.company_name)}</span>
+                <span class="workspace-pill">${escapeHtml(selectedConsultation.email)}</span>
+                ${selectedConsultation.phone ? `<span class="workspace-pill">${escapeHtml(selectedConsultation.phone)}</span>` : ''}
+                ${selectedConsultation.requested_service ? `<span class="workspace-pill">${escapeHtml(selectedConsultation.requested_service)}</span>` : ''}
+            </div>
+            <div class="workspace-data-card-foot">
+                <strong>${escapeHtml(selectedConsultation.preferred_time || 'Preferred time pending')}</strong>
+            </div>
+        `
+        : renderEmptyState('No consultation selected', 'Choose a consultation request to review the brief, contact details, and preferred time.');
 }
 
 function buildRecentActivityMarkup(state) {
@@ -1404,18 +1851,20 @@ function renderMissingConfigState() {
         );
     });
 
-    const gates = ['adminAccessGate', 'workspaceOverviewMetrics']
-        .map((id) => byId(id))
-        .filter(Boolean);
-
-    gates.forEach((target) => {
-        target.innerHTML = renderEmptyState(
-            'Portal setup required',
-            'This production portal is wired for Supabase, but the project credentials and schema still need to be connected.',
-            `<a href="mailto:${escapeHtml(SUPPORT_EMAIL)}" class="btn btn-primary btn-sm">Contact Support</a>`
-        );
-        target.classList.remove('is-hidden');
-    });
+    showProtectedRouteGate(
+        'workspaceAccessGate',
+        'Portal setup required',
+        'This production portal is wired for Supabase, but the project credentials and schema still need to be connected.',
+        `<a href="mailto:${escapeHtml(SUPPORT_EMAIL)}" class="btn btn-primary btn-sm">Contact Support</a>`
+    );
+    showProtectedRouteGate(
+        'adminAccessGate',
+        'Portal setup required',
+        'This production portal is wired for Supabase, but the project credentials and schema still need to be connected.',
+        `<a href="mailto:${escapeHtml(SUPPORT_EMAIL)}" class="btn btn-primary btn-sm">Contact Support</a>`
+    );
+    byId('clientWorkspaceShell')?.classList.add('is-hidden');
+    byId('adminAppShell')?.classList.add('is-hidden');
 }
 
 function renderAdminAccessDenied() {
@@ -1449,6 +1898,58 @@ function renderGlobalFailure(error) {
         .filter(Boolean);
 
     targets.forEach((target) => setInlineStatus(target, message, 'error'));
+
+    if (APP === 'client-workspace') {
+        showProtectedRouteGate(
+            'workspaceAccessGate',
+            'We could not open the client portal',
+            'The live workspace could not be initialized right now. Try signing in again or contact support if the problem continues.',
+            `<a href="client-login.html" class="btn btn-primary btn-sm">Return To Sign In</a>`
+        );
+        byId('clientWorkspaceShell')?.classList.add('is-hidden');
+    }
+
+    if (APP === 'ops') {
+        showProtectedRouteGate(
+            'adminAccessGate',
+            'We could not open the admin suite',
+            'The admin workspace could not be initialized right now. Sign in again or contact support if the problem continues.',
+            `<a href="client-login.html" class="btn btn-primary btn-sm">Return To Sign In</a>`
+        );
+        byId('adminAppShell')?.classList.add('is-hidden');
+    }
+}
+
+function renderProtectedRouteRedirectState(app) {
+    if (app === 'client-workspace') {
+        showProtectedRouteGate(
+            'workspaceAccessGate',
+            'Sign in required',
+            'Your session is required before the live client workspace can open.',
+            '<a href="client-login.html" class="btn btn-primary btn-sm">Go To Sign In</a>'
+        );
+        byId('clientWorkspaceShell')?.classList.add('is-hidden');
+    }
+
+    if (app === 'ops') {
+        showProtectedRouteGate(
+            'adminAccessGate',
+            'Sign in required',
+            'Admin authentication is required before the live operations suite can open.',
+            '<a href="client-login.html" class="btn btn-primary btn-sm">Go To Sign In</a>'
+        );
+        byId('adminAppShell')?.classList.add('is-hidden');
+    }
+}
+
+function showProtectedRouteGate(gateId, title, body, actionMarkup = '') {
+    const gate = byId(gateId);
+    if (!gate) {
+        return;
+    }
+
+    gate.innerHTML = renderEmptyState(title, body, actionMarkup);
+    gate.classList.remove('is-hidden');
 }
 
 function initWorkspaceChrome() {
@@ -1508,7 +2009,7 @@ function initWorkspaceChrome() {
     });
 
     document.addEventListener('click', (event) => {
-        const closeTrigger = event.target.closest('.workspace-nav-button, [data-open-workspace-tab], #portalSignOut, #workspaceAccountMenu a');
+        const closeTrigger = event.target.closest('.workspace-nav-button, [data-open-workspace-tab], #portalSignOut, #workspaceAccountMenu a, #workspaceAccountMenu button');
         if (!closeTrigger) {
             return;
         }
@@ -1552,7 +2053,12 @@ function bindWorkspaceTabs(root) {
         }
 
         button.dataset.tabsBound = 'true';
-        button.addEventListener('click', () => activateWorkspaceTab(root, button.dataset.workspaceTab));
+        button.addEventListener('click', () => {
+            activateWorkspaceTab(root, button.dataset.workspaceTab);
+            if (window.innerWidth <= 1100) {
+                byId('workspaceDrawerClose')?.click();
+            }
+        });
     });
 
     root.querySelectorAll('[data-open-workspace-tab]').forEach((trigger) => {
@@ -1561,7 +2067,12 @@ function bindWorkspaceTabs(root) {
         }
 
         trigger.dataset.tabsBound = 'true';
-        trigger.addEventListener('click', () => activateWorkspaceTab(root, trigger.dataset.openWorkspaceTab));
+        trigger.addEventListener('click', () => {
+            activateWorkspaceTab(root, trigger.dataset.openWorkspaceTab);
+            if (window.innerWidth <= 1100) {
+                byId('workspaceDrawerClose')?.click();
+            }
+        });
     });
 }
 
@@ -1597,12 +2108,32 @@ function getProjectMessages(state, projectId) {
     return state.messages.filter((message) => message.project_id === projectId);
 }
 
+function getSelectedConsultation(state) {
+    return state.consultations.find((consultation) => consultation.id === state.selectedConsultationId)
+        || state.consultations[0]
+        || null;
+}
+
+function getUpcomingConsultations(state) {
+    return [...state.consultations]
+        .filter((consultation) => !['completed', 'archived'].includes(String(consultation.status || '').toLowerCase()))
+        .sort((left, right) => {
+            const leftAt = new Date(left.preferred_iso || left.preferred_date || left.created_at || 0).getTime();
+            const rightAt = new Date(right.preferred_iso || right.preferred_date || right.created_at || 0).getTime();
+            return leftAt - rightAt;
+        });
+}
+
 function persistAdminSelection(state) {
     if (state.selectedClientId) {
         localStorage.setItem(ADMIN_CLIENT_STORAGE_KEY, state.selectedClientId);
+    } else {
+        localStorage.removeItem(ADMIN_CLIENT_STORAGE_KEY);
     }
     if (state.selectedProjectId) {
         localStorage.setItem(ADMIN_PROJECT_STORAGE_KEY, state.selectedProjectId);
+    } else {
+        localStorage.removeItem(ADMIN_PROJECT_STORAGE_KEY);
     }
 }
 
@@ -1645,20 +2176,303 @@ function sanitizeExternalUrl(value) {
 }
 
 function getInvoicePaymentUrl(invoice) {
-    return sanitizeExternalUrl(invoice?.payment_url) || STRIPE_PAYMENT_LINK_URL;
+    return sanitizeExternalUrl(invoice?.payment_url);
 }
 
-function formatProvisioningError(error) {
-    if (!error) {
-        return 'The client account could not be provisioned.';
+async function invokeAdminProvisioning(supabase, payload) {
+    const session = await getSession(supabase);
+    if (!session?.access_token) {
+        return {
+            ok: false,
+            code: 'AUTH_REQUIRED',
+            message: 'Your admin session expired. Sign in again before creating a client.'
+        };
     }
 
-    const message = String(error.message || '').trim();
-    if (message.includes('Failed to send a request to the Edge Function')) {
-        return 'The Supabase Edge Function is not responding. Redeploy `admin-provision-user` after setting `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY`.';
+    const edgeProvisioning = await invokeSupabaseFunctionViaHttp('admin-provision-user', session.access_token, payload);
+    if (edgeProvisioning.ok || !ADMIN_PROVISION_ENDPOINT || !['SERVICE_UNAVAILABLE', 'CONFIG_MISSING'].includes(edgeProvisioning.code)) {
+        return edgeProvisioning;
     }
 
-    return message || 'The client account could not be provisioned.';
+    if (ADMIN_PROVISION_ENDPOINT) {
+        try {
+            const response = await fetch(ADMIN_PROVISION_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${session.access_token}`
+                },
+                body: JSON.stringify(payload)
+            });
+            const body = await safeParseJson(response);
+
+            if (response.ok && body?.ok !== false) {
+                return {
+                    ok: true,
+                    message: body?.message || 'Client account created and invite sent.',
+                    data: body?.data || body
+                };
+            }
+
+            const shouldFallbackToEdgeFunction = [404, 405, 500, 502, 503, 504].includes(response.status)
+                || body?.code === 'CONFIG_MISSING';
+
+            if (!shouldFallbackToEdgeFunction) {
+                return {
+                    ok: false,
+                    code: body?.code || 'PROVISIONING_FAILED',
+                    message: mapProvisioningMessage(body?.code, body?.message),
+                    details: body?.details || null
+                };
+            }
+
+            console.warn('[Portal] Same-origin provisioning endpoint unavailable, falling back to Supabase Edge Function.', {
+                status: response.status,
+                code: body?.code || null
+            });
+        } catch (error) {
+            console.warn('[Portal] Same-origin provisioning endpoint failed, falling back to Supabase Edge Function.', error);
+        }
+    }
+
+    return edgeProvisioning;
+}
+
+async function invokeSupabaseFunctionViaHttp(functionName, accessToken, payload) {
+    const functionUrl = CONFIG.supabaseUrl
+        ? `${String(CONFIG.supabaseUrl).replace(/\/$/, '')}/functions/v1/${functionName}`
+        : '';
+
+    if (!functionUrl || !CONFIG.supabaseAnonKey) {
+        return {
+            ok: false,
+            code: 'SERVICE_UNAVAILABLE',
+            message: 'The secure provisioning service is not configured correctly.'
+        };
+    }
+
+    try {
+        const response = await fetch(functionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+                apikey: CONFIG.supabaseAnonKey
+            },
+            body: JSON.stringify(payload)
+        });
+        const body = await safeParseJson(response);
+
+        if (response.ok && body?.ok !== false) {
+            return {
+                ok: true,
+                message: body?.message || 'Client account created and invite sent.',
+                data: body?.data || body
+            };
+        }
+
+        const code = body?.code || inferProvisioningCode({ message: body?.message || response.statusText });
+        return {
+            ok: false,
+            code,
+            message: mapProvisioningMessage(code, body?.message || response.statusText),
+            details: body?.details || body || null
+        };
+    } catch (error) {
+        const code = inferProvisioningCode(error);
+        return {
+            ok: false,
+            code,
+            message: mapProvisioningMessage(code, error?.message),
+            details: error
+        };
+    }
+}
+
+function resolveAdminProvisionEndpoint(config) {
+    const configured = sanitizeExternalUrl(config.adminProvisionEndpoint || '');
+    if (configured) {
+        return configured;
+    }
+
+    if (!window?.location?.origin || window.location.protocol === 'file:') {
+        return '';
+    }
+
+    return `${window.location.origin}/api/admin-provision-user`;
+}
+
+function resolvePortalProfileSyncEndpoint(config) {
+    const configured = sanitizeExternalUrl(config.portalProfileSyncEndpoint || '');
+    if (configured) {
+        return configured;
+    }
+
+    if (!window?.location?.origin || window.location.protocol === 'file:') {
+        return '';
+    }
+
+    return `${window.location.origin}/api/portal-sync-profile`;
+}
+
+async function safeParseJson(response) {
+    try {
+        return await response.json();
+    } catch (error) {
+        return null;
+    }
+}
+
+function isProfileSyncDisabled() {
+    try {
+        return window?.sessionStorage?.getItem(PROFILE_SYNC_DISABLED_STORAGE_KEY) === '1';
+    } catch (error) {
+        return false;
+    }
+}
+
+function setProfileSyncDisabled(disabled) {
+    try {
+        if (!window?.sessionStorage) {
+            return;
+        }
+
+        if (disabled) {
+            window.sessionStorage.setItem(PROFILE_SYNC_DISABLED_STORAGE_KEY, '1');
+        } else {
+            window.sessionStorage.removeItem(PROFILE_SYNC_DISABLED_STORAGE_KEY);
+        }
+    } catch (error) {
+        // Ignore sessionStorage access failures.
+    }
+}
+
+function readOptionalTableCache() {
+    try {
+        const raw = window?.sessionStorage?.getItem(OPTIONAL_TABLE_CACHE_KEY);
+        return raw ? JSON.parse(raw) : {};
+    } catch (error) {
+        return {};
+    }
+}
+
+function writeOptionalTableCache(cache) {
+    try {
+        if (!window?.sessionStorage) {
+            return;
+        }
+
+        window.sessionStorage.setItem(OPTIONAL_TABLE_CACHE_KEY, JSON.stringify(cache));
+    } catch (error) {
+        // Ignore sessionStorage access failures.
+    }
+}
+
+function isOptionalTableCachedUnavailable(table) {
+    return Boolean(readOptionalTableCache()[table]);
+}
+
+function cacheOptionalTableUnavailable(table) {
+    const cache = readOptionalTableCache();
+    cache[table] = true;
+    writeOptionalTableCache(cache);
+}
+
+function clearOptionalTableUnavailable(table) {
+    const cache = readOptionalTableCache();
+    if (!cache[table]) {
+        return;
+    }
+
+    delete cache[table];
+    writeOptionalTableCache(cache);
+}
+
+function isMissingTableError(error, table) {
+    const status = Number(error?.status || error?.statusCode || 0);
+    const code = String(error?.code || '').toUpperCase();
+    const message = [
+        error?.message,
+        error?.details,
+        error?.hint
+    ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+
+    if (status === 404) {
+        return true;
+    }
+
+    if (code === 'PGRST205') {
+        return true;
+    }
+
+    return (
+        (message.includes(`public.${table}`) && (message.includes('schema cache') || message.includes('does not exist') || message.includes('not found')))
+        || message.includes(`relation "${table}" does not exist`)
+        || message.includes(`relation "public.${table}" does not exist`)
+    );
+}
+
+function getOptionalTableUnavailableMessage(table) {
+    switch (table) {
+        case 'consultations':
+            return 'The consultations table is missing in the current Supabase project. The admin suite is still available, but the consultation calendar is temporarily offline until that schema is applied.';
+        default:
+            return `The ${table} table is unavailable in the current Supabase project.`;
+    }
+}
+
+function toggleFormDisabled(form, disabled) {
+    if (!form) {
+        return;
+    }
+
+    form.querySelectorAll('input, select, textarea, button').forEach((field) => {
+        field.disabled = disabled;
+    });
+}
+
+function inferProvisioningCode(error) {
+    const message = String(error?.message || '').trim().toLowerCase();
+
+    if (!message) {
+        return 'PROVISIONING_FAILED';
+    }
+    if (message.includes('not found')) {
+        return 'SERVICE_UNAVAILABLE';
+    }
+    if (message.includes('failed to send a request to the edge function')) {
+        return 'SERVICE_UNAVAILABLE';
+    }
+    if (message.includes('authorization') || message.includes('jwt')) {
+        return 'AUTH_REQUIRED';
+    }
+    if (message.includes('already exists') || message.includes('duplicate')) {
+        return 'DUPLICATE_CLIENT';
+    }
+
+    return 'PROVISIONING_FAILED';
+}
+
+function mapProvisioningMessage(code, fallbackMessage = '') {
+    switch (code) {
+        case 'AUTH_REQUIRED':
+            return 'Your admin session expired. Sign in again before creating a client.';
+        case 'FORBIDDEN':
+            return 'Only internal admin accounts can provision live client access.';
+        case 'VALIDATION_ERROR':
+            return fallbackMessage || 'Review the client details and complete every required field before sending the invite.';
+        case 'DUPLICATE_CLIENT':
+            return 'That portal email is already tied to a client record. Open the existing client or use a different email.';
+        case 'CONFIG_MISSING':
+            return 'The secure provisioning service is missing its server-side Supabase configuration. Add the required keys and redeploy the endpoint.';
+        case 'SERVICE_UNAVAILABLE':
+            return 'The secure provisioning service is currently unavailable. Redeploy the admin provisioning endpoint and confirm the server-side Supabase keys are configured.';
+        default:
+            return fallbackMessage || 'The client account could not be provisioned right now. Try again in a moment.';
+    }
 }
 
 function setInlineStatus(element, message, kind = 'info') {
@@ -1780,6 +2594,10 @@ function formatDate(value) {
     }).format(new Date(value));
 }
 
+function formatConsultationDate(value) {
+    return formatDate(value);
+}
+
 function formatDateTime(value) {
     if (!value) {
         return 'Pending';
@@ -1806,6 +2624,11 @@ function formatFileMeta(documentRecord) {
 
 function createInvoiceNumber(seed) {
     return `${slugify(seed).slice(0, 6).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
+}
+
+function buildProjectSlug(seed) {
+    const base = slugify(seed);
+    return base ? `${base}-${Date.now().toString().slice(-6)}` : '';
 }
 
 function slugify(value) {

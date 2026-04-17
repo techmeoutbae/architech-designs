@@ -12,21 +12,6 @@ const Logger = {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
-    try {
-        if (!document.querySelector('link[data-premium-refresh]')) {
-            const currentPath = window.location.pathname.split('/').filter(Boolean);
-            const pathDepth = Math.max(currentPath.length - 1, 0);
-            const prefix = '../'.repeat(pathDepth);
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = `${prefix}css/premium-refresh.css`;
-            link.dataset.premiumRefresh = 'true';
-            document.head.appendChild(link);
-        }
-    } catch (e) {
-        Logger.error('Styles', 'Failed to load premium refresh stylesheet', e);
-    }
-
     Logger.info('App', 'Application initializing...');
 
     // ========== NAVIGATION COMPONENT ==========
@@ -34,15 +19,33 @@ document.addEventListener('DOMContentLoaded', function() {
         const navbar = document.querySelector('.navbar');
         const mobileToggle = document.querySelector('.mobile-toggle');
         const navLinks = document.querySelector('.nav-links');
+        const brandWrapper = document.querySelector('.header-logo-wrapper');
         const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+        const currentUrl = new URL(window.location.href);
+        const currentDemo = currentUrl.searchParams.get('demo') || '';
         const pathSegments = window.location.pathname.split('/').filter(Boolean);
         const pathDepth = Math.max(pathSegments.length - 1, 0);
         const relativePrefix = '../'.repeat(pathDepth);
+        const NAV_COLLAPSE_WIDTH = 1220;
         let menuOverlay = null;
 
         if (!navbar || !navLinks || !mobileToggle) {
             Logger.info('Navigation', 'Premium navigation skipped on this page');
         } else {
+            if (brandWrapper && !brandWrapper.dataset.brandReady) {
+                brandWrapper.dataset.brandReady = 'true';
+                brandWrapper.innerHTML = `
+                    <a href="${resolveHref('index.html')}" class="brand-lockup" aria-label="Architech Designs home">
+                        <span class="brand-lockup-mark">
+                            <img src="${resolveHref('images/updated-ad-logo.png')}" alt="" aria-hidden="true">
+                        </span>
+                        <span class="brand-lockup-copy">
+                            <strong>Architech Designs</strong>
+                        </span>
+                    </a>
+                `;
+            }
+
             function resolveHref(href) {
                 return /^https?:/i.test(href) ? href : `${relativePrefix}${href}`;
             }
@@ -55,18 +58,44 @@ document.addEventListener('DOMContentLoaded', function() {
                     match: ['index.html', '']
                 },
                 {
-                    type: 'link',
+                    type: 'dropdown',
                     label: 'Services',
-                    href: 'services.html',
-                    match: ['services.html']
+                    match: ['services.html'],
+                    items: [
+                        { label: 'Website Design', href: 'services.html' },
+                        { label: 'Conversion Systems', href: 'services.html#growth-services' },
+                        { label: 'Custom Software', href: 'index.html#systems-preview' }
+                    ]
+                },
+                {
+                    type: 'dropdown',
+                    label: 'Packages',
+                    match: ['packages.html', 'quiz.html'],
+                    items: [
+                        { label: 'Launch Site', href: 'packages.html#package-launch' },
+                        { label: 'Growth System', href: 'packages.html#package-growth' },
+                        { label: 'Premium System', href: 'packages.html#package-premium' }
+                    ]
                 },
                 {
                     type: 'dropdown',
                     label: 'Work',
-                    match: ['portfolio.html', 'live-demo.html', 'case-study-luxe-med-spa.html', 'case-study-apex-hvac.html'],
+                    match: ['portfolio.html', 'live-demo.html', 'client-portal.html', 'quiz.html'],
                     items: [
-                        { label: 'Projects', href: 'portfolio.html', description: 'Project case overviews and featured builds.' },
-                        { label: 'Med Spa Demo', href: 'live-demo.html?demo=medspa-beauty', description: 'Embedded beauty demo powered by the restored med spa site bundle.' }
+                        { label: 'Demo Space', href: 'portfolio.html#demo-gallery' },
+                        { label: 'Beauty Demo', href: 'live-demo.html?demo=beauty-service' },
+                        { label: 'Product Demo', href: 'live-demo.html?demo=product-brand' },
+                        { label: 'Builder Lab', href: 'portfolio.html#builder-lab' }
+                    ]
+                },
+                {
+                    type: 'dropdown',
+                    label: 'Portal',
+                    match: ['client-login.html', 'client-portal.html', 'client-workspace.html', 'ops-suite.html'],
+                    items: [
+                        { label: 'Client Login', href: 'client-login.html' },
+                        { label: 'Portal Preview', href: 'client-portal.html' },
+                        { label: 'Admin Suite', href: 'ops-suite.html' }
                     ]
                 },
                 {
@@ -74,28 +103,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     label: 'Company',
                     match: ['about.html', 'process.html', 'faq.html', 'contact.html', 'why-choose-us.html'],
                     items: [
-                        { label: 'About', href: 'about.html', description: 'Who Architech Designs is and how we work.' },
-                        { label: 'Process', href: 'process.html', description: 'Delivery structure from strategy through launch.' },
-                        { label: 'FAQ', href: 'faq.html', description: 'Answers to timing, pricing, and scope questions.' },
-                        { label: 'Contact', href: 'contact.html', description: 'Book a consultation or start the conversation.' }
+                        { label: 'About', href: 'about.html' },
+                        { label: 'Process', href: 'process.html' },
+                        { label: 'FAQ', href: 'faq.html' },
+                        { label: 'Contact', href: 'contact.html' }
                     ]
-                },
-                {
-                    type: 'link',
-                    label: 'Pricing',
-                    href: 'packages.html',
-                    match: ['packages.html', 'quiz.html']
-                },
-                {
-                    type: 'link',
-                    label: 'Demo',
-                    href: 'client-portal.html',
-                    match: ['client-portal.html']
                 }
             ];
-
-            const clientPortalPaths = ['client-login.html', 'client-workspace.html', 'ops-suite.html'];
-            const isClientPortalPage = clientPortalPaths.includes(currentPath);
 
             function isItemActive(item) {
                 if (item.match && item.match.includes(currentPath)) {
@@ -103,7 +117,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 if (item.type === 'dropdown') {
-                    return item.items.some((entry) => entry.href === currentPath);
+                    return item.items.some((entry) => {
+                        const parsed = new URL(entry.href, window.location.origin + '/');
+                        const path = parsed.pathname.split('/').pop() || 'index.html';
+                        const demo = parsed.searchParams.get('demo') || '';
+                        return path === currentPath && (!demo || demo === currentDemo);
+                    });
                 }
 
                 return item.href === currentPath;
@@ -123,9 +142,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             </button>
                             <div class="nav-dropdown-menu">
                                 ${item.items.map((entry) => `
-                                    <a href="${resolveHref(entry.href)}" class="nav-dropdown-link${entry.href === currentPath ? ' active' : ''}">
+                                    <a href="${resolveHref(entry.href)}" class="nav-dropdown-link${isItemActive({ type: 'dropdown', items: [entry] }) ? ' active' : ''}">
                                         <strong>${entry.label}</strong>
-                                        <span>${entry.description}</span>
                                     </a>
                                 `).join('')}
                             </div>
@@ -171,15 +189,13 @@ document.addEventListener('DOMContentLoaded', function() {
             function renderNavigation() {
                 navLinks.innerHTML = [
                     ...navigationModel.map(renderNavItem),
-                    `<li class="nav-mobile-action"><a href="${resolveHref('contact.html')}" class="nav-mobile-link">Book Consultation</a></li>`,
-                    `<li class="nav-mobile-action nav-mobile-action-primary"><a href="${resolveHref('client-login.html')}" class="nav-mobile-link">Client Portal</a></li>`
+                    `<li class="nav-mobile-action nav-mobile-action-primary"><a href="${resolveHref('contact.html')}" class="nav-mobile-link">Book Consultation</a></li>`
                 ].join('');
 
                 const navCta = document.querySelector('.nav-cta');
                 if (navCta) {
                     navCta.innerHTML = `
-                        <a href="${resolveHref('contact.html')}" class="btn btn-outline btn-sm nav-secondary-cta">Book Consultation</a>
-                        <a href="${resolveHref('client-login.html')}" class="btn btn-sm nav-primary-cta${isClientPortalPage ? ' active' : ''}" style="background: linear-gradient(135deg, #f2ddab 0%, #d6b35e 48%, #c79b25 100%); color: #102138 !important; box-shadow: 0 20px 44px rgba(7, 12, 20, 0.24);">Client Portal</a>
+                        <a href="${resolveHref('contact.html')}" class="btn btn-sm nav-primary-cta">Book Consultation</a>
                     `;
                 }
 
@@ -213,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             navLinks.addEventListener('click', function(e) {
                 const dropdownTrigger = e.target.closest('.nav-dropdown-toggle');
-                if (dropdownTrigger && window.innerWidth <= 1080) {
+                if (dropdownTrigger && window.innerWidth <= NAV_COLLAPSE_WIDTH) {
                     const parent = dropdownTrigger.closest('.nav-dropdown');
                     const isOpen = parent.classList.contains('is-open');
                     document.querySelectorAll('.nav-dropdown.is-open').forEach((item) => {
@@ -241,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             window.addEventListener('resize', function() {
-                if (window.innerWidth > 1080) {
+                if (window.innerWidth > NAV_COLLAPSE_WIDTH) {
                     closeMenu();
                 }
             });
@@ -250,21 +266,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     } catch (e) {
         Logger.error('Navigation', 'Failed to initialize navigation', e);
-    }
-
-    try {
-        const medspaDemoCard = document.querySelector('.project-card[data-href="live-demo.html?demo=medspa-beauty"]');
-        const medspaDescription = medspaDemoCard?.querySelector('.project-desc');
-        if (medspaDescription) {
-            medspaDescription.textContent = 'Live demo showcasing interactive treatments, quiz flow, booking paths, and the kind of premium customer journey we build for service businesses.';
-        }
-
-        const medspaTrustLabel = medspaDemoCard?.querySelector('.mini-mockup-trust span');
-        if (medspaTrustLabel) {
-            medspaTrustLabel.textContent = '4.9 Rating';
-        }
-    } catch (e) {
-        Logger.error('Portfolio', 'Failed to normalize demo card copy', e);
     }
 
     // ========== HONEST SOCIAL LINKS ==========
@@ -455,9 +456,285 @@ document.addEventListener('DOMContentLoaded', function() {
         const contactForm = document.querySelector('.contact-form form');
         
         if (contactForm) {
+            let status = contactForm.querySelector('[data-contact-status]');
+            const isConsultationForm = contactForm.dataset.consultationForm === 'true';
+            if (!status) {
+                status = document.createElement('div');
+                status.className = 'contact-form-status';
+                status.setAttribute('aria-live', 'polite');
+                status.dataset.contactStatus = 'true';
+                contactForm.appendChild(status);
+            }
+
+            function setContactStatus(message, kind = 'info') {
+                status.textContent = message;
+                status.classList.remove('success', 'error');
+                if (kind === 'success') {
+                    status.classList.add('success');
+                }
+                if (kind === 'error') {
+                    status.classList.add('error');
+                }
+            }
+
+            function isLocalPreview() {
+                return ['localhost', '127.0.0.1'].includes(window.location.hostname);
+            }
+
+            function formatDateValue(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+
+            function initConsultationScheduler(form) {
+                const dayContainer = form.querySelector('[data-consultation-days]');
+                const timeContainer = form.querySelector('[data-consultation-times]');
+                const daySelect = form.querySelector('[data-consultation-day-select]');
+                const timeSelect = form.querySelector('[data-consultation-time-select]');
+                const summary = form.querySelector('[data-consultation-summary]');
+                const summaryInline = form.querySelector('[data-consultation-summary-inline]');
+                const timezoneLabel = form.querySelector('[data-consultation-timezone-label]');
+                const hiddenDate = form.querySelector('#consultationDate');
+                const hiddenTime = form.querySelector('#consultationTime');
+                const hiddenIso = form.querySelector('#consultationIso');
+                const hiddenTimezone = form.querySelector('#consultationTimezone');
+
+                if (!summary || !hiddenDate || !hiddenTime || !hiddenIso || !hiddenTimezone) {
+                    return null;
+                }
+
+                const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/New_York';
+                const timezoneDisplay = timezone.replace(/_/g, ' ').replace(/\//g, ' / ');
+                const dayFormatter = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
+                const dateFormatter = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' });
+                const summaryFormatter = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+                const slotOptions = [
+                    { value: '10:00', label: '10:00 AM' },
+                    { value: '11:30', label: '11:30 AM' },
+                    { value: '13:30', label: '1:30 PM' },
+                    { value: '15:00', label: '3:00 PM' },
+                    { value: '16:30', label: '4:30 PM' }
+                ];
+
+                const dayOptions = [];
+                const cursor = new Date();
+                cursor.setHours(0, 0, 0, 0);
+                while (dayOptions.length < 8) {
+                    cursor.setDate(cursor.getDate() + 1);
+                    const weekday = cursor.getDay();
+                    if (weekday === 0 || weekday === 6) {
+                        continue;
+                    }
+                    dayOptions.push(new Date(cursor));
+                }
+
+                const schedulerState = {
+                    selectedDay: formatDateValue(dayOptions[0]),
+                    selectedTime: slotOptions[0].value
+                };
+
+                if (timezoneLabel) {
+                    timezoneLabel.textContent = timezoneDisplay;
+                }
+
+                function syncSelection() {
+                    const day = dayOptions.find((entry) => formatDateValue(entry) === schedulerState.selectedDay) || dayOptions[0];
+                    const slot = slotOptions.find((entry) => entry.value === schedulerState.selectedTime) || slotOptions[0];
+                    const fullSummary = `${summaryFormatter.format(day)} at ${slot.label}`;
+                    const compactSummary = `${dayFormatter.format(day)}, ${dateFormatter.format(day)} at ${slot.label}`;
+
+                    hiddenDate.value = schedulerState.selectedDay;
+                    hiddenTime.value = slot.label;
+                    hiddenIso.value = `${schedulerState.selectedDay}T${slot.value}:00`;
+                    hiddenTimezone.value = timezone;
+                    summary.textContent = `Requested slot: ${fullSummary} (${timezoneDisplay}).`;
+
+                    if (summaryInline) {
+                        summaryInline.textContent = `${compactSummary} (${timezoneDisplay})`;
+                    }
+
+                    if (daySelect) {
+                        daySelect.value = schedulerState.selectedDay;
+                    }
+
+                    if (timeSelect) {
+                        timeSelect.value = schedulerState.selectedTime;
+                    }
+                }
+
+                function renderDays() {
+                    if (dayContainer) {
+                        dayContainer.innerHTML = dayOptions.map((day) => {
+                            const value = formatDateValue(day);
+                            const activeClass = value === schedulerState.selectedDay ? ' is-active' : '';
+                            return `
+                                <button type="button" class="consultation-day${activeClass}" data-consultation-day="${value}">
+                                    <strong>${dayFormatter.format(day)}</strong>
+                                    <span>${dateFormatter.format(day)}</span>
+                                </button>
+                            `;
+                        }).join('');
+                    }
+
+                    if (daySelect) {
+                        daySelect.innerHTML = dayOptions.map((day) => {
+                            const value = formatDateValue(day);
+                            return `<option value="${value}">${dayFormatter.format(day)} - ${dateFormatter.format(day)}</option>`;
+                        }).join('');
+                    }
+                }
+
+                function renderTimes() {
+                    if (timeContainer) {
+                        timeContainer.innerHTML = slotOptions.map((slot) => {
+                            const activeClass = slot.value === schedulerState.selectedTime ? ' is-active' : '';
+                            return `
+                                <button type="button" class="consultation-slot${activeClass}" data-consultation-time="${slot.value}">
+                                    <strong>${slot.label}</strong>
+                                </button>
+                            `;
+                        }).join('');
+                    }
+
+                    if (timeSelect) {
+                        timeSelect.innerHTML = slotOptions.map((slot) => `
+                            <option value="${slot.value}">${slot.label}</option>
+                        `).join('');
+                    }
+                }
+
+                dayContainer?.addEventListener('click', (event) => {
+                    const trigger = event.target.closest('[data-consultation-day]');
+                    if (!trigger) {
+                        return;
+                    }
+
+                    schedulerState.selectedDay = trigger.dataset.consultationDay;
+                    renderDays();
+                    syncSelection();
+                });
+
+                timeContainer?.addEventListener('click', (event) => {
+                    const trigger = event.target.closest('[data-consultation-time]');
+                    if (!trigger) {
+                        return;
+                    }
+
+                    schedulerState.selectedTime = trigger.dataset.consultationTime;
+                    renderTimes();
+                    syncSelection();
+                });
+
+                daySelect?.addEventListener('change', (event) => {
+                    schedulerState.selectedDay = event.target.value;
+                    renderDays();
+                    syncSelection();
+                });
+
+                timeSelect?.addEventListener('change', (event) => {
+                    schedulerState.selectedTime = event.target.value;
+                    renderTimes();
+                    syncSelection();
+                });
+
+                renderDays();
+                renderTimes();
+                syncSelection();
+
+                return {
+                    isValid: () => Boolean(hiddenDate.value && hiddenTime.value),
+                    reset() {
+                        schedulerState.selectedDay = formatDateValue(dayOptions[0]);
+                        schedulerState.selectedTime = slotOptions[0].value;
+                        renderDays();
+                        renderTimes();
+                        syncSelection();
+                    }
+                };
+            }
+
+            async function submitToFormspree(form) {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {
+                        Accept: 'application/json'
+                    }
+                });
+
+                return {
+                    ok: response.ok,
+                    status: response.status
+                };
+            }
+
+            async function submitConsultationRequest(form) {
+                const payload = {
+                    fullName: [form.querySelector('#firstName')?.value.trim(), form.querySelector('#lastName')?.value.trim()].filter(Boolean).join(' '),
+                    email: form.querySelector('#email')?.value.trim().toLowerCase(),
+                    phone: form.querySelector('#phone')?.value.trim() || '',
+                    companyName: form.querySelector('#businessName')?.value.trim(),
+                    requestedService: form.querySelector('#package')?.value || '',
+                    budgetRange: form.querySelector('#budget')?.value || '',
+                    timeline: form.querySelector('#timeline')?.value || '',
+                    preferredDate: form.querySelector('#consultationDate')?.value || '',
+                    preferredTime: form.querySelector('#consultationTime')?.value || '',
+                    preferredIso: form.querySelector('#consultationIso')?.value || '',
+                    timezone: form.querySelector('#consultationTimezone')?.value || '',
+                    projectDetails: form.querySelector('#projectDetails')?.value.trim(),
+                    source: 'website-contact-scheduler'
+                };
+
+                try {
+                    const response = await fetch('/api/contact-consultation', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    let body = {};
+                    try {
+                        body = await response.json();
+                    } catch (parseError) {
+                        body = {};
+                    }
+
+                    if (response.status === 404 && isLocalPreview()) {
+                        return {
+                            ok: false,
+                            skipped: true,
+                            status: 404,
+                            message: 'Local preview mode detected. The admin-calendar handoff is skipped outside Vercel.'
+                        };
+                    }
+
+                    return {
+                        ok: response.ok,
+                        skipped: false,
+                        status: response.status,
+                        message: body.message || ''
+                    };
+                } catch (error) {
+                    return {
+                        ok: false,
+                        skipped: isLocalPreview(),
+                        status: 0,
+                        message: error.message || 'The consultation request could not be saved.'
+                    };
+                }
+            }
+
+            const consultationScheduler = isConsultationForm ? initConsultationScheduler(contactForm) : null;
+
             contactForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
                 const submitBtn = contactForm.querySelector('button[type="submit"]');
-                const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+                const originalText = submitBtn ? submitBtn.textContent : 'Send';
                 
                 let isValid = true;
                 const requiredFields = contactForm.querySelectorAll('[required]');
@@ -470,32 +747,75 @@ document.addEventListener('DOMContentLoaded', function() {
                         field.style.borderColor = 'var(--border)';
                     }
                 });
+
+                if (isConsultationForm && consultationScheduler && !consultationScheduler.isValid()) {
+                    isValid = false;
+                }
                 
                 if (isValid && submitBtn) {
-                    submitBtn.textContent = 'Sending...';
+                    submitBtn.textContent = isConsultationForm ? 'Reserving...' : 'Sending...';
                     submitBtn.disabled = true;
+                    setContactStatus(
+                        isConsultationForm ? 'Saving your preferred consultation time and sending your brief...' : 'Sending your inquiry...',
+                        'info'
+                    );
                     
                     try {
-                        const response = await fetch(contactForm.action, {
-                            method: 'POST',
-                            body: new FormData(contactForm),
-                            headers: {
-                                'Accept': 'application/json'
+                        let consultationResult = { ok: true, skipped: false, status: 200, message: '' };
+                        if (isConsultationForm) {
+                            consultationResult = await submitConsultationRequest(contactForm);
+                            if (!consultationResult.ok && !consultationResult.skipped && consultationResult.status === 409) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                                setContactStatus(consultationResult.message || 'That consultation slot was just taken. Choose a different time and try again.', 'error');
+                                return;
                             }
-                        });
+                        }
+
+                        const emailResult = await submitToFormspree(contactForm);
                         
-                        if (response.ok) {
-                            submitBtn.textContent = 'Message Sent!';
+                        if (consultationResult.ok && emailResult.ok) {
+                            submitBtn.textContent = isConsultationForm ? 'Consultation Requested' : 'Message Sent';
                             submitBtn.style.background = 'var(--success)';
                             submitBtn.style.color = 'var(--white)';
                             contactForm.reset();
-                            Logger.info('ContactForm', 'Form submitted successfully to Formspree');
+                            consultationScheduler?.reset();
+                            setContactStatus(
+                                isConsultationForm
+                                    ? 'Your consultation request is in. The preferred time is saved to the admin calendar and the team has your brief.'
+                                    : 'Your message was sent successfully. We will reach out soon.',
+                                'success'
+                            );
+                            Logger.info('ContactForm', 'Consultation request saved and emailed successfully');
+                        } else if (consultationResult.ok && !emailResult.ok) {
+                            submitBtn.textContent = 'Request Saved';
+                            submitBtn.style.background = 'var(--success)';
+                            submitBtn.style.color = 'var(--white)';
+                            contactForm.reset();
+                            consultationScheduler?.reset();
+                            setContactStatus('Your request was saved to the admin calendar. Email forwarding is delayed, but the team will still see it internally.', 'success');
+                            Logger.warn('ContactForm', 'Consultation saved but Formspree email failed');
+                        } else if (!consultationResult.ok && emailResult.ok) {
+                            submitBtn.textContent = 'Inquiry Sent';
+                            submitBtn.style.background = 'var(--success)';
+                            submitBtn.style.color = 'var(--white)';
+                            contactForm.reset();
+                            consultationScheduler?.reset();
+                            setContactStatus(
+                                consultationResult.skipped
+                                    ? 'Your inquiry was sent. The admin-calendar handoff is skipped in local preview, but the live site will store it internally.'
+                                    : (consultationResult.message || 'Your inquiry was sent. We could not lock the calendar slot automatically, so the team will confirm it manually.'),
+                                'success'
+                            );
+                            Logger.warn('ContactForm', 'Formspree succeeded but consultation calendar save failed');
                         } else {
-                            submitBtn.textContent = 'Error - Try Again';
-                            Logger.error('ContactForm', 'Formspree submission failed');
+                            submitBtn.textContent = 'Try Again';
+                            setContactStatus('We could not send your message right now. Please try again or email us directly.', 'error');
+                            Logger.error('ContactForm', 'Consultation save and Formspree submission failed');
                         }
                     } catch (error) {
-                        submitBtn.textContent = 'Error - Try Again';
+                        submitBtn.textContent = 'Try Again';
+                        setContactStatus('We could not send your message right now. Please try again or email us directly.', 'error');
                         Logger.error('ContactForm', 'Form submission error: ' + error.message);
                     }
                     
@@ -506,6 +826,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         submitBtn.disabled = false;
                     }, 5000);
                 } else {
+                    setContactStatus('Please complete each required field before sending your message.', 'error');
                     Logger.warn('ContactForm', 'Form validation failed');
                 }
             });
@@ -795,12 +1116,43 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentQuestionEl = document.getElementById('currentQuestion');
             const totalQuestionsEl = document.getElementById('totalQuestions');
             const quizRetake = document.getElementById('quizRetake');
+            const multiSelectKeys = new Set(['primary_goal', 'help_needed']);
             
             let currentStep = 0;
-            const totalSteps = questions.length - 1;
+            const totalSteps = questions.length;
             const answers = {};
             
             totalQuestionsEl.textContent = totalSteps;
+
+            function advanceQuiz(index) {
+                if (index < totalSteps - 1) {
+                    currentStep = index + 1;
+                    showQuestion(currentStep);
+                } else {
+                    showResults();
+                }
+            }
+
+            function ensureMultiSelectContinue(question) {
+                let continueButton = question.querySelector('[data-quiz-continue]');
+                if (continueButton) {
+                    return continueButton;
+                }
+
+                const actions = document.createElement('div');
+                actions.className = 'quiz-question-actions';
+
+                continueButton = document.createElement('button');
+                continueButton.type = 'button';
+                continueButton.className = 'btn btn-primary btn-sm quiz-question-continue';
+                continueButton.dataset.quizContinue = 'true';
+                continueButton.disabled = true;
+                continueButton.textContent = 'Continue';
+
+                actions.appendChild(continueButton);
+                question.appendChild(actions);
+                return continueButton;
+            }
             
             function showQuestion(index) {
                 questions.forEach((q, i) => {
@@ -982,9 +1334,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const featuresEl = document.getElementById('quizResultsFeatures');
                 
                 const packageNames = {
-                    'launch': { name: 'Signature Website', subtitle: 'Focused Website Engagement' },
-                    'growth': { name: 'Growth System', subtitle: 'Conversion-Led Build' },
-                    'premium': { name: 'Custom Software Build', subtitle: 'Tailored Scope' }
+                    'launch': { name: 'Launch Site', subtitle: 'Focused Website Engagement' },
+                    'growth': { name: 'Growth Site', subtitle: 'Conversion-Led Build' },
+                    'premium': { name: 'Premium Growth System', subtitle: 'Advanced Website + Systems Layer' }
                 };
                 
                 const pkg = packageNames[result.package];
@@ -1014,15 +1366,28 @@ document.addEventListener('DOMContentLoaded', function() {
             questions.forEach((question, qIndex) => {
                 const options = question.querySelectorAll('.quiz-option');
                 const key = question.dataset.key;
-                const isMultiSelect = key === 'primary_goal' || key === 'help_needed';
+                const isMultiSelect = multiSelectKeys.has(key);
+                const continueButton = isMultiSelect ? ensureMultiSelectContinue(question) : null;
+
+                if (isMultiSelect) {
+                    const subtitle = question.querySelector('.quiz-question-subtitle');
+                    if (subtitle && !subtitle.textContent.includes('continue')) {
+                        subtitle.textContent = 'Select all that apply, then continue';
+                    }
+
+                    continueButton?.addEventListener('click', function() {
+                        if (!Array.isArray(answers[key]) || answers[key].length === 0) {
+                            return;
+                        }
+                        advanceQuiz(qIndex);
+                    });
+                }
                 
                 options.forEach(option => {
                     option.addEventListener('click', function() {
                         if (isMultiSelect) {
-                            // Toggle selection for multi-select questions
                             this.classList.toggle('selected');
-                            
-                            // Collect all selected values
+
                             const selectedValues = [];
                             options.forEach(o => {
                                 if (o.classList.contains('selected')) {
@@ -1030,31 +1395,16 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                             });
                             answers[key] = selectedValues;
-                            
-                            // Auto-advance after a short delay if at least one is selected
-                            if (selectedValues.length > 0) {
-                                setTimeout(() => {
-                                    if (qIndex < totalSteps - 1) {
-                                        currentStep = qIndex + 1;
-                                        showQuestion(currentStep);
-                                    } else {
-                                        showResults();
-                                    }
-                                }, 400);
+                            if (continueButton) {
+                                continueButton.disabled = selectedValues.length === 0;
                             }
                         } else {
-                            // Single select behavior
                             options.forEach(o => o.classList.remove('selected'));
                             this.classList.add('selected');
                             answers[key] = this.dataset.value;
                             
                             setTimeout(() => {
-                                if (qIndex < totalSteps - 1) {
-                                    currentStep = qIndex + 1;
-                                    showQuestion(currentStep);
-                                } else {
-                                    showResults();
-                                }
+                                advanceQuiz(qIndex);
                             }, 300);
                         }
                     });
@@ -1065,6 +1415,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentStep = 0;
                 Object.keys(answers).forEach(key => delete answers[key]);
                 quizWrapper.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+                quizWrapper.querySelectorAll('[data-quiz-continue]').forEach(button => {
+                    button.disabled = true;
+                });
                 quizWrapper.querySelectorAll('.quiz-progress-step').forEach(s => s.classList.remove('active', 'completed'));
                 showQuestion(0);
             });
@@ -1146,5 +1499,108 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     } catch (e) {
         Logger.error('DemoPortal', 'Failed to initialize dropdown menu', e);
+    }
+
+    // ========== ESTIMATE BUILDER COMPONENT ==========
+    try {
+        const estimateBuilder = document.getElementById('estimateBuilder');
+
+        if (estimateBuilder) {
+            const currency = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                maximumFractionDigits: 0
+            });
+
+            const rangeOutput = document.getElementById('estimateRange');
+            const packageOutput = document.getElementById('estimatePackageRecommendation');
+            const summaryOutput = document.getElementById('estimateSummary');
+            const featuresOutput = document.getElementById('estimateFeatureList');
+
+            function calculateEstimate() {
+                const basePackage = estimateBuilder.querySelector('#estimateBasePackage')?.value || 'growth';
+                const pageCount = parseInt(estimateBuilder.querySelector('#estimatePageCount')?.value || '6', 10);
+                const wantsPortal = Boolean(estimateBuilder.querySelector('#estimatePortal')?.checked);
+                const wantsAutomation = Boolean(estimateBuilder.querySelector('#estimateAutomation')?.checked);
+                const wantsSeo = Boolean(estimateBuilder.querySelector('#estimateSeo')?.checked);
+                const wantsCopy = Boolean(estimateBuilder.querySelector('#estimateCopy')?.checked);
+                const wantsCalculator = Boolean(estimateBuilder.querySelector('#estimateCalculator')?.checked);
+                const wantsCommerce = Boolean(estimateBuilder.querySelector('#estimateCommerce')?.checked);
+
+                const packageBase = {
+                    launch: 1799,
+                    growth: 2999,
+                    premium: 5299
+                };
+
+                let estimate = packageBase[basePackage] || packageBase.growth;
+
+                if (pageCount > 5) {
+                    estimate += (pageCount - 5) * 180;
+                }
+                if (wantsPortal) {
+                    estimate += 1600;
+                }
+                if (wantsAutomation) {
+                    estimate += 900;
+                }
+                if (wantsSeo) {
+                    estimate += 700;
+                }
+                if (wantsCopy) {
+                    estimate += 650;
+                }
+                if (wantsCalculator) {
+                    estimate += 850;
+                }
+                if (wantsCommerce) {
+                    estimate += 1200;
+                }
+
+                let recommendedPackage = 'Growth Site';
+                if (basePackage === 'launch' && estimate < 2600 && !wantsPortal && !wantsCommerce && !wantsCalculator) {
+                    recommendedPackage = 'Launch Site';
+                }
+                if (basePackage === 'premium' || wantsPortal || wantsCommerce || wantsCalculator || estimate >= 5000) {
+                    recommendedPackage = 'Premium Growth System';
+                }
+
+                const minEstimate = Math.round((estimate * 0.92) / 50) * 50;
+                const maxEstimate = Math.round((estimate * 1.12) / 50) * 50;
+
+                const selectedFeatures = [
+                    `${pageCount} page scope`,
+                    wantsPortal ? 'client portal preview' : null,
+                    wantsAutomation ? 'automation / integrations' : null,
+                    wantsSeo ? 'advanced SEO setup' : null,
+                    wantsCopy ? 'copy structure support' : null,
+                    wantsCalculator ? 'interactive calculator or estimator' : null,
+                    wantsCommerce ? 'product or checkout flow' : null
+                ].filter(Boolean);
+
+                if (rangeOutput) {
+                    rangeOutput.textContent = `${currency.format(minEstimate)} - ${currency.format(maxEstimate)}`;
+                }
+                if (packageOutput) {
+                    packageOutput.textContent = recommendedPackage;
+                }
+                if (summaryOutput) {
+                    summaryOutput.textContent = `This planning range reflects a ${pageCount}-page scope${selectedFeatures.length > 1 ? ` with ${selectedFeatures.slice(1).join(', ')}` : ''}.`;
+                }
+                if (featuresOutput) {
+                    featuresOutput.innerHTML = selectedFeatures.map((feature) => `<li>${feature}</li>`).join('');
+                }
+            }
+
+            estimateBuilder.querySelectorAll('select, input').forEach((field) => {
+                field.addEventListener('input', calculateEstimate);
+                field.addEventListener('change', calculateEstimate);
+            });
+
+            calculateEstimate();
+            Logger.info('EstimateBuilder', 'Interactive estimate builder initialized');
+        }
+    } catch (e) {
+        Logger.error('EstimateBuilder', 'Failed to initialize estimate builder', e);
     }
 });
