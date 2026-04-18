@@ -31,6 +31,19 @@ function stopMessageFeed(supabase) {
     }
 }
 
+function buildProjectMessageQuery(supabase, projectId, includeInternal = APP !== 'client-workspace') {
+    let query = supabase
+        .from('messages')
+        .select('*')
+        .eq('project_id', projectId);
+
+    if (!includeInternal) {
+        query = query.eq('is_internal', false);
+    }
+
+    return query.order('created_at', { ascending: true });
+}
+
 function startMessagePolling(supabase, projectId, onRefresh) {
     stopMessageFeed(supabase);
 
@@ -41,11 +54,7 @@ function startMessagePolling(supabase, projectId, onRefresh) {
     const refresh = typeof onRefresh === 'function'
         ? onRefresh
         : async () => {
-            const { data } = await supabase
-                .from('messages')
-                .select('*')
-                .eq('project_id', projectId)
-                .order('created_at', { ascending: true });
+            const { data } = await buildProjectMessageQuery(supabase, projectId);
 
             renderMessageThread(data || []);
         };
@@ -390,6 +399,7 @@ async function initClientWorkspacePage(supabase, userContext) {
 
     bindWorkspaceTabs(document);
     initWorkspaceChrome();
+    syncWorkspaceTabFromLocation(document);
     setLoadingWorkspaceState();
 
     signOutButton?.addEventListener('click', async () => {
@@ -595,6 +605,7 @@ async function initAdminWorkspacePage(supabase, userContext) {
 
     bindWorkspaceTabs(document);
     initWorkspaceChrome();
+    syncWorkspaceTabFromLocation(document);
     bindAdminEventHandlers();
     await refreshAdminData();
 
@@ -652,6 +663,13 @@ async function initAdminWorkspacePage(supabase, userContext) {
             redirectTo('client-login.html');
         });
 
+        byId('adminDocumentCancel')?.addEventListener('click', resetAdminDocumentForm);
+        byId('adminProjectCancel')?.addEventListener('click', resetAdminProjectForm);
+        byId('adminMilestoneCancel')?.addEventListener('click', resetAdminMilestoneForm);
+        byId('adminUpdateCancel')?.addEventListener('click', resetAdminUpdateForm);
+        byId('adminInvoiceCancel')?.addEventListener('click', resetAdminInvoiceForm);
+        byId('adminMessageCancel')?.addEventListener('click', resetAdminMessageForm);
+
         byId('adminClientSelect')?.addEventListener('change', (event) => {
             state.selectedClientId = event.target.value;
             const visibleProjects = getProjectsForSelectedClient(state);
@@ -682,20 +700,104 @@ async function initAdminWorkspacePage(supabase, userContext) {
             bindAdminRealtimeForSelectedProject();
         });
 
-        byId('adminProjectList')?.addEventListener('click', (event) => {
-            const trigger = event.target.closest('[data-select-project]');
-            if (!trigger) {
+        byId('adminProjectList')?.addEventListener('click', async (event) => {
+            const selectTrigger = event.target.closest('[data-select-project]');
+            if (selectTrigger) {
+                state.selectedProjectId = selectTrigger.dataset.selectProject;
+                const project = state.projects.find((item) => item.id === state.selectedProjectId);
+                if (project?.client_id) {
+                    state.selectedClientId = project.client_id;
+                }
+                persistAdminSelection(state);
+                renderAdminWorkspace(state);
+                bindAdminRealtimeForSelectedProject();
                 return;
             }
 
-            state.selectedProjectId = trigger.dataset.selectProject;
-            const project = state.projects.find((item) => item.id === state.selectedProjectId);
-            if (project?.client_id) {
-                state.selectedClientId = project.client_id;
+            const editTrigger = event.target.closest('[data-edit-project]');
+            if (editTrigger) {
+                const project = state.projects.find((item) => item.id === editTrigger.dataset.editProject);
+                populateAdminProjectForm(project);
+                return;
             }
-            persistAdminSelection(state);
-            renderAdminWorkspace(state);
-            bindAdminRealtimeForSelectedProject();
+
+            const deleteTrigger = event.target.closest('[data-delete-project]');
+            if (!deleteTrigger) {
+                return;
+            }
+
+            const project = state.projects.find((item) => item.id === deleteTrigger.dataset.deleteProject);
+            if (!project || !window.confirm(`Delete ${project.name}? This will remove its milestones, updates, messages, files, and invoices.`)) {
+                return;
+            }
+
+            const { error } = await supabase.from('projects').delete().eq('id', project.id);
+            if (error) {
+                setAlert(byId('adminAlert'), error.message || 'The project could not be deleted.', 'error');
+                return;
+            }
+
+            resetAdminProjectForm();
+            await refreshAdminData();
+            setAlert(byId('adminAlert'), 'Project deleted.', 'success');
+        });
+
+        byId('adminMilestoneList')?.addEventListener('click', async (event) => {
+            const editTrigger = event.target.closest('[data-edit-milestone]');
+            if (editTrigger) {
+                const milestone = state.milestones.find((item) => item.id === editTrigger.dataset.editMilestone);
+                populateAdminMilestoneForm(milestone);
+                return;
+            }
+
+            const deleteTrigger = event.target.closest('[data-delete-milestone]');
+            if (!deleteTrigger) {
+                return;
+            }
+
+            const milestone = state.milestones.find((item) => item.id === deleteTrigger.dataset.deleteMilestone);
+            if (!milestone || !window.confirm(`Delete milestone: ${milestone.title}?`)) {
+                return;
+            }
+
+            const { error } = await supabase.from('milestones').delete().eq('id', milestone.id);
+            if (error) {
+                setAlert(byId('adminAlert'), error.message || 'The milestone could not be deleted.', 'error');
+                return;
+            }
+
+            resetAdminMilestoneForm();
+            await refreshAdminData();
+            setAlert(byId('adminAlert'), 'Milestone deleted.', 'success');
+        });
+
+        byId('adminUpdateList')?.addEventListener('click', async (event) => {
+            const editTrigger = event.target.closest('[data-edit-update]');
+            if (editTrigger) {
+                const update = state.updates.find((item) => item.id === editTrigger.dataset.editUpdate);
+                populateAdminUpdateForm(update);
+                return;
+            }
+
+            const deleteTrigger = event.target.closest('[data-delete-update]');
+            if (!deleteTrigger) {
+                return;
+            }
+
+            const update = state.updates.find((item) => item.id === deleteTrigger.dataset.deleteUpdate);
+            if (!update || !window.confirm(`Delete update: ${update.title}?`)) {
+                return;
+            }
+
+            const { error } = await supabase.from('project_updates').delete().eq('id', update.id);
+            if (error) {
+                setAlert(byId('adminAlert'), error.message || 'The update could not be deleted.', 'error');
+                return;
+            }
+
+            resetAdminUpdateForm();
+            await refreshAdminData();
+            setAlert(byId('adminAlert'), 'Project update deleted.', 'success');
         });
 
         byId('adminConsultationList')?.addEventListener('click', (event) => {
@@ -709,28 +811,114 @@ async function initAdminWorkspacePage(supabase, userContext) {
         });
 
         byId('adminDocumentList')?.addEventListener('click', async (event) => {
-            const trigger = event.target.closest('[data-download-document]');
-            if (!trigger) {
+            const downloadTrigger = event.target.closest('[data-download-document]');
+            if (downloadTrigger) {
+                const documentRecord = state.documents.find((item) => item.id === downloadTrigger.dataset.downloadDocument);
+                if (!documentRecord) {
+                    return;
+                }
+
+                setAlert(byId('adminAlert'), 'Preparing a secure download...', 'info');
+                const { data, error } = await supabase.storage
+                    .from(STORAGE_BUCKET)
+                    .createSignedUrl(documentRecord.storage_path, 60);
+
+                if (error || !data?.signedUrl) {
+                    setAlert(byId('adminAlert'), error?.message || 'The file could not be downloaded.', 'error');
+                    return;
+                }
+
+                window.open(data.signedUrl, '_blank', 'noopener');
+                clearAlert(byId('adminAlert'));
                 return;
             }
 
-            const documentRecord = state.documents.find((item) => item.id === trigger.dataset.downloadDocument);
-            if (!documentRecord) {
+            const editTrigger = event.target.closest('[data-edit-document]');
+            if (editTrigger) {
+                const documentRecord = state.documents.find((item) => item.id === editTrigger.dataset.editDocument);
+                populateAdminDocumentForm(documentRecord);
                 return;
             }
 
-            setAlert(byId('adminAlert'), 'Preparing a secure download...', 'info');
-            const { data, error } = await supabase.storage
-                .from(STORAGE_BUCKET)
-                .createSignedUrl(documentRecord.storage_path, 60);
-
-            if (error || !data?.signedUrl) {
-                setAlert(byId('adminAlert'), error?.message || 'The file could not be downloaded.', 'error');
+            const deleteTrigger = event.target.closest('[data-delete-document]');
+            if (!deleteTrigger) {
                 return;
             }
 
-            window.open(data.signedUrl, '_blank', 'noopener');
-            clearAlert(byId('adminAlert'));
+            const documentRecord = state.documents.find((item) => item.id === deleteTrigger.dataset.deleteDocument);
+            if (!documentRecord || !window.confirm(`Delete ${documentRecord.file_name}? This cannot be undone.`)) {
+                return;
+            }
+
+            setAlert(byId('adminAlert'), 'Deleting document...', 'info');
+            const { error: deleteError } = await supabase.from('documents').delete().eq('id', documentRecord.id);
+            if (deleteError) {
+                setAlert(byId('adminAlert'), deleteError.message || 'The document could not be deleted.', 'error');
+                return;
+            }
+
+            await supabase.storage.from(STORAGE_BUCKET).remove([documentRecord.storage_path]);
+            resetAdminDocumentForm();
+            await refreshAdminData();
+            setAlert(byId('adminAlert'), 'Document deleted.', 'success');
+        });
+
+        byId('adminInvoiceList')?.addEventListener('click', async (event) => {
+            const editTrigger = event.target.closest('[data-edit-invoice]');
+            if (editTrigger) {
+                const invoice = state.invoices.find((item) => item.id === editTrigger.dataset.editInvoice);
+                populateAdminInvoiceForm(invoice);
+                return;
+            }
+
+            const deleteTrigger = event.target.closest('[data-delete-invoice]');
+            if (!deleteTrigger) {
+                return;
+            }
+
+            const invoice = state.invoices.find((item) => item.id === deleteTrigger.dataset.deleteInvoice);
+            if (!invoice || !window.confirm(`Delete ${invoice.title}? This will also remove related payment records.`)) {
+                return;
+            }
+
+            const { error } = await supabase.from('invoices').delete().eq('id', invoice.id);
+            if (error) {
+                setAlert(byId('adminAlert'), error.message || 'The invoice could not be deleted.', 'error');
+                return;
+            }
+
+            resetAdminInvoiceForm();
+            await refreshAdminData();
+            setAlert(byId('adminAlert'), 'Invoice deleted.', 'success');
+        });
+
+        byId('adminMessageThread')?.addEventListener('click', async (event) => {
+            const editTrigger = event.target.closest('[data-edit-message]');
+            if (editTrigger) {
+                const message = state.messages.find((item) => item.id === editTrigger.dataset.editMessage);
+                populateAdminMessageForm(message);
+                return;
+            }
+
+            const deleteTrigger = event.target.closest('[data-delete-message]');
+            if (!deleteTrigger) {
+                return;
+            }
+
+            const message = state.messages.find((item) => item.id === deleteTrigger.dataset.deleteMessage);
+            if (!message || !window.confirm('Delete this message?')) {
+                return;
+            }
+
+            const { error } = await supabase.from('messages').delete().eq('id', message.id);
+            if (error) {
+                setAlert(byId('adminAlert'), error.message || 'The message could not be deleted.', 'error');
+                return;
+            }
+
+            resetAdminMessageForm();
+            await refreshAdminData();
+            setAlert(byId('adminAlert'), 'Message deleted.', 'success');
         });
 
         byId('adminAccessList')?.addEventListener('click', async (event) => {
@@ -787,36 +975,40 @@ async function initAdminWorkspacePage(supabase, userContext) {
                 return;
             }
 
+            const projectId = byId('adminProjectId')?.value;
+            const existingProject = projectId ? state.projects.find((item) => item.id === projectId) : null;
             const payload = {
                 client_id: byId('adminProjectClient').value,
                 name: byId('adminProjectName')?.value.trim(),
-                slug: buildProjectSlug(byId('adminProjectName')?.value.trim()),
+                slug: existingProject?.slug || buildProjectSlug(byId('adminProjectName')?.value.trim()),
                 service_line: byId('adminProjectService')?.value.trim() || null,
                 current_phase: byId('adminProjectPhase')?.value.trim() || null,
                 target_launch_date: byId('adminProjectLaunch')?.value || null,
                 description: byId('adminProjectDescription')?.value.trim() || null,
-                created_by: state.profile.id
+                created_by: existingProject?.created_by || state.profile.id
             };
 
-            const { data, error } = await supabase.from('projects').insert(payload).select().single();
+            const { data, error } = existingProject
+                ? await supabase.from('projects').update(payload).eq('id', existingProject.id).select().single()
+                : await supabase.from('projects').insert(payload).select().single();
             if (error || !data) {
-                setAlert(byId('adminAlert'), error?.message || 'The project could not be created.', 'error');
+                setAlert(byId('adminAlert'), error?.message || 'The project could not be saved.', 'error');
                 return;
             }
 
             const selectedClient = state.clients.find((client) => client.id === payload.client_id);
-            if (selectedClient?.profile_id) {
+            if (!existingProject && selectedClient?.profile_id) {
                 await supabase.from('project_memberships').upsert([
                     { project_id: data.id, user_id: state.profile.id, membership_role: 'admin', is_primary: false },
                     { project_id: data.id, user_id: selectedClient.profile_id, membership_role: 'client', is_primary: true }
                 ], { onConflict: 'project_id,user_id' });
             }
 
-            event.currentTarget.reset();
+            resetAdminProjectForm();
             state.selectedClientId = payload.client_id;
             state.selectedProjectId = data.id;
             await refreshAdminData();
-            setAlert(byId('adminAlert'), 'Project created and assigned.', 'success');
+            setAlert(byId('adminAlert'), existingProject ? 'Project updated successfully.' : 'Project created and assigned.', 'success');
         });
 
         byId('adminMilestoneForm')?.addEventListener('submit', async (event) => {
@@ -826,25 +1018,29 @@ async function initAdminWorkspacePage(supabase, userContext) {
                 return;
             }
 
+            const milestoneId = byId('adminMilestoneId')?.value;
+            const existingMilestone = milestoneId ? state.milestones.find((item) => item.id === milestoneId) : null;
             const payload = {
-                project_id: state.selectedProjectId,
+                project_id: existingMilestone?.project_id || state.selectedProjectId,
                 title: byId('adminMilestoneTitle')?.value.trim(),
                 description: byId('adminMilestoneDescription')?.value.trim() || null,
                 status: byId('adminMilestoneStatus')?.value || 'upcoming',
                 due_at: byId('adminMilestoneDue')?.value || null,
                 requires_approval: Boolean(byId('adminMilestoneApproval')?.checked),
-                sort_order: getProjectMilestones(state).length + 1
+                sort_order: existingMilestone?.sort_order || (getProjectMilestones(state).length + 1)
             };
 
-            const { error } = await supabase.from('milestones').insert(payload);
+            const { error } = existingMilestone
+                ? await supabase.from('milestones').update(payload).eq('id', existingMilestone.id)
+                : await supabase.from('milestones').insert(payload);
             if (error) {
-                setAlert(byId('adminAlert'), error.message || 'The milestone could not be created.', 'error');
+                setAlert(byId('adminAlert'), error.message || 'The milestone could not be saved.', 'error');
                 return;
             }
 
-            event.currentTarget.reset();
+            resetAdminMilestoneForm();
             await refreshAdminData();
-            setAlert(byId('adminAlert'), 'Milestone added to the selected project.', 'success');
+            setAlert(byId('adminAlert'), existingMilestone ? 'Milestone updated successfully.' : 'Milestone added to the selected project.', 'success');
         });
 
         byId('adminUpdateForm')?.addEventListener('submit', async (event) => {
@@ -854,23 +1050,27 @@ async function initAdminWorkspacePage(supabase, userContext) {
                 return;
             }
 
+            const updateId = byId('adminUpdateId')?.value;
+            const existingUpdate = updateId ? state.updates.find((item) => item.id === updateId) : null;
             const payload = {
-                project_id: state.selectedProjectId,
-                author_id: state.profile.id,
+                project_id: existingUpdate?.project_id || state.selectedProjectId,
+                author_id: existingUpdate?.author_id || state.profile.id,
                 title: byId('adminUpdateTitle')?.value.trim(),
                 body: byId('adminUpdateBody')?.value.trim(),
                 status: byId('adminUpdateStatus')?.value || 'update'
             };
 
-            const { error } = await supabase.from('project_updates').insert(payload);
+            const { error } = existingUpdate
+                ? await supabase.from('project_updates').update(payload).eq('id', existingUpdate.id)
+                : await supabase.from('project_updates').insert(payload);
             if (error) {
-                setAlert(byId('adminAlert'), error.message || 'The project update could not be posted.', 'error');
+                setAlert(byId('adminAlert'), error.message || 'The project update could not be saved.', 'error');
                 return;
             }
 
-            event.currentTarget.reset();
+            resetAdminUpdateForm();
             await refreshAdminData();
-            setAlert(byId('adminAlert'), 'Project update published.', 'success');
+            setAlert(byId('adminAlert'), existingUpdate ? 'Project update updated successfully.' : 'Project update published.', 'success');
         });
 
         byId('adminDocumentForm')?.addEventListener('submit', async (event) => {
@@ -880,42 +1080,67 @@ async function initAdminWorkspacePage(supabase, userContext) {
                 return;
             }
 
+            const documentId = byId('adminDocumentId')?.value;
+            const existingDocument = documentId ? state.documents.find((item) => item.id === documentId) : null;
             const file = byId('adminDocumentFile')?.files?.[0];
-            if (!file) {
+            if (!existingDocument && !file) {
                 setAlert(byId('adminAlert'), 'Choose a file to upload.', 'error');
                 return;
             }
 
-            const storagePath = `${state.selectedProjectId}/${Date.now()}-${sanitizeFileName(file.name)}`;
-            const { error: uploadError } = await supabase.storage.from(STORAGE_BUCKET).upload(storagePath, file, {
-                cacheControl: '3600',
-                upsert: false
-            });
+            let nextStoragePath = existingDocument?.storage_path || '';
+            let nextFileName = existingDocument?.file_name || '';
+            let nextMimeType = existingDocument?.mime_type || 'application/octet-stream';
+            let nextFileSize = existingDocument?.file_size || 0;
+            let uploadedReplacementPath = '';
 
-            if (uploadError) {
-                setAlert(byId('adminAlert'), uploadError.message || 'The file could not be uploaded.', 'error');
-                return;
+            if (file) {
+                uploadedReplacementPath = `${state.selectedProjectId}/${Date.now()}-${sanitizeFileName(file.name)}`;
+                const { error: uploadError } = await supabase.storage.from(STORAGE_BUCKET).upload(uploadedReplacementPath, file, {
+                    cacheControl: '3600',
+                    upsert: false
+                });
+
+                if (uploadError) {
+                    setAlert(byId('adminAlert'), uploadError.message || 'The file could not be uploaded.', 'error');
+                    return;
+                }
+
+                nextStoragePath = uploadedReplacementPath;
+                nextFileName = file.name;
+                nextMimeType = file.type || 'application/octet-stream';
+                nextFileSize = file.size;
             }
 
-            const { error: documentError } = await supabase.from('documents').insert({
-                project_id: state.selectedProjectId,
-                uploaded_by: state.profile.id,
-                file_name: file.name,
-                storage_path: storagePath,
-                mime_type: file.type || 'application/octet-stream',
-                file_size: file.size,
+            const documentPayload = {
+                project_id: existingDocument?.project_id || state.selectedProjectId,
+                uploaded_by: existingDocument?.uploaded_by || state.profile.id,
+                file_name: nextFileName,
+                storage_path: nextStoragePath,
+                mime_type: nextMimeType,
+                file_size: nextFileSize,
                 category: byId('adminDocumentCategory')?.value.trim() || 'Project file'
-            });
+            };
+
+            const { error: documentError } = existingDocument
+                ? await supabase.from('documents').update(documentPayload).eq('id', existingDocument.id)
+                : await supabase.from('documents').insert(documentPayload);
 
             if (documentError) {
-                await supabase.storage.from(STORAGE_BUCKET).remove([storagePath]);
-                setAlert(byId('adminAlert'), documentError.message || 'The file record could not be created.', 'error');
+                if (uploadedReplacementPath) {
+                    await supabase.storage.from(STORAGE_BUCKET).remove([uploadedReplacementPath]);
+                }
+                setAlert(byId('adminAlert'), documentError.message || 'The file record could not be saved.', 'error');
                 return;
             }
 
-            event.currentTarget.reset();
+            if (existingDocument && uploadedReplacementPath && existingDocument.storage_path && existingDocument.storage_path !== uploadedReplacementPath) {
+                await supabase.storage.from(STORAGE_BUCKET).remove([existingDocument.storage_path]);
+            }
+
+            resetAdminDocumentForm();
             await refreshAdminData();
-            setAlert(byId('adminAlert'), 'Document uploaded to the client portal.', 'success');
+            setAlert(byId('adminAlert'), existingDocument ? 'Document updated successfully.' : 'Document uploaded to the client portal.', 'success');
         });
 
         byId('adminInvoiceForm')?.addEventListener('submit', async (event) => {
@@ -925,11 +1150,12 @@ async function initAdminWorkspacePage(supabase, userContext) {
                 return;
             }
 
+            const invoiceId = byId('adminInvoiceId')?.value;
+            const existingInvoice = invoiceId ? state.invoices.find((item) => item.id === invoiceId) : null;
             const project = getSelectedProject(state);
             const payload = {
-                project_id: state.selectedProjectId,
-                created_by: state.profile.id,
-                invoice_number: createInvoiceNumber(project?.name || 'portal'),
+                project_id: existingInvoice?.project_id || state.selectedProjectId,
+                created_by: existingInvoice?.created_by || state.profile.id,
                 title: byId('adminInvoiceTitle')?.value.trim(),
                 description: byId('adminInvoiceDescription')?.value.trim() || null,
                 amount: Number(byId('adminInvoiceAmount')?.value || 0),
@@ -939,15 +1165,21 @@ async function initAdminWorkspacePage(supabase, userContext) {
                 payment_url: byId('adminInvoicePaymentUrl')?.value.trim() || null
             };
 
-            const { error } = await supabase.from('invoices').insert(payload);
+            if (!existingInvoice) {
+                payload.invoice_number = createInvoiceNumber(project?.name || 'portal');
+            }
+
+            const { error } = existingInvoice
+                ? await supabase.from('invoices').update(payload).eq('id', existingInvoice.id)
+                : await supabase.from('invoices').insert(payload);
             if (error) {
-                setAlert(byId('adminAlert'), error.message || 'The invoice could not be created.', 'error');
+                setAlert(byId('adminAlert'), error.message || 'The invoice could not be saved.', 'error');
                 return;
             }
 
-            event.currentTarget.reset();
+            resetAdminInvoiceForm();
             await refreshAdminData();
-            setAlert(byId('adminAlert'), 'Invoice created successfully.', 'success');
+            setAlert(byId('adminAlert'), existingInvoice ? 'Invoice updated successfully.' : 'Invoice created successfully.', 'success');
         });
 
         byId('adminPaymentForm')?.addEventListener('submit', async (event) => {
@@ -992,6 +1224,8 @@ async function initAdminWorkspacePage(supabase, userContext) {
                 return;
             }
 
+            const messageId = byId('adminMessageId')?.value;
+            const existingMessage = messageId ? state.messages.find((item) => item.id === messageId) : null;
             const body = byId('adminMessageBody')?.value.trim();
             if (!body) {
                 return;
@@ -1004,15 +1238,17 @@ async function initAdminWorkspacePage(supabase, userContext) {
                 is_internal: Boolean(byId('adminMessageInternal')?.checked)
             };
 
-            const { error } = await supabase.from('messages').insert(payload);
+            const { error } = existingMessage
+                ? await supabase.from('messages').update({ body: payload.body, is_internal: payload.is_internal }).eq('id', existingMessage.id)
+                : await supabase.from('messages').insert(payload);
             if (error) {
-                setAlert(byId('adminAlert'), error.message || 'The message could not be sent.', 'error');
+                setAlert(byId('adminAlert'), error.message || 'The message could not be saved.', 'error');
                 return;
             }
 
-            event.currentTarget.reset();
+            resetAdminMessageForm();
             await refreshAdminData();
-            setAlert(byId('adminAlert'), 'Message posted to the project thread.', 'success');
+            setAlert(byId('adminAlert'), existingMessage ? 'Message updated successfully.' : 'Message posted to the project thread.', 'success');
         });
 
         byId('adminAccessForm')?.addEventListener('submit', async (event) => {
@@ -1217,7 +1453,7 @@ async function fetchProjectDetail(supabase, projectId) {
         fetchTable(supabase, 'project_updates', '*', (query) => query.eq('project_id', projectId).order('published_at', { ascending: false })),
         fetchTable(supabase, 'documents', '*', (query) => query.eq('project_id', projectId).order('created_at', { ascending: false })),
         fetchTable(supabase, 'invoices', '*', (query) => query.eq('project_id', projectId).order('issued_at', { ascending: false })),
-        fetchTable(supabase, 'messages', '*', (query) => query.eq('project_id', projectId).order('created_at', { ascending: true }))
+        fetchTable(supabase, 'messages', '*', () => buildProjectMessageQuery(supabase, projectId, APP !== 'client-workspace'))
     ]);
 
     const invoiceIds = invoices.map((invoice) => invoice.id);
@@ -1296,6 +1532,22 @@ async function fetchMaybeSingle(supabase, table, columns, mutateQuery = (query) 
     return data || null;
 }
 
+function getWorkspaceHashTarget(root) {
+    const targetId = window.location.hash.replace('#', '').trim();
+    if (!targetId) {
+        return '';
+    }
+
+    return root.querySelector(`.workspace-view[id="${targetId}"]`) ? targetId : '';
+}
+
+function syncWorkspaceTabFromLocation(root) {
+    const targetId = getWorkspaceHashTarget(root);
+    if (targetId) {
+        activateWorkspaceTab(root, targetId, { updateHash: false });
+    }
+}
+
 function renderClientWorkspace(state, supabase) {
     const selectedProject = state.projects.find((project) => project.id === state.selectedProjectId) || state.projects[0];
     const detail = state.projectDetail;
@@ -1323,22 +1575,22 @@ function renderClientWorkspace(state, supabase) {
     `).join('');
 
     byId('workspaceOverviewMetrics').innerHTML = `
-        <article class="workspace-kpi-card">
+        <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="workspace-overview">
             <span>Current phase</span>
             <strong>${escapeHtml(selectedProject.current_phase || 'Project delivery')}</strong>
-        </article>
-        <article class="workspace-kpi-card">
+        </button>
+        <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="workspace-milestones">
             <span>Milestones complete</span>
             <strong>${completedMilestones.length} of ${detail.milestones.length || 0}</strong>
-        </article>
-        <article class="workspace-kpi-card">
+        </button>
+        <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="workspace-billing">
             <span>Open invoices</span>
             <strong>${openInvoices.length ? formatCurrency(sumBy(openInvoices, 'amount')) : 'All current'}</strong>
-        </article>
-        <article class="workspace-kpi-card">
+        </button>
+        <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="workspace-updates">
             <span>Collected to date</span>
             <strong>${formatCurrency(totalCollected)}</strong>
-        </article>
+        </button>
     `;
 
     byId('overviewSummaryTitle').textContent = selectedProject.current_phase || selectedProject.name;
@@ -1499,6 +1751,25 @@ function renderAdminWorkspace(state) {
     const consultationFeedMessage = state.availability?.consultations?.message
         || 'The consultation calendar is unavailable right now, so the admin suite loaded without that feed.';
 
+    if (byId('adminDocumentId')?.value && !selectedProjectDocuments.some((item) => item.id === byId('adminDocumentId').value)) {
+        resetAdminDocumentForm();
+    }
+    if (byId('adminProjectId')?.value && !state.projects.some((item) => item.id === byId('adminProjectId').value)) {
+        resetAdminProjectForm();
+    }
+    if (byId('adminMilestoneId')?.value && !selectedProjectMilestones.some((item) => item.id === byId('adminMilestoneId').value)) {
+        resetAdminMilestoneForm();
+    }
+    if (byId('adminUpdateId')?.value && !selectedProjectUpdates.some((item) => item.id === byId('adminUpdateId').value)) {
+        resetAdminUpdateForm();
+    }
+    if (byId('adminInvoiceId')?.value && !selectedProjectInvoices.some((item) => item.id === byId('adminInvoiceId').value)) {
+        resetAdminInvoiceForm();
+    }
+    if (byId('adminMessageId')?.value && !selectedProjectMessages.some((item) => item.id === byId('adminMessageId').value)) {
+        resetAdminMessageForm();
+    }
+
     byId('workspaceProjectTitle').textContent = selectedProject?.name || 'Select a project';
     if (byId('workspaceProjectSynopsis')) {
         byId('workspaceProjectSynopsis').textContent = selectedProject?.description || 'Manage clients, project delivery, files, billing, and permissions from the internal control layer.';
@@ -1513,26 +1784,26 @@ function renderAdminWorkspace(state) {
     byId('adminProjectSelect').innerHTML = buildOptions(getProjectsForSelectedClient(state), state.selectedProjectId, 'name', 'id', 'Select project');
 
     byId('adminMetricsGrid').innerHTML = `
-        <article class="workspace-kpi-card">
+        <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="ops-clients">
             <span>Portal clients</span>
             <strong>${state.clients.length}</strong>
-        </article>
-        <article class="workspace-kpi-card">
+        </button>
+        <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="ops-projects">
             <span>Active projects</span>
             <strong>${state.projects.length}</strong>
-        </article>
-        <article class="workspace-kpi-card">
+        </button>
+        <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="ops-finance">
             <span>Outstanding invoices</span>
             <strong>${formatCurrency(sumBy(state.invoices.filter((invoice) => !['paid', 'void'].includes(invoice.status)), 'amount'))}</strong>
-        </article>
-        <article class="workspace-kpi-card">
+        </button>
+        <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="ops-deliverables">
             <span>Client-visible files</span>
             <strong>${state.documents.length}</strong>
-        </article>
-        <article class="workspace-kpi-card">
+        </button>
+        <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="ops-consultations">
             <span>${consultationFeedAvailable ? 'Upcoming consultations' : 'Consultation calendar'}</span>
             <strong>${consultationFeedAvailable ? upcomingConsultations.length : 'Offline'}</strong>
-        </article>
+        </button>
     `;
 
     byId('adminRecentActivity').innerHTML = buildRecentActivityMarkup(state);
@@ -1575,6 +1846,10 @@ function renderAdminWorkspace(state) {
                 <div class="workspace-data-card-foot">
                     <strong>${project.target_launch_date ? `Launch ${formatDate(project.target_launch_date)}` : 'Launch date not set'}</strong>
                 </div>
+                <div class="workspace-card-actions">
+                    <button type="button" class="btn btn-outline btn-sm" data-edit-project="${escapeHtml(project.id)}">Edit</button>
+                    <button type="button" class="btn btn-outline btn-sm workspace-action-danger" data-delete-project="${escapeHtml(project.id)}">Delete</button>
+                </div>
             </article>
         `).join('')
         : renderEmptyState('No projects for this client', 'Create a project and assign it to the selected client.');
@@ -1592,6 +1867,10 @@ function renderAdminWorkspace(state) {
                 <p>${escapeHtml(milestone.description || 'No milestone details added yet.')}</p>
                 <div class="workspace-data-card-foot">
                     <strong>${milestone.due_at ? `Due ${formatDate(milestone.due_at)}` : 'No due date set'}</strong>
+                </div>
+                <div class="workspace-card-actions">
+                    <button type="button" class="btn btn-outline btn-sm" data-edit-milestone="${escapeHtml(milestone.id)}">Edit</button>
+                    <button type="button" class="btn btn-outline btn-sm workspace-action-danger" data-delete-milestone="${escapeHtml(milestone.id)}">Delete</button>
                 </div>
             </article>
         `).join('')
@@ -1613,6 +1892,10 @@ function renderAdminWorkspace(state) {
                     <div class="workspace-data-card-foot">
                         <strong>${escapeHtml(author?.full_name || 'Architech')}</strong>
                     </div>
+                    <div class="workspace-card-actions">
+                        <button type="button" class="btn btn-outline btn-sm" data-edit-update="${escapeHtml(update.id)}">Edit</button>
+                        <button type="button" class="btn btn-outline btn-sm workspace-action-danger" data-delete-update="${escapeHtml(update.id)}">Delete</button>
+                    </div>
                 </article>
             `;
         }).join('')
@@ -1624,7 +1907,11 @@ function renderAdminWorkspace(state) {
                 <span class="workspace-file-type">${escapeHtml(documentRecord.category || 'Document')}</span>
                 <h3>${escapeHtml(documentRecord.file_name)}</h3>
                 <p>${escapeHtml(formatFileMeta(documentRecord))}</p>
-                <button type="button" class="btn btn-outline btn-sm" data-download-document="${escapeHtml(documentRecord.id)}">Download</button>
+                <div class="workspace-card-actions">
+                    <button type="button" class="btn btn-outline btn-sm" data-download-document="${escapeHtml(documentRecord.id)}">Download</button>
+                    <button type="button" class="btn btn-outline btn-sm" data-edit-document="${escapeHtml(documentRecord.id)}">Edit</button>
+                    <button type="button" class="btn btn-outline btn-sm workspace-action-danger" data-delete-document="${escapeHtml(documentRecord.id)}">Delete</button>
+                </div>
             </article>
         `).join('')
         : renderEmptyState('No deliverables uploaded', 'Upload files to make them immediately available to the client portal.');
@@ -1647,6 +1934,10 @@ function renderAdminWorkspace(state) {
                         <strong>${formatCurrency(invoice.amount)}</strong>
                         <span class="workspace-inline-note">${invoicePaymentUrl ? 'External payment link attached' : 'Portal checkout will generate at payment time'}</span>
                     </div>
+                    <div class="workspace-card-actions">
+                        <button type="button" class="btn btn-outline btn-sm" data-edit-invoice="${escapeHtml(invoice.id)}">Edit</button>
+                        <button type="button" class="btn btn-outline btn-sm workspace-action-danger" data-delete-invoice="${escapeHtml(invoice.id)}">Delete</button>
+                    </div>
                     ${invoicePaymentUrl ? `<div class="workspace-inline-records"><a class="workspace-pill" href="${escapeHtml(invoicePaymentUrl)}" target="_blank" rel="noopener noreferrer">Open payment link</a></div>` : ''}
                     ${invoicePayments.length ? `<div class="workspace-inline-records">${invoicePayments.map((payment) => `<span class="workspace-pill success">${escapeHtml(formatCurrency(payment.amount))} ${escapeHtml(payment.method || 'recorded')}</span>`).join('')}</div>` : ''}
                 </article>
@@ -1661,7 +1952,11 @@ function renderAdminWorkspace(state) {
                 <article class="workspace-message ${message.is_internal ? 'team internal' : sender?.role === 'client' ? 'client' : 'team'}">
                     <div class="workspace-message-meta">
                         <strong>${escapeHtml(sender?.full_name || sender?.email || 'Architech')}</strong>
-                        <span>${escapeHtml(formatDateTime(message.created_at))}</span>
+                        <div class="workspace-message-meta-actions">
+                            <span>${escapeHtml(formatDateTime(message.created_at))}</span>
+                            <button type="button" class="workspace-message-action" data-edit-message="${escapeHtml(message.id)}">Edit</button>
+                            <button type="button" class="workspace-message-action workspace-action-danger" data-delete-message="${escapeHtml(message.id)}">Delete</button>
+                        </div>
                     </div>
                     <p>${escapeHtml(message.body)}</p>
                     ${message.is_internal ? '<span class="workspace-pill warning">Internal note</span>' : ''}
@@ -2034,19 +2329,29 @@ function initWorkspaceChrome() {
     });
 }
 
-function activateWorkspaceTab(root, targetId) {
+function activateWorkspaceTab(root, targetId, options = {}) {
     if (!targetId) {
         return;
     }
+
+    const { updateHash = true } = options;
 
     const buttons = root.querySelectorAll('.workspace-nav-button');
     const views = root.querySelectorAll('.workspace-view');
 
     buttons.forEach((item) => item.classList.toggle('active', item.dataset.workspaceTab === targetId));
     views.forEach((view) => view.classList.toggle('active', view.id === targetId));
+
+    if (updateHash) {
+        const nextUrl = new URL(window.location.href);
+        nextUrl.hash = targetId;
+        window.history.replaceState({}, document.title, nextUrl.toString());
+    }
 }
 
 function bindWorkspaceTabs(root) {
+    const stateHost = root instanceof HTMLElement ? root : document.body;
+
     root.querySelectorAll('.workspace-nav-button').forEach((button) => {
         if (button.dataset.tabsBound === 'true') {
             return;
@@ -2074,6 +2379,11 @@ function bindWorkspaceTabs(root) {
             }
         });
     });
+
+    if (stateHost.dataset.workspaceHashBound !== 'true') {
+        stateHost.dataset.workspaceHashBound = 'true';
+        window.addEventListener('hashchange', () => syncWorkspaceTabFromLocation(root));
+    }
 }
 
 function getSelectedProject(state) {
@@ -2106,6 +2416,153 @@ function getProjectInvoices(state, projectId) {
 
 function getProjectMessages(state, projectId) {
     return state.messages.filter((message) => message.project_id === projectId);
+}
+
+function resetAdminDocumentForm() {
+    byId('adminDocumentForm')?.reset();
+    byId('adminDocumentId').value = '';
+    byId('adminDocumentFormTitle').textContent = 'Upload Document';
+    byId('adminDocumentSubmit').textContent = 'Upload Document';
+    byId('adminDocumentCancel').classList.add('is-hidden');
+}
+
+function resetAdminProjectForm() {
+    byId('adminProjectForm')?.reset();
+    byId('adminProjectId').value = '';
+    byId('adminProjectFormTitle').textContent = 'Create Project';
+    byId('adminProjectSubmit').textContent = 'Create Project';
+    byId('adminProjectCancel').classList.add('is-hidden');
+}
+
+function populateAdminProjectForm(project) {
+    if (!project) {
+        return;
+    }
+
+    resetAdminProjectForm();
+    byId('adminProjectId').value = project.id;
+    byId('adminProjectClient').value = project.client_id || '';
+    byId('adminProjectName').value = project.name || '';
+    byId('adminProjectService').value = project.service_line || '';
+    byId('adminProjectPhase').value = project.current_phase || '';
+    byId('adminProjectLaunch').value = project.target_launch_date ? String(project.target_launch_date).slice(0, 10) : '';
+    byId('adminProjectDescription').value = project.description || '';
+    byId('adminProjectFormTitle').textContent = 'Edit Project';
+    byId('adminProjectSubmit').textContent = 'Save Project';
+    byId('adminProjectCancel').classList.remove('is-hidden');
+    byId('adminProjectForm')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetAdminMilestoneForm() {
+    byId('adminMilestoneForm')?.reset();
+    byId('adminMilestoneId').value = '';
+    byId('adminMilestoneFormTitle').textContent = 'Add Milestone';
+    byId('adminMilestoneSubmit').textContent = 'Add Milestone';
+    byId('adminMilestoneCancel').classList.add('is-hidden');
+}
+
+function populateAdminMilestoneForm(milestone) {
+    if (!milestone) {
+        return;
+    }
+
+    resetAdminMilestoneForm();
+    byId('adminMilestoneId').value = milestone.id;
+    byId('adminMilestoneTitle').value = milestone.title || '';
+    byId('adminMilestoneDue').value = milestone.due_at ? String(milestone.due_at).slice(0, 10) : '';
+    byId('adminMilestoneStatus').value = milestone.status || 'upcoming';
+    byId('adminMilestoneDescription').value = milestone.description || '';
+    byId('adminMilestoneApproval').checked = Boolean(milestone.requires_approval);
+    byId('adminMilestoneFormTitle').textContent = 'Edit Milestone';
+    byId('adminMilestoneSubmit').textContent = 'Save Milestone';
+    byId('adminMilestoneCancel').classList.remove('is-hidden');
+    byId('adminMilestoneForm')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetAdminUpdateForm() {
+    byId('adminUpdateForm')?.reset();
+    byId('adminUpdateId').value = '';
+    byId('adminUpdateFormTitle').textContent = 'Publish Project Update';
+    byId('adminUpdateSubmit').textContent = 'Publish Update';
+    byId('adminUpdateCancel').classList.add('is-hidden');
+}
+
+function populateAdminUpdateForm(update) {
+    if (!update) {
+        return;
+    }
+
+    resetAdminUpdateForm();
+    byId('adminUpdateId').value = update.id;
+    byId('adminUpdateTitle').value = update.title || '';
+    byId('adminUpdateStatus').value = update.status || 'update';
+    byId('adminUpdateBody').value = update.body || '';
+    byId('adminUpdateFormTitle').textContent = 'Edit Project Update';
+    byId('adminUpdateSubmit').textContent = 'Save Update';
+    byId('adminUpdateCancel').classList.remove('is-hidden');
+    byId('adminUpdateForm')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function populateAdminDocumentForm(documentRecord) {
+    if (!documentRecord) {
+        return;
+    }
+
+    resetAdminDocumentForm();
+    byId('adminDocumentId').value = documentRecord.id;
+    byId('adminDocumentCategory').value = documentRecord.category || '';
+    byId('adminDocumentFormTitle').textContent = 'Edit Document';
+    byId('adminDocumentSubmit').textContent = 'Save Document';
+    byId('adminDocumentCancel').classList.remove('is-hidden');
+    byId('adminDocumentForm')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetAdminInvoiceForm() {
+    byId('adminInvoiceForm')?.reset();
+    byId('adminInvoiceId').value = '';
+    byId('adminInvoiceFormTitle').textContent = 'Create Invoice';
+    byId('adminInvoiceSubmit').textContent = 'Create Invoice';
+    byId('adminInvoiceCancel').classList.add('is-hidden');
+}
+
+function populateAdminInvoiceForm(invoice) {
+    if (!invoice) {
+        return;
+    }
+
+    resetAdminInvoiceForm();
+    byId('adminInvoiceId').value = invoice.id;
+    byId('adminInvoiceTitle').value = invoice.title || '';
+    byId('adminInvoiceAmount').value = Number(invoice.amount || 0) || '';
+    byId('adminInvoiceStatus').value = invoice.status || 'issued';
+    byId('adminInvoiceDue').value = invoice.due_at ? String(invoice.due_at).slice(0, 10) : '';
+    byId('adminInvoicePaymentUrl').value = invoice.payment_url || '';
+    byId('adminInvoiceDescription').value = invoice.description || '';
+    byId('adminInvoiceFormTitle').textContent = 'Edit Invoice';
+    byId('adminInvoiceSubmit').textContent = 'Save Invoice';
+    byId('adminInvoiceCancel').classList.remove('is-hidden');
+    byId('adminInvoiceForm')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetAdminMessageForm() {
+    byId('adminMessageForm')?.reset();
+    byId('adminMessageId').value = '';
+    byId('adminMessageSubmit').textContent = 'Post Message';
+    byId('adminMessageCancel').classList.add('is-hidden');
+}
+
+function populateAdminMessageForm(message) {
+    if (!message) {
+        return;
+    }
+
+    resetAdminMessageForm();
+    byId('adminMessageId').value = message.id;
+    byId('adminMessageBody').value = message.body || '';
+    byId('adminMessageInternal').checked = Boolean(message.is_internal);
+    byId('adminMessageSubmit').textContent = 'Save Message';
+    byId('adminMessageCancel').classList.remove('is-hidden');
+    byId('adminMessageForm')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function getSelectedConsultation(state) {

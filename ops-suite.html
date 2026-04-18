@@ -229,7 +229,8 @@
                         <div class="workspace-form-layout">
                             <div class="workspace-form-stack">
                                 <form class="workspace-form-card" id="adminProjectForm">
-                                    <h3>Create Project</h3>
+                                    <h3 id="adminProjectFormTitle">Create Project</h3>
+                                    <input type="hidden" id="adminProjectId">
                                     <div class="workspace-form-grid">
                                         <div class="form-group">
                                             <label for="adminProjectClient">Client</label>
@@ -257,12 +258,14 @@
                                         </div>
                                     </div>
                                     <div class="workspace-form-actions">
-                                        <button type="submit" class="btn btn-primary">Create Project</button>
+                                        <button type="submit" class="btn btn-primary" id="adminProjectSubmit">Create Project</button>
+                                        <button type="button" class="btn btn-outline is-hidden" id="adminProjectCancel">Cancel Edit</button>
                                     </div>
                                 </form>
 
                                 <form class="workspace-form-card" id="adminMilestoneForm">
-                                    <h3>Add Milestone</h3>
+                                    <h3 id="adminMilestoneFormTitle">Add Milestone</h3>
+                                    <input type="hidden" id="adminMilestoneId">
                                     <div class="workspace-form-grid">
                                         <div class="form-group">
                                             <label for="adminMilestoneTitle">Title</label>
@@ -292,12 +295,14 @@
                                         <span>Requires client approval</span>
                                     </label>
                                     <div class="workspace-form-actions">
-                                        <button type="submit" class="btn btn-outline">Add Milestone</button>
+                                        <button type="submit" class="btn btn-outline" id="adminMilestoneSubmit">Add Milestone</button>
+                                        <button type="button" class="btn btn-outline is-hidden" id="adminMilestoneCancel">Cancel Edit</button>
                                     </div>
                                 </form>
 
                                 <form class="workspace-form-card" id="adminUpdateForm">
-                                    <h3>Publish Project Update</h3>
+                                    <h3 id="adminUpdateFormTitle">Publish Project Update</h3>
+                                    <input type="hidden" id="adminUpdateId">
                                     <div class="workspace-form-grid">
                                         <div class="form-group">
                                             <label for="adminUpdateTitle">Update Title</label>
@@ -317,7 +322,8 @@
                                         </div>
                                     </div>
                                     <div class="workspace-form-actions">
-                                        <button type="submit" class="btn btn-outline">Publish Update</button>
+                                        <button type="submit" class="btn btn-outline" id="adminUpdateSubmit">Publish Update</button>
+                                        <button type="button" class="btn btn-outline is-hidden" id="adminUpdateCancel">Cancel Edit</button>
                                     </div>
                                 </form>
                             </div>
@@ -339,6 +345,8 @@
                         </div>
                         <div class="workspace-form-layout">
                             <form class="workspace-form-card" id="adminDocumentForm">
+                                <h3 id="adminDocumentFormTitle">Upload Document</h3>
+                                <input type="hidden" id="adminDocumentId">
                                 <div class="workspace-form-grid">
                                     <div class="form-group">
                                         <label for="adminDocumentCategory">Category</label>
@@ -346,11 +354,12 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="adminDocumentFile">File</label>
-                                        <input id="adminDocumentFile" type="file" required>
+                                        <input id="adminDocumentFile" type="file">
                                     </div>
                                 </div>
                                 <div class="workspace-form-actions">
-                                    <button type="submit" class="btn btn-primary">Upload Document</button>
+                                    <button type="submit" class="btn btn-primary" id="adminDocumentSubmit">Upload Document</button>
+                                    <button type="button" class="btn btn-outline is-hidden" id="adminDocumentCancel">Cancel Edit</button>
                                 </div>
                             </form>
                             <div class="workspace-file-grid" id="adminDocumentList"></div>
@@ -367,7 +376,8 @@
                         <div class="workspace-form-layout">
                             <div class="workspace-form-stack">
                                 <form class="workspace-form-card" id="adminInvoiceForm">
-                                    <h3>Create Invoice</h3>
+                                    <h3 id="adminInvoiceFormTitle">Create Invoice</h3>
+                                    <input type="hidden" id="adminInvoiceId">
                                     <div class="workspace-form-grid">
                                         <div class="form-group">
                                             <label for="adminInvoiceTitle">Invoice Title</label>
@@ -401,7 +411,8 @@
                                     </div>
                                     <p class="workspace-inline-note">Leave this blank to let the portal generate Stripe Checkout sessions automatically. Only use this field when you intentionally want an external payment link override.</p>
                                     <div class="workspace-form-actions">
-                                        <button type="submit" class="btn btn-primary">Create Invoice</button>
+                                        <button type="submit" class="btn btn-primary" id="adminInvoiceSubmit">Create Invoice</button>
+                                        <button type="button" class="btn btn-outline is-hidden" id="adminInvoiceCancel">Cancel Edit</button>
                                     </div>
                                 </form>
 
@@ -447,13 +458,17 @@
                         </div>
                         <div class="workspace-thread" id="adminMessageThread"></div>
                         <form class="workspace-composer" id="adminMessageForm">
+                            <input type="hidden" id="adminMessageId">
                             <label for="adminMessageBody">Message Body</label>
                             <textarea id="adminMessageBody" rows="4" placeholder="Share a project update, review note, or client response."></textarea>
                             <label class="workspace-checkbox">
                                 <input id="adminMessageInternal" type="checkbox">
                                 <span>Save as internal note only</span>
                             </label>
-                            <button type="submit" class="btn btn-primary">Post Message</button>
+                            <div class="workspace-form-actions">
+                                <button type="submit" class="btn btn-primary" id="adminMessageSubmit">Post Message</button>
+                                <button type="button" class="btn btn-outline is-hidden" id="adminMessageCancel">Cancel Edit</button>
+                            </div>
                         </form>
                     </section>
 

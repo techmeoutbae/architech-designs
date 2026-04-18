@@ -11,6 +11,9 @@ const Logger = {
     }
 };
 
+const SUPABASE_PUBLIC_URL = 'https://eaiwhqqwirahmppfjsva.supabase.co';
+const SUPABASE_PUBLIC_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlYWl3aHFxd2lyYWhtcHBmanN2YSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzc1ODk5NTM0LCJleHAiOjIwOTE0NzU1MzR9.WRLIyYQDuLn5k8XKuiv4SfUdh1qkFwSimT1fvP06VGU';
+
 document.addEventListener('DOMContentLoaded', function() {
     Logger.info('App', 'Application initializing...');
 
@@ -23,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const currentPath = window.location.pathname.split('/').pop() || 'index.html';
         const currentUrl = new URL(window.location.href);
         const currentDemo = currentUrl.searchParams.get('demo') || '';
+        const isClientUtilityPage = ['client-login.html', 'client-portal.html', 'client-workspace.html', 'ops-suite.html'].includes(currentPath);
         const pathSegments = window.location.pathname.split('/').filter(Boolean);
         const pathDepth = Math.max(pathSegments.length - 1, 0);
         const relativePrefix = '../'.repeat(pathDepth);
@@ -41,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </span>
                         <span class="brand-lockup-copy">
                             <strong>Architech Designs</strong>
+                            <small>Premium Websites &amp; Systems</small>
                         </span>
                     </a>
                 `;
@@ -52,60 +57,53 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const navigationModel = [
                 {
-                    type: 'link',
-                    label: 'Home',
-                    href: 'index.html',
-                    match: ['index.html', '']
-                },
-                {
                     type: 'dropdown',
                     label: 'Services',
-                    match: ['services.html'],
+                    panelClass: 'nav-dropdown-menu-wide',
+                    match: ['services.html', 'packages.html'],
                     items: [
-                        { label: 'Website Design', href: 'services.html' },
-                        { label: 'Conversion Systems', href: 'services.html#growth-services' },
-                        { label: 'Custom Software', href: 'index.html#systems-preview' }
+                        { label: 'Luxury Websites', href: 'services.html' },
+                        { label: 'Packages & Pricing', href: 'packages.html' },
+                        { label: 'Client Portal', href: 'client-portal.html' },
+                        { label: 'Custom Integrations', href: 'index.html#systems-preview' },
+                        { label: 'Redesigns', href: 'services.html' }
                     ]
                 },
                 {
                     type: 'dropdown',
-                    label: 'Packages',
-                    match: ['packages.html', 'quiz.html'],
+                    label: 'Systems',
+                    panelClass: 'nav-dropdown-menu-wide nav-dropdown-menu-system',
+                    match: ['client-portal.html', 'client-login.html', 'client-workspace.html'],
                     items: [
-                        { label: 'Launch Site', href: 'packages.html#package-launch' },
-                        { label: 'Growth System', href: 'packages.html#package-growth' },
-                        { label: 'Premium System', href: 'packages.html#package-premium' }
+                        { label: 'Client Portal', href: 'client-portal.html' },
+                        { label: 'Automations', href: 'index.html#systems-preview' },
+                        { label: 'Estimators & Tools', href: 'portfolio.html#builder-lab' },
+                        { label: 'Booking Flows', href: 'index.html#home-consultation' },
+                        { label: 'Lead Routing', href: 'portfolio.html#builder-lab' },
+                        { label: 'Internal Workflow Tools', href: 'index.html#systems-preview' }
                     ]
                 },
                 {
                     type: 'dropdown',
                     label: 'Work',
-                    match: ['portfolio.html', 'live-demo.html', 'client-portal.html', 'quiz.html'],
+                    panelClass: 'nav-dropdown-menu-wide',
+                    match: ['portfolio.html', 'live-demo.html', 'client-portal.html', 'quiz.html', 'demo-details.html'],
                     items: [
-                        { label: 'Demo Space', href: 'portfolio.html#demo-gallery' },
-                        { label: 'Beauty Demo', href: 'live-demo.html?demo=beauty-service' },
-                        { label: 'Product Demo', href: 'live-demo.html?demo=product-brand' },
-                        { label: 'Builder Lab', href: 'portfolio.html#builder-lab' }
+                        { label: 'Demo Sites', href: 'portfolio.html#demo-gallery' },
+                        { label: 'Estimator / Calculator', href: 'portfolio.html#builder-lab' },
+                        { label: 'Demo Portal', href: 'client-portal.html' },
+                        { label: 'Quiz', href: 'quiz.html' },
+                        { label: 'Booking System', href: 'index.html#home-consultation' }
                     ]
                 },
                 {
                     type: 'dropdown',
-                    label: 'Portal',
-                    match: ['client-login.html', 'client-portal.html', 'client-workspace.html', 'ops-suite.html'],
-                    items: [
-                        { label: 'Client Login', href: 'client-login.html' },
-                        { label: 'Portal Preview', href: 'client-portal.html' },
-                        { label: 'Admin Suite', href: 'ops-suite.html' }
-                    ]
-                },
-                {
-                    type: 'dropdown',
-                    label: 'Company',
+                    label: 'About',
+                    panelClass: 'nav-dropdown-menu-compact',
                     match: ['about.html', 'process.html', 'faq.html', 'contact.html', 'why-choose-us.html'],
                     items: [
                         { label: 'About', href: 'about.html' },
                         { label: 'Process', href: 'process.html' },
-                        { label: 'FAQ', href: 'faq.html' },
                         { label: 'Contact', href: 'contact.html' }
                     ]
                 }
@@ -140,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <polyline points="6 9 12 15 18 9"></polyline>
                                 </svg>
                             </button>
-                            <div class="nav-dropdown-menu">
+                            <div class="nav-dropdown-menu ${item.panelClass || ''}">
                                 ${item.items.map((entry) => `
                                     <a href="${resolveHref(entry.href)}" class="nav-dropdown-link${isItemActive({ type: 'dropdown', items: [entry] }) ? ' active' : ''}">
                                         <strong>${entry.label}</strong>
@@ -189,12 +187,14 @@ document.addEventListener('DOMContentLoaded', function() {
             function renderNavigation() {
                 navLinks.innerHTML = [
                     ...navigationModel.map(renderNavItem),
+                    `<li class="nav-mobile-action"><a href="${resolveHref('client-login.html')}" class="nav-mobile-link nav-mobile-link-subtle${isClientUtilityPage ? ' active' : ''}">Client Login</a></li>`,
                     `<li class="nav-mobile-action nav-mobile-action-primary"><a href="${resolveHref('contact.html')}" class="nav-mobile-link">Book Consultation</a></li>`
                 ].join('');
 
                 const navCta = document.querySelector('.nav-cta');
                 if (navCta) {
                     navCta.innerHTML = `
+                        <a href="${resolveHref('client-login.html')}" class="nav-utility-link${isClientUtilityPage ? ' active' : ''}">Client Login</a>
                         <a href="${resolveHref('contact.html')}" class="btn btn-sm nav-primary-cta">Book Consultation</a>
                     `;
                 }
@@ -511,11 +511,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 const dateFormatter = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' });
                 const summaryFormatter = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
                 const slotOptions = [
+                    { value: '09:30', label: '9:30 AM' },
                     { value: '10:00', label: '10:00 AM' },
                     { value: '11:30', label: '11:30 AM' },
+                    { value: '12:00', label: '12:00 PM' },
+                    { value: '12:30', label: '12:30 PM' },
                     { value: '13:30', label: '1:30 PM' },
+                    { value: '14:00', label: '2:00 PM' },
                     { value: '15:00', label: '3:00 PM' },
-                    { value: '16:30', label: '4:30 PM' }
+                    { value: '16:30', label: '4:30 PM' },
+                    { value: '17:00', label: '5:00 PM' }
                 ];
 
                 const dayOptions = [];
@@ -530,9 +535,30 @@ document.addEventListener('DOMContentLoaded', function() {
                     dayOptions.push(new Date(cursor));
                 }
 
+                const slotPatterns = [
+                    ['09:30', '10:00', '11:30', '13:30', '16:30'],
+                    ['10:00', '11:30', '14:00', '15:00', '17:00'],
+                    ['09:30', '11:30', '13:30', '15:00', '16:30'],
+                    ['10:00', '12:00', '14:00', '15:00', '17:00'],
+                    ['09:30', '10:00', '13:30', '15:00', '16:30'],
+                    ['10:00', '11:30', '12:30', '14:00', '16:30'],
+                    ['09:30', '11:30', '13:30', '15:00', '17:00'],
+                    ['10:00', '12:00', '14:00', '16:30', '17:00']
+                ];
+
+                const slotsByDay = Object.fromEntries(dayOptions.map((day, index) => {
+                    const value = formatDateValue(day);
+                    const allowedSlots = slotPatterns[index % slotPatterns.length];
+                    return [value, slotOptions.filter((slot) => allowedSlots.includes(slot.value))];
+                }));
+
+                function getSlotsForSelectedDay() {
+                    return slotsByDay[schedulerState.selectedDay] || slotOptions;
+                }
+
                 const schedulerState = {
                     selectedDay: formatDateValue(dayOptions[0]),
-                    selectedTime: slotOptions[0].value
+                    selectedTime: (slotsByDay[formatDateValue(dayOptions[0])] || slotOptions)[0].value
                 };
 
                 if (timezoneLabel) {
@@ -541,7 +567,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 function syncSelection() {
                     const day = dayOptions.find((entry) => formatDateValue(entry) === schedulerState.selectedDay) || dayOptions[0];
-                    const slot = slotOptions.find((entry) => entry.value === schedulerState.selectedTime) || slotOptions[0];
+                    const availableSlots = getSlotsForSelectedDay();
+                    const slot = availableSlots.find((entry) => entry.value === schedulerState.selectedTime) || availableSlots[0];
+                    schedulerState.selectedTime = slot.value;
                     const fullSummary = `${summaryFormatter.format(day)} at ${slot.label}`;
                     const compactSummary = `${dayFormatter.format(day)}, ${dateFormatter.format(day)} at ${slot.label}`;
 
@@ -587,8 +615,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 function renderTimes() {
+                    const availableSlots = getSlotsForSelectedDay();
                     if (timeContainer) {
-                        timeContainer.innerHTML = slotOptions.map((slot) => {
+                        timeContainer.innerHTML = availableSlots.map((slot) => {
                             const activeClass = slot.value === schedulerState.selectedTime ? ' is-active' : '';
                             return `
                                 <button type="button" class="consultation-slot${activeClass}" data-consultation-time="${slot.value}">
@@ -599,7 +628,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     if (timeSelect) {
-                        timeSelect.innerHTML = slotOptions.map((slot) => `
+                        timeSelect.innerHTML = availableSlots.map((slot) => `
                             <option value="${slot.value}">${slot.label}</option>
                         `).join('');
                     }
@@ -612,7 +641,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     schedulerState.selectedDay = trigger.dataset.consultationDay;
+                    schedulerState.selectedTime = getSlotsForSelectedDay()[0].value;
                     renderDays();
+                    renderTimes();
                     syncSelection();
                 });
 
@@ -629,7 +660,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 daySelect?.addEventListener('change', (event) => {
                     schedulerState.selectedDay = event.target.value;
+                    schedulerState.selectedTime = getSlotsForSelectedDay()[0].value;
                     renderDays();
+                    renderTimes();
                     syncSelection();
                 });
 
@@ -647,7 +680,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     isValid: () => Boolean(hiddenDate.value && hiddenTime.value),
                     reset() {
                         schedulerState.selectedDay = formatDateValue(dayOptions[0]);
-                        schedulerState.selectedTime = slotOptions[0].value;
+                        schedulerState.selectedTime = getSlotsForSelectedDay()[0].value;
                         renderDays();
                         renderTimes();
                         syncSelection();
@@ -687,30 +720,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     source: 'website-contact-scheduler'
                 };
 
-                try {
-                    const response = await fetch('/api/contact-consultation', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Accept: 'application/json'
-                        },
-                        body: JSON.stringify(payload)
-                    });
+                const requestOptions = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                };
 
+                async function parseConsultationResponse(response) {
                     let body = {};
                     try {
                         body = await response.json();
                     } catch (parseError) {
                         body = {};
-                    }
-
-                    if (response.status === 404 && isLocalPreview()) {
-                        return {
-                            ok: false,
-                            skipped: true,
-                            status: 404,
-                            message: 'Local preview mode detected. The admin-calendar handoff is skipped outside Vercel.'
-                        };
                     }
 
                     return {
@@ -719,12 +743,37 @@ document.addEventListener('DOMContentLoaded', function() {
                         status: response.status,
                         message: body.message || ''
                     };
+                }
+
+                try {
+                    const response = await fetch(`${SUPABASE_PUBLIC_URL}/functions/v1/contact-consultation`, {
+                        ...requestOptions,
+                        headers: {
+                            ...requestOptions.headers,
+                            apikey: SUPABASE_PUBLIC_ANON_KEY
+                        }
+                    });
+                    const result = await parseConsultationResponse(response);
+
+                    if (response.ok || ![404, 405, 503].includes(response.status)) {
+                        return result;
+                    }
+
+                    const fallbackResponse = await fetch('/api/contact-consultation', requestOptions);
+
+                    return await parseConsultationResponse(fallbackResponse);
                 } catch (error) {
-                    return {
-                        ok: false,
-                        skipped: isLocalPreview(),
-                        status: 0,
-                        message: error.message || 'The consultation request could not be saved.'
+                    try {
+                        const fallbackResponse = await fetch('/api/contact-consultation', requestOptions);
+
+                        return await parseConsultationResponse(fallbackResponse);
+                    } catch (fallbackError) {
+                        return {
+                            ok: false,
+                            skipped: isLocalPreview(),
+                            status: 0,
+                            message: fallbackError.message || error.message || 'The consultation request could not be saved.'
+                        };
                     };
                 }
             }
@@ -1335,7 +1384,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 const packageNames = {
                     'launch': { name: 'Launch Site', subtitle: 'Focused Website Engagement' },
-                    'growth': { name: 'Growth Site', subtitle: 'Conversion-Led Build' },
+                    'growth': { name: 'Growth System', subtitle: 'Conversion-Led Build' },
                     'premium': { name: 'Premium Growth System', subtitle: 'Advanced Website + Systems Layer' }
                 };
                 
@@ -1557,7 +1606,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     estimate += 1200;
                 }
 
-                let recommendedPackage = 'Growth Site';
+                let recommendedPackage = 'Growth System';
                 if (basePackage === 'launch' && estimate < 2600 && !wantsPortal && !wantsCommerce && !wantsCalculator) {
                     recommendedPackage = 'Launch Site';
                 }

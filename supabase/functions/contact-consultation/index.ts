@@ -1,49 +1,54 @@
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://eaiwhqqwirahmppfjsva.supabase.co';
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+/// <reference lib="deno" />
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'content-type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Cache-Control': 'no-store'
+    'Access-Control-Allow-Headers': 'content-type, apikey',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS'
 };
 
-module.exports = async function handler(req, res) {
-    applyCors(res);
+function json(body: unknown, status = 200) {
+    return new Response(JSON.stringify(body), {
+        status,
+        headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+        }
+    });
+}
 
-    if (req.method === 'OPTIONS') {
-        res.status(204).end();
-        return;
+Deno.serve(async (request: Request) => {
+    if (request.method === 'OPTIONS') {
+        return new Response(null, { status: 204, headers: corsHeaders });
     }
 
-    if (req.method !== 'POST') {
-        sendJson(res, 405, {
+    if (request.method !== 'POST') {
+        return json({
             ok: false,
             code: 'METHOD_NOT_ALLOWED',
             message: 'Use POST to submit a consultation request.'
-        });
-        return;
+        }, 405);
     }
 
-    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-        sendJson(res, 503, {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') || Deno.env.get('SUPABASE_PROJECT_URL');
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+    if (!supabaseUrl || !serviceRoleKey) {
+        return json({
             ok: false,
             code: 'CONFIG_MISSING',
             message: 'The secure consultation service is not configured yet.'
-        });
-        return;
+        }, 503);
     }
 
-    let payload;
+    let payload: Record<string, unknown>;
     try {
-        payload = await readJsonBody(req);
-    } catch (error) {
-        sendJson(res, 400, {
+        payload = await request.json();
+    } catch {
+        return json({
             ok: false,
             code: 'INVALID_JSON',
             message: 'The consultation payload could not be read.'
-        });
-        return;
+        }, 400);
     }
 
     const fullName = String(payload?.fullName || '').trim();
@@ -61,29 +66,25 @@ module.exports = async function handler(req, res) {
     const source = String(payload?.source || '').trim() || 'website-contact-scheduler';
 
     if (!fullName || !email || !companyName || !preferredDate || !preferredTime || !projectDetails) {
-        sendJson(res, 400, {
+        return json({
             ok: false,
             code: 'VALIDATION_ERROR',
             message: 'Name, email, company, preferred consultation slot, and project brief are required.'
-        });
-        return;
+        }, 400);
     }
 
     try {
-        const existing = await restRequest(
-            `/rest/v1/consultations?select=id&preferred_date=eq.${encodeURIComponent(preferredDate)}&preferred_time=eq.${encodeURIComponent(preferredTime)}&status=in.(new,confirmed)&limit=1`
-        );
+        const existing = await restRequest(supabaseUrl, serviceRoleKey, `/rest/v1/consultations?select=id&preferred_date=eq.${encodeURIComponent(preferredDate)}&preferred_time=eq.${encodeURIComponent(preferredTime)}&status=in.(new,confirmed)&limit=1`);
 
         if (existing.length) {
-            sendJson(res, 409, {
+            return json({
                 ok: false,
                 code: 'SLOT_UNAVAILABLE',
                 message: 'That consultation slot was just taken. Please choose another time.'
-            });
-            return;
+            }, 409);
         }
 
-        await restRequest('/rest/v1/consultations', {
+        await restRequest(supabaseUrl, serviceRoleKey, '/rest/v1/consultations', {
             method: 'POST',
             body: [{
                 full_name: fullName,
@@ -103,67 +104,34 @@ module.exports = async function handler(req, res) {
             prefer: 'return=representation'
         });
 
-        sendJson(res, 201, {
+        return json({
             ok: true,
             code: 'CONSULTATION_CREATED',
             message: 'Consultation request received and saved to the admin calendar.'
-        });
+        }, 201);
     } catch (error) {
         if (isMissingTableError(error, 'consultations')) {
-            sendJson(res, 503, {
+            return json({
                 ok: false,
                 code: 'CONSULTATION_CALENDAR_UNAVAILABLE',
                 message: 'The consultation calendar is temporarily unavailable, so we could not reserve that slot automatically.'
-            });
-            return;
+            }, 503);
         }
 
-        console.error('[contact-consultation] request failed', {
-            message: error?.message,
-            details: error?.details,
-            stack: error?.stack
-        });
-
-        sendJson(res, 500, {
+        console.error('[contact-consultation] request failed', error);
+        return json({
             ok: false,
             code: 'REQUEST_FAILED',
-            message: error?.message || 'The consultation request could not be saved.'
-        });
+            message: error instanceof Error ? error.message : 'The consultation request could not be saved.'
+        }, 500);
     }
-};
+});
 
-function applyCors(res) {
-    Object.entries(corsHeaders).forEach(([key, value]) => res.setHeader(key, value));
-}
-
-function sendJson(res, status, body) {
-    res.status(status).json(body);
-}
-
-async function readJsonBody(req) {
-    if (req.body && typeof req.body === 'object') {
-        return req.body;
-    }
-
-    if (typeof req.body === 'string' && req.body.trim()) {
-        return JSON.parse(req.body);
-    }
-
-    const chunks = [];
-    for await (const chunk of req) {
-        chunks.push(Buffer.from(chunk));
-    }
-
-    const text = Buffer.concat(chunks).toString('utf8').trim();
-    return text ? JSON.parse(text) : {};
-}
-
-async function restRequest(path, options = {}) {
-    const url = `${SUPABASE_URL}${path}`;
-    const method = options.method || 'GET';
-    const headers = {
-        apikey: SUPABASE_SERVICE_ROLE_KEY,
-        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+async function restRequest(supabaseUrl: string, serviceRoleKey: string, path: string, options: { method?: string; body?: unknown; headers?: Record<string, string>; prefer?: string } = {}) {
+    const url = `${supabaseUrl}${path}`;
+    const headers: Record<string, string> = {
+        apikey: serviceRoleKey,
+        Authorization: `Bearer ${serviceRoleKey}`,
         Accept: 'application/json',
         ...options.headers
     };
@@ -177,7 +145,7 @@ async function restRequest(path, options = {}) {
     }
 
     const response = await fetch(url, {
-        method,
+        method: options.method || 'GET',
         headers,
         body: options.body !== undefined ? JSON.stringify(options.body) : undefined
     });
@@ -186,14 +154,14 @@ async function restRequest(path, options = {}) {
     if (!response.ok) {
         const message = body?.message || body?.error_description || body?.hint || 'Supabase request failed.';
         const error = new Error(message);
-        error.details = body;
+        (error as Error & { details?: unknown }).details = body;
         throw error;
     }
 
     return Array.isArray(body) ? body : body ? [body] : [];
 }
 
-async function safeJson(response) {
+async function safeJson(response: Response) {
     const text = await response.text();
     if (!text) {
         return null;
@@ -201,22 +169,20 @@ async function safeJson(response) {
 
     try {
         return JSON.parse(text);
-    } catch (error) {
+    } catch {
         return { raw: text };
     }
 }
 
-function isMissingTableError(error, table) {
-    const code = String(error?.code || error?.details?.code || '').toUpperCase();
+function isMissingTableError(error: unknown, table: string) {
+    const typed = error as { code?: string; details?: { code?: string; message?: string; hint?: string; details?: string }; message?: string };
+    const code = String(typed?.code || typed?.details?.code || '').toUpperCase();
     const message = [
-        error?.message,
-        error?.details?.message,
-        error?.details?.hint,
-        error?.details?.details
-    ]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase();
+        typed?.message,
+        typed?.details?.message,
+        typed?.details?.hint,
+        typed?.details?.details
+    ].filter(Boolean).join(' ').toLowerCase();
 
     if (code === 'PGRST205') {
         return true;
