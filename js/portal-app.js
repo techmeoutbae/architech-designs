@@ -1557,9 +1557,9 @@ function renderClientWorkspace(state, supabase) {
     const nextMilestone = detail.milestones.find((milestone) => !['approved', 'complete'].includes(milestone.status)) || detail.milestones[0];
     const totalCollected = detail.payments.reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
-    byId('workspaceClientName').textContent = state.client?.company_name || state.profile.full_name || 'Client Portal';
-    byId('workspaceClientEmail').textContent = state.profile.email || SUPPORT_EMAIL;
-    byId('workspaceClientMeta').textContent = `${state.profile.full_name || 'Project contact'} | ${selectedProject.service_line || 'Portal project'}`;
+    byId('workspaceClientName')?.replaceChildren(document.createTextNode(state.client?.company_name || state.profile.full_name || 'Client Portal'));
+    byId('workspaceClientEmail')?.replaceChildren(document.createTextNode(state.profile.email || SUPPORT_EMAIL));
+    byId('workspaceClientMeta')?.replaceChildren(document.createTextNode(`${state.profile.full_name || 'Project contact'} | ${selectedProject.service_line || 'Portal project'}`));
     byId('workspaceProjectTitle').textContent = selectedProject.name;
     if (byId('workspaceProjectSynopsis')) {
         byId('workspaceProjectSynopsis').textContent = selectedProject.description || 'Review project status, files, billing, and direct communication in one refined private workspace.';
@@ -1705,9 +1705,9 @@ function renderClientWorkspace(state, supabase) {
 }
 
 function renderClientWorkspaceEmptyState(profile, client) {
-    byId('workspaceClientName').textContent = client?.company_name || profile.full_name || 'Client Portal';
-    byId('workspaceClientEmail').textContent = profile.email || SUPPORT_EMAIL;
-    byId('workspaceClientMeta').textContent = 'No projects assigned yet';
+    byId('workspaceClientName')?.replaceChildren(document.createTextNode(client?.company_name || profile.full_name || 'Client Portal'));
+    byId('workspaceClientEmail')?.replaceChildren(document.createTextNode(profile.email || SUPPORT_EMAIL));
+    byId('workspaceClientMeta')?.replaceChildren(document.createTextNode('No projects assigned yet'));
     byId('workspaceProjectTitle').textContent = 'Portal setup in progress';
     if (byId('workspaceProjectSynopsis')) {
         byId('workspaceProjectSynopsis').textContent = 'Your workspace will populate as soon as your team assigns the first live project.';
@@ -1735,9 +1735,9 @@ function renderClientWorkspaceEmptyState(profile, client) {
 }
 
 function renderAdminWorkspace(state) {
-    byId('workspaceClientName').textContent = state.profile.full_name || 'Architech Admin';
-    byId('workspaceClientEmail').textContent = state.profile.email || SUPPORT_EMAIL;
-    byId('workspaceClientMeta').textContent = 'Internal portal administration';
+    byId('workspaceClientName')?.replaceChildren(document.createTextNode(state.profile.full_name || 'Architech Admin'));
+    byId('workspaceClientEmail')?.replaceChildren(document.createTextNode(state.profile.email || SUPPORT_EMAIL));
+    byId('workspaceClientMeta')?.replaceChildren(document.createTextNode('Internal portal administration'));
 
     const selectedProject = getSelectedProject(state);
     const selectedConsultation = getSelectedConsultation(state);

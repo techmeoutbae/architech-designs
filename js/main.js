@@ -17,6 +17,17 @@ const SUPABASE_PUBLIC_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 document.addEventListener('DOMContentLoaded', function() {
     Logger.info('App', 'Application initializing...');
 
+    function syncResponsiveDisclosures() {
+        const mobileViewport = window.innerWidth <= 768;
+        document.querySelectorAll('.consultation-trust-panel-toggle').forEach((details) => {
+            if (!(details instanceof HTMLDetailsElement)) {
+                return;
+            }
+
+            details.open = !mobileViewport;
+        });
+    }
+
     // ========== NAVIGATION COMPONENT ==========
     try {
         const navbar = document.querySelector('.navbar');
@@ -268,6 +279,9 @@ document.addEventListener('DOMContentLoaded', function() {
         Logger.error('Navigation', 'Failed to initialize navigation', e);
     }
 
+    syncResponsiveDisclosures();
+    window.addEventListener('resize', syncResponsiveDisclosures);
+
     // ========== HONEST SOCIAL LINKS ==========
     try {
         document.querySelectorAll('[aria-label="LinkedIn"]').forEach((link) => {
@@ -453,9 +467,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ========== CONTACT FORM COMPONENT ==========
     try {
-        const contactForm = document.querySelector('.contact-form form');
+        const contactForms = Array.from(document.querySelectorAll('form[data-consultation-form="true"], .contact-form form'));
+        const uniqueContactForms = [...new Set(contactForms)];
         
-        if (contactForm) {
+        uniqueContactForms.forEach((contactForm) => {
             let status = contactForm.querySelector('[data-contact-status]');
             const isConsultationForm = contactForm.dataset.consultationForm === 'true';
             if (!status) {
@@ -496,6 +511,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const summary = form.querySelector('[data-consultation-summary]');
                 const summaryInline = form.querySelector('[data-consultation-summary-inline]');
                 const timezoneLabel = form.querySelector('[data-consultation-timezone-label]');
+                const schedulerDetails = form.querySelector('.consultation-scheduler');
+                const schedulerPanel = form.querySelector('.consultation-scheduler-panel');
+                const schedulerSelects = form.querySelector('.consultation-scheduler-selects');
                 const hiddenDate = form.querySelector('#consultationDate');
                 const hiddenTime = form.querySelector('#consultationTime');
                 const hiddenIso = form.querySelector('#consultationIso');
@@ -634,6 +652,37 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
 
+                function syncSchedulerPresentation() {
+                    const homepageScheduler = schedulerDetails?.classList.contains('home-consultation-scheduler');
+                    if (!homepageScheduler) {
+                        return;
+                    }
+
+                    const mobileViewport = window.innerWidth <= 768;
+
+                    if (schedulerDetails) {
+                        schedulerDetails.style.setProperty('display', 'grid', 'important');
+                        schedulerDetails.style.setProperty('overflow', 'visible', 'important');
+                    }
+
+                    if (schedulerPanel) {
+                        schedulerPanel.style.setProperty('display', 'grid', 'important');
+                    }
+
+                    if (dayContainer) {
+                        dayContainer.style.setProperty('display', 'none', 'important');
+                    }
+
+                    if (timeContainer) {
+                        timeContainer.style.setProperty('display', 'none', 'important');
+                    }
+
+                    if (schedulerSelects) {
+                        schedulerSelects.style.setProperty('display', 'grid', 'important');
+                        schedulerSelects.style.setProperty('grid-template-columns', mobileViewport ? '1fr' : 'repeat(2, minmax(0, 1fr))');
+                    }
+                }
+
                 dayContainer?.addEventListener('click', (event) => {
                     const trigger = event.target.closest('[data-consultation-day]');
                     if (!trigger) {
@@ -675,6 +724,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 renderDays();
                 renderTimes();
                 syncSelection();
+                syncSchedulerPresentation();
+
+                if (schedulerDetails && !schedulerDetails.dataset.schedulerResizeBound) {
+                    schedulerDetails.dataset.schedulerResizeBound = 'true';
+                    window.addEventListener('resize', syncSchedulerPresentation);
+                }
 
                 return {
                     isValid: () => Boolean(hiddenDate.value && hiddenTime.value),
@@ -880,7 +935,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             Logger.info('ContactForm', 'Contact form initialized');
-        }
+        });
     } catch (e) {
         Logger.error('ContactForm', 'Failed to initialize contact form', e);
     }

@@ -313,7 +313,7 @@
                             <p>We return with a sharper structure, system recommendation, and next step.</p>
                         </article>
                     </div>
-                    <details class="consultation-trust-panel consultation-trust-panel-toggle">
+                    <details class="consultation-trust-panel consultation-trust-panel-toggle" open>
                         <summary class="consultation-trust-label">What this can cover</summary>
                         <div class="consultation-trust-tags">
                             <span>Website direction</span>
@@ -333,16 +333,18 @@
                         <input type="hidden" id="consultationTimezone" name="consultationTimezone">
                         <input type="hidden" name="requestSource" value="website-contact-scheduler">
 
-                        <details class="consultation-scheduler consultation-scheduler-compact home-consultation-scheduler">
-                            <summary>
+                        <div class="consultation-scheduler consultation-scheduler-compact home-consultation-scheduler">
+                            <div class="consultation-scheduler-inline-head">
                                 <span>Preferred consultation slot</span>
                                 <strong data-consultation-summary-inline>Choose a day and time</strong>
-                            </summary>
+                            </div>
                             <div class="consultation-scheduler-panel">
                                 <div class="consultation-scheduler-head">
                                     <span class="consultation-kicker">Scheduling</span>
                                     <p>Availability is shown in <strong data-consultation-timezone-label>your time zone</strong>.</p>
                                 </div>
+                                <div class="consultation-days" data-consultation-days></div>
+                                <div class="consultation-times" data-consultation-times></div>
                                 <div class="consultation-scheduler-selects">
                                     <div class="form-group">
                                         <label for="consultationDaySelect">Day</label>
@@ -355,7 +357,7 @@
                                 </div>
                                 <p class="consultation-selection" data-consultation-summary>Choose a preferred slot to continue.</p>
                             </div>
-                        </details>
+                        </div>
 
                         <div class="form-row">
                             <div class="form-group">

@@ -3261,7 +3261,7 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 .navbar.navbar-premium .nav-cta {
-    gap: 12px;
+    gap: 18px;
 }
 
 .nav-utility-link {
@@ -3269,6 +3269,7 @@ img { max-width: 100%; height: auto; display: block; }
     align-items: center;
     min-height: 46px;
     padding: 0 2px;
+    margin-right: 4px;
     color: rgba(16, 33, 56, 0.7);
     font-size: 0.84rem;
     font-weight: 600;
@@ -4044,18 +4045,6 @@ img { max-width: 100%; height: auto; display: block; }
     margin-bottom: 0;
 }
 
-.homepage .consultation-scheduler-compact summary {
-    align-items: center;
-}
-
-.homepage .consultation-scheduler-compact summary strong {
-    text-align: right;
-}
-
-.homepage .consultation-scheduler-compact[open] summary {
-    margin-bottom: 18px;
-}
-
 .nav-dropdown-menu {
     min-width: 360px;
 }
@@ -4444,6 +4433,17 @@ img { max-width: 100%; height: auto; display: block; }
     text-align: center;
 }
 
+@media (min-width: 769px) {
+    .homepage .home-consultation-scheduler .consultation-days,
+    .homepage .home-consultation-scheduler .consultation-times {
+        display: none;
+    }
+
+    .homepage .home-consultation-scheduler .consultation-scheduler-selects {
+        display: grid;
+    }
+}
+
 .premium-home-hero-redesigned {
     padding-top: clamp(120px, 10vw, 146px);
 }
@@ -4533,6 +4533,59 @@ img { max-width: 100%; height: auto; display: block; }
     display: flex;
 }
 
+@media (min-width: 1101px) {
+    .workspace-product-page .workspace-shell {
+        display: grid;
+        grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
+        gap: 22px;
+        align-items: start;
+    }
+
+    .workspace-product-page .workspace-sidebar {
+        position: sticky;
+        top: 112px;
+        left: auto;
+        bottom: auto;
+        width: 100%;
+        max-height: calc(100vh - 136px);
+        transform: none;
+        opacity: 1;
+        pointer-events: auto;
+        visibility: visible;
+        overflow-y: auto;
+        z-index: auto;
+    }
+
+    .workspace-product-page .workspace-drawer-toggle,
+    .workspace-product-page .workspace-drawer-close,
+    .workspace-product-page .workspace-drawer-backdrop {
+        display: none !important;
+    }
+}
+
+/* Final homepage scheduler mode override */
+@media (min-width: 769px) {
+    .homepage .home-consultation-scheduler .consultation-days,
+    .homepage .home-consultation-scheduler .consultation-times {
+        display: none !important;
+    }
+
+    .homepage .home-consultation-scheduler .consultation-scheduler-selects {
+        display: grid !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .homepage .home-consultation-scheduler .consultation-days,
+    .homepage .home-consultation-scheduler .consultation-times {
+        display: none !important;
+    }
+
+    .homepage .home-consultation-scheduler .consultation-scheduler-selects {
+        display: grid !important;
+    }
+}
+
 @media (max-width: 1100px) {
     .homepage .trust-editorial-rail .trust-editorial-card {
         flex-basis: min(320px, calc(100vw - 96px));
@@ -4555,16 +4608,17 @@ img { max-width: 100%; height: auto; display: block; }
 
     .homepage .home-consultation-scheduler .consultation-days,
     .homepage .home-consultation-scheduler .consultation-times {
+        display: none;
+    }
+
+    .homepage .home-consultation-scheduler .consultation-scheduler-selects {
+        display: grid;
+    }
+
+    .homepage .home-consultation-scheduler .consultation-days,
+    .homepage .home-consultation-scheduler .consultation-times {
         grid-template-columns: 1fr;
     }
-}
-
-.homepage .consultation-scheduler-compact summary {
-    align-items: center;
-}
-
-.homepage .consultation-scheduler-compact summary strong {
-    text-align: right;
 }
 
 .workspace-product-page .workspace-shell {
@@ -16953,6 +17007,32 @@ p {
     overflow: hidden;
 }
 
+.consultation-scheduler-inline-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 16px 18px;
+    background:
+        radial-gradient(circle at top right, rgba(199, 155, 37, 0.14), transparent 36%),
+        linear-gradient(180deg, rgba(245, 248, 252, 0.98) 0%, rgba(255, 255, 255, 0.96) 100%);
+}
+
+.consultation-scheduler-inline-head span {
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.consultation-scheduler-inline-head strong {
+    color: var(--primary);
+    font-size: 0.94rem;
+    line-height: 1.45;
+    text-align: right;
+}
+
 .consultation-scheduler-compact summary {
     display: flex;
     align-items: center;
@@ -17318,4 +17398,45 @@ p {
     .demo-detail-metrics {
         grid-template-columns: 1fr;
     }
+}
+
+@media (min-width: 1101px) {
+    .workspace-product-page .workspace-shell {
+        display: grid !important;
+        grid-template-columns: minmax(280px, 320px) minmax(0, 1fr) !important;
+        gap: 22px !important;
+        align-items: start !important;
+        overflow: visible !important;
+    }
+
+    .workspace-product-page .workspace-sidebar {
+        position: sticky !important;
+        top: 112px !important;
+        left: auto !important;
+        bottom: auto !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-height: calc(100vh - 136px) !important;
+        transform: none !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        visibility: visible !important;
+        overflow-y: auto !important;
+        z-index: auto !important;
+    }
+
+    .workspace-product-page .workspace-nav {
+        display: flex !important;
+    }
+
+.workspace-product-page .workspace-drawer-toggle,
+.workspace-product-page .workspace-drawer-close,
+.workspace-product-page .workspace-drawer-backdrop {
+    display: none !important;
+}
+
+.ops-page .workspace-sidebar-topbar {
+    justify-content: flex-end;
+    min-height: 16px;
+}
 }
