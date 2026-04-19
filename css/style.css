@@ -16729,4 +16729,22 @@ p {
     justify-content: flex-end;
     min-height: 16px;
 }
+
+/* Final consultation scheduler header contrast fix */
+.homepage .consultation-scheduler-inline-head,
+.contact-page .consultation-scheduler-compact summary {
+    background: linear-gradient(180deg, #163453 0%, #21466e 100%) !important;
+}
+
+.homepage .consultation-scheduler-inline-head span,
+.homepage .consultation-scheduler-inline-head strong,
+.contact-page .consultation-scheduler-compact summary span,
+.contact-page .consultation-scheduler-compact summary strong {
+    color: #fff !important;
+}
+
+.homepage .consultation-scheduler-inline-head span,
+.contact-page .consultation-scheduler-compact summary span {
+    opacity: 0.84;
+}
 }
