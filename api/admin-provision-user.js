@@ -17,6 +17,26 @@ function shouldRetryInviteWithoutRedirect(message) {
         || normalized.includes('not permitted');
 }
 
+function normalizeRedirectTo(value) {
+    const fallback = (process.env.ARCHITECH_SITE_URL || 'https://www.architechdesigns.net').replace(/\/$/, '');
+    const rawValue = String(value || '').trim();
+
+    if (!rawValue) {
+        return `${fallback}/client-login`;
+    }
+
+    try {
+        const parsed = new URL(rawValue);
+        if (['localhost', '127.0.0.1'].includes(parsed.hostname)) {
+            return `${fallback}/client-login`;
+        }
+
+        return parsed.toString();
+    } catch {
+        return `${fallback}/client-login`;
+    }
+}
+
 module.exports = async function handler(req, res) {
     applyCors(res);
 
@@ -71,7 +91,7 @@ module.exports = async function handler(req, res) {
     const billingEmail = String(payload?.billingEmail || '').trim().toLowerCase() || email;
     const projectName = String(payload?.projectName || '').trim();
     const serviceLine = String(payload?.serviceLine || '').trim() || null;
-    const redirectTo = String(payload?.redirectTo || '').trim() || null;
+    const redirectTo = normalizeRedirectTo(payload?.redirectTo || '');
 
     if (!fullName || !email || !companyName || !projectName) {
         sendJson(res, 400, {

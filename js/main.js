@@ -14,8 +14,78 @@ const Logger = {
 const SUPABASE_PUBLIC_URL = 'https://eaiwhqqwirahmppfjsva.supabase.co';
 const SUPABASE_PUBLIC_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlYWl3aHFxd2lyYWhtcHBmanN2YSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzc1ODk5NTM0LCJleHAiOjIwOTE0NzU1MzR9.WRLIyYQDuLn5k8XKuiv4SfUdh1qkFwSimT1fvP06VGU';
 
+function normalizePageKey(value) {
+    let path = String(value || '');
+
+    if (!path) {
+        return 'index';
+    }
+
+    if (/^https?:/i.test(path)) {
+        try {
+            path = new URL(path).pathname;
+        } catch {
+            path = String(value || '');
+        }
+    }
+
+    path = path.split('?')[0].split('#')[0].replace(/\\/g, '/');
+    const lastSegment = path.split('/').filter(Boolean).pop() || 'index';
+    const normalized = lastSegment.replace(/\.html$/i, '');
+    return normalized || 'index';
+}
+
+function toCleanInternalPath(href, relativePrefix = '') {
+    const rawHref = String(href || '').trim();
+
+    if (!rawHref || /^([a-z]+:|#)/i.test(rawHref) || rawHref.startsWith('//')) {
+        return rawHref;
+    }
+
+    const [pathWithQuery, hashValue] = rawHref.split('#');
+    const [pathOnly, queryValue] = pathWithQuery.split('?');
+    const hash = hashValue ? `#${hashValue}` : '';
+    const query = queryValue ? `?${queryValue}` : '';
+    const hasLeadingSlash = pathOnly.startsWith('/');
+    const hasRelativeDots = /^\.?\.?\//.test(pathOnly);
+
+    let normalizedPath = pathOnly;
+    if (/index\.html$/i.test(normalizedPath)) {
+        normalizedPath = normalizedPath.replace(/index\.html$/i, '');
+    } else {
+        normalizedPath = normalizedPath.replace(/\.html$/i, '');
+    }
+
+    const prefix = hasLeadingSlash || hasRelativeDots ? '' : relativePrefix;
+    const nextPath = `${prefix}${normalizedPath}`;
+    const fallbackPath = hasLeadingSlash ? '/' : (relativePrefix || '/');
+
+    return `${nextPath || fallbackPath}${query}${hash}`;
+}
+
+function normalizeCurrentCleanUrl() {
+    if (!/^https?:$/i.test(window.location.protocol)) {
+        return;
+    }
+
+    const url = new URL(window.location.href);
+    let nextPath = url.pathname;
+
+    if (/\/index\.html$/i.test(nextPath)) {
+        nextPath = nextPath.replace(/\/index\.html$/i, '/');
+    } else if (/\.html$/i.test(nextPath)) {
+        nextPath = nextPath.replace(/\.html$/i, '');
+    }
+
+    if (nextPath !== url.pathname) {
+        url.pathname = nextPath;
+        window.history.replaceState({}, document.title, url.toString());
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     Logger.info('App', 'Application initializing...');
+    normalizeCurrentCleanUrl();
 
     function syncResponsiveDisclosures() {
         const mobileViewport = window.innerWidth <= 768;
@@ -34,10 +104,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const mobileToggle = document.querySelector('.mobile-toggle');
         const navLinks = document.querySelector('.nav-links');
         const brandWrapper = document.querySelector('.header-logo-wrapper');
-        const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+        const currentPath = normalizePageKey(window.location.pathname);
         const currentUrl = new URL(window.location.href);
         const currentDemo = currentUrl.searchParams.get('demo') || '';
-        const isClientUtilityPage = ['client-login.html', 'client-portal.html', 'client-workspace.html', 'ops-suite.html'].includes(currentPath);
+        const isClientUtilityPage = ['client-login', 'client-portal', 'client-workspace', 'ops-suite'].includes(currentPath);
         const pathSegments = window.location.pathname.split('/').filter(Boolean);
         const pathDepth = Math.max(pathSegments.length - 1, 0);
         const relativePrefix = '../'.repeat(pathDepth);
@@ -63,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             function resolveHref(href) {
-                return /^https?:/i.test(href) ? href : `${relativePrefix}${href}`;
+                return /^https?:/i.test(href) ? href : toCleanInternalPath(href, relativePrefix);
             }
 
             const navigationModel = [
@@ -125,16 +195,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     return true;
                 }
 
+                if (item.match && item.match.map(normalizePageKey).includes(currentPath)) {
+                    return true;
+                }
+
                 if (item.type === 'dropdown') {
                     return item.items.some((entry) => {
                         const parsed = new URL(entry.href, window.location.origin + '/');
-                        const path = parsed.pathname.split('/').pop() || 'index.html';
+                        const path = normalizePageKey(parsed.pathname);
                         const demo = parsed.searchParams.get('demo') || '';
                         return path === currentPath && (!demo || demo === currentDemo);
                     });
                 }
 
-                return item.href === currentPath;
+                return normalizePageKey(item.href) === currentPath;
             }
 
             function renderNavItem(item) {
@@ -281,6 +355,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     syncResponsiveDisclosures();
     window.addEventListener('resize', syncResponsiveDisclosures);
+
+    document.querySelectorAll('a[href]').forEach((anchor) => {
+        const rawHref = anchor.getAttribute('href');
+        if (!rawHref || /^([a-z]+:|#|\/\/)/i.test(rawHref)) {
+            return;
+        }
+
+        anchor.setAttribute('href', toCleanInternalPath(rawHref));
+    });
 
     // ========== HONEST SOCIAL LINKS ==========
     try {

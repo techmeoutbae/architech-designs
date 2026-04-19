@@ -57,6 +57,26 @@ function isRedirectInviteError(message: string | undefined | null) {
         || normalized.includes('not permitted');
 }
 
+function normalizeRedirectUrl(value: string | undefined | null) {
+    const fallback = Deno.env.get('ARCHITECH_SITE_URL') || 'https://www.architechdesigns.net';
+    const rawValue = String(value || '').trim();
+
+    if (!rawValue) {
+        return `${fallback.replace(/\/$/, '')}/client-login`;
+    }
+
+    try {
+        const url = new URL(rawValue);
+        if (['localhost', '127.0.0.1'].includes(url.hostname)) {
+            return `${fallback.replace(/\/$/, '')}/client-login`;
+        }
+
+        return url.toString();
+    } catch {
+        return `${fallback.replace(/\/$/, '')}/client-login`;
+    }
+}
+
 async function inviteClientUser(
     adminClient: ReturnType<typeof createClient>,
     email: string,
@@ -196,7 +216,7 @@ Deno.serve(async (request: Request) => {
             throw provisioningError('DUPLICATE_CLIENT', 'That portal email is already tied to an existing account.');
         }
 
-        const inviteResponse = await inviteClientUser(adminClient, email, fullName, payload.redirectTo || null);
+        const inviteResponse = await inviteClientUser(adminClient, email, fullName, normalizeRedirectUrl(payload.redirectTo || null));
 
         if (inviteResponse.error || !inviteResponse.data.user) {
             throw provisioningError('PROVISIONING_FAILED', inviteResponse.error?.message || 'The invite could not be created.', inviteResponse.error);

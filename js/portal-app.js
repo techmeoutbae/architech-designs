@@ -8,12 +8,15 @@ const OPTIONAL_TABLE_CACHE_KEY = 'architech.portal.optionalTables';
 const APP = document.body.dataset.app;
 const CONFIG = window.ARCHITECH_PORTAL_CONFIG || {};
 const SUPPORT_EMAIL = CONFIG.supportEmail || 'hello@architechdesigns.net';
+const SITE_URL = String(CONFIG.siteUrl || 'https://www.architechdesigns.net').replace(/\/$/, '');
 const STORAGE_BUCKET = CONFIG.storageBucket || 'client-documents';
 const DEFAULT_STRIPE_API_URL = 'https://api.stripe.com/v1';
 const STRIPE_PUBLISHABLE_KEY = CONFIG.stripePublishableKey || '';
 const STRIPE_PAYMENT_LINK_URL = resolveConfiguredStripePaymentUrl(CONFIG);
 const ADMIN_PROVISION_ENDPOINT = resolveAdminProvisionEndpoint(CONFIG);
 const PROFILE_SYNC_ENDPOINT = resolvePortalProfileSyncEndpoint(CONFIG);
+
+normalizeCurrentCleanUrl();
 
 // Realtime project feed with polling fallback
 let messagePollInterval = null;
@@ -361,7 +364,7 @@ async function initClientLoginPage(supabase) {
 
         setInlineStatus(loginStatus, 'Sending a password reset email...', 'info');
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${window.location.origin}/client-login.html`
+            redirectTo: `${SITE_URL}/client-login`
         });
 
         if (error) {
@@ -951,7 +954,8 @@ async function initAdminWorkspacePage(supabase, userContext) {
                 companyName: byId('adminClientCompany')?.value.trim(),
                 billingEmail: byId('adminClientBillingEmail')?.value.trim().toLowerCase() || null,
                 projectName: byId('adminClientProjectName')?.value.trim(),
-                serviceLine: byId('adminClientServiceLine')?.value || 'Client Portal Engagement'
+                serviceLine: byId('adminClientServiceLine')?.value || 'Client Portal Engagement',
+                redirectTo: `${SITE_URL}/client-login`
             };
 
             const provisioning = await invokeAdminProvisioning(supabase, payload);
@@ -2182,7 +2186,7 @@ function renderAdminAccessDenied() {
     accessGate.innerHTML = renderEmptyState(
         'Admin access only',
         'This workspace is reserved for internal portal administration. Sign in with an admin account to manage clients, projects, files, invoices, and permissions.',
-        '<a href="client-login.html" class="btn btn-primary btn-sm">Go To Sign In</a>'
+        `<a href="${cleanInternalPath('client-login.html')}" class="btn btn-primary btn-sm">Go To Sign In</a>`
     );
 }
 
@@ -2199,7 +2203,7 @@ function renderGlobalFailure(error) {
             'workspaceAccessGate',
             'We could not open the client portal',
             'The live workspace could not be initialized right now. Try signing in again or contact support if the problem continues.',
-            `<a href="client-login.html" class="btn btn-primary btn-sm">Return To Sign In</a>`
+            `<a href="${cleanInternalPath('client-login.html')}" class="btn btn-primary btn-sm">Return To Sign In</a>`
         );
         byId('clientWorkspaceShell')?.classList.add('is-hidden');
     }
@@ -2209,7 +2213,7 @@ function renderGlobalFailure(error) {
             'adminAccessGate',
             'We could not open the admin suite',
             'The admin workspace could not be initialized right now. Sign in again or contact support if the problem continues.',
-            `<a href="client-login.html" class="btn btn-primary btn-sm">Return To Sign In</a>`
+            `<a href="${cleanInternalPath('client-login.html')}" class="btn btn-primary btn-sm">Return To Sign In</a>`
         );
         byId('adminAppShell')?.classList.add('is-hidden');
     }
@@ -2221,7 +2225,7 @@ function renderProtectedRouteRedirectState(app) {
             'workspaceAccessGate',
             'Sign in required',
             'Your session is required before the live client workspace can open.',
-            '<a href="client-login.html" class="btn btn-primary btn-sm">Go To Sign In</a>'
+            `<a href="${cleanInternalPath('client-login.html')}" class="btn btn-primary btn-sm">Go To Sign In</a>`
         );
         byId('clientWorkspaceShell')?.classList.add('is-hidden');
     }
@@ -2231,7 +2235,7 @@ function renderProtectedRouteRedirectState(app) {
             'adminAccessGate',
             'Sign in required',
             'Admin authentication is required before the live operations suite can open.',
-            '<a href="client-login.html" class="btn btn-primary btn-sm">Go To Sign In</a>'
+            `<a href="${cleanInternalPath('client-login.html')}" class="btn btn-primary btn-sm">Go To Sign In</a>`
         );
         byId('adminAppShell')?.classList.add('is-hidden');
     }
@@ -3124,7 +3128,49 @@ function indexBy(items, key) {
 }
 
 function redirectTo(path) {
-    window.location.href = path;
+    window.location.href = cleanInternalPath(path);
+}
+
+function cleanInternalPath(path) {
+    const rawPath = String(path || '').trim();
+
+    if (!rawPath || /^([a-z]+:|#)/i.test(rawPath) || rawPath.startsWith('//')) {
+        return rawPath;
+    }
+
+    const [pathWithQuery, hashValue] = rawPath.split('#');
+    const [pathOnly, queryValue] = pathWithQuery.split('?');
+    const hash = hashValue ? `#${hashValue}` : '';
+    const query = queryValue ? `?${queryValue}` : '';
+
+    let normalizedPath = pathOnly;
+    if (/index\.html$/i.test(normalizedPath)) {
+        normalizedPath = normalizedPath.replace(/index\.html$/i, '');
+    } else {
+        normalizedPath = normalizedPath.replace(/\.html$/i, '');
+    }
+
+    return `${normalizedPath || '/'}${query}${hash}`;
+}
+
+function normalizeCurrentCleanUrl() {
+    if (!/^https?:$/i.test(window.location.protocol)) {
+        return;
+    }
+
+    const url = new URL(window.location.href);
+    let nextPath = url.pathname;
+
+    if (/\/index\.html$/i.test(nextPath)) {
+        nextPath = nextPath.replace(/\/index\.html$/i, '/');
+    } else if (/\.html$/i.test(nextPath)) {
+        nextPath = nextPath.replace(/\.html$/i, '');
+    }
+
+    if (nextPath !== url.pathname) {
+        url.pathname = nextPath;
+        window.history.replaceState({}, document.title, url.toString());
+    }
 }
 
 function escapeHtml(value) {
