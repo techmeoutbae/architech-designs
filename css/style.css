@@ -16730,6 +16730,8 @@ p {
     min-height: 16px;
 }
 
+}
+
 /* Final consultation scheduler header contrast fix */
 .homepage .consultation-scheduler-inline-head,
 .contact-page .consultation-scheduler-compact summary {
@@ -16746,5 +16748,4 @@ p {
 .homepage .consultation-scheduler-inline-head span,
 .contact-page .consultation-scheduler-compact summary span {
     opacity: 0.84;
-}
 }
