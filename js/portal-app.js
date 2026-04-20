@@ -672,6 +672,35 @@ async function initAdminWorkspacePage(supabase, userContext) {
         byId('adminUpdateCancel')?.addEventListener('click', resetAdminUpdateForm);
         byId('adminInvoiceCancel')?.addEventListener('click', resetAdminInvoiceForm);
         byId('adminMessageCancel')?.addEventListener('click', resetAdminMessageForm);
+        byId('adminConsultationDelete')?.addEventListener('click', async () => {
+            const consultationId = byId('adminConsultationId')?.value;
+            const consultation = state.consultations.find((item) => item.id === consultationId);
+            if (!consultation) {
+                return;
+            }
+
+            const confirmed = await confirmWorkspaceAction({
+                kicker: 'Delete consultation',
+                title: `Delete ${consultation.company_name}?`,
+                body: 'This removes the consultation request from the admin calendar history.',
+                confirmLabel: 'Delete Consultation',
+                tone: 'danger'
+            });
+
+            if (!confirmed) {
+                return;
+            }
+
+            const { error } = await supabase.from('consultations').delete().eq('id', consultation.id);
+            if (error) {
+                setAlert(byId('adminAlert'), error.message || 'The consultation could not be deleted.', 'error');
+                return;
+            }
+
+            state.selectedConsultationId = '';
+            await refreshAdminData();
+            setAlert(byId('adminAlert'), 'Consultation deleted.', 'success');
+        });
 
         byId('adminClientSelect')?.addEventListener('change', (event) => {
             state.selectedClientId = event.target.value;
@@ -730,7 +759,15 @@ async function initAdminWorkspacePage(supabase, userContext) {
             }
 
             const project = state.projects.find((item) => item.id === deleteTrigger.dataset.deleteProject);
-            if (!project || !window.confirm(`Delete ${project.name}? This will remove its milestones, updates, messages, files, and invoices.`)) {
+            const confirmed = project && await confirmWorkspaceAction({
+                kicker: 'Delete project',
+                title: `Delete ${project?.name || 'project'}?`,
+                body: 'This removes the project, related milestones, updates, messages, files, and invoices from the live portal.',
+                confirmLabel: 'Delete Project',
+                tone: 'danger'
+            });
+
+            if (!project || !confirmed) {
                 return;
             }
 
@@ -759,7 +796,15 @@ async function initAdminWorkspacePage(supabase, userContext) {
             }
 
             const milestone = state.milestones.find((item) => item.id === deleteTrigger.dataset.deleteMilestone);
-            if (!milestone || !window.confirm(`Delete milestone: ${milestone.title}?`)) {
+            const confirmed = milestone && await confirmWorkspaceAction({
+                kicker: 'Delete milestone',
+                title: `Delete ${milestone?.title || 'milestone'}?`,
+                body: 'This removes the milestone from the selected client timeline.',
+                confirmLabel: 'Delete Milestone',
+                tone: 'danger'
+            });
+
+            if (!milestone || !confirmed) {
                 return;
             }
 
@@ -788,7 +833,15 @@ async function initAdminWorkspacePage(supabase, userContext) {
             }
 
             const update = state.updates.find((item) => item.id === deleteTrigger.dataset.deleteUpdate);
-            if (!update || !window.confirm(`Delete update: ${update.title}?`)) {
+            const confirmed = update && await confirmWorkspaceAction({
+                kicker: 'Delete update',
+                title: `Delete ${update?.title || 'update'}?`,
+                body: 'This removes the published update from the selected project history.',
+                confirmLabel: 'Delete Update',
+                tone: 'danger'
+            });
+
+            if (!update || !confirmed) {
                 return;
             }
 
@@ -849,7 +902,15 @@ async function initAdminWorkspacePage(supabase, userContext) {
             }
 
             const documentRecord = state.documents.find((item) => item.id === deleteTrigger.dataset.deleteDocument);
-            if (!documentRecord || !window.confirm(`Delete ${documentRecord.file_name}? This cannot be undone.`)) {
+            const confirmed = documentRecord && await confirmWorkspaceAction({
+                kicker: 'Delete document',
+                title: `Delete ${documentRecord?.file_name || 'document'}?`,
+                body: 'This removes the file from storage and the live client portal.',
+                confirmLabel: 'Delete Document',
+                tone: 'danger'
+            });
+
+            if (!documentRecord || !confirmed) {
                 return;
             }
 
@@ -880,7 +941,15 @@ async function initAdminWorkspacePage(supabase, userContext) {
             }
 
             const invoice = state.invoices.find((item) => item.id === deleteTrigger.dataset.deleteInvoice);
-            if (!invoice || !window.confirm(`Delete ${invoice.title}? This will also remove related payment records.`)) {
+            const confirmed = invoice && await confirmWorkspaceAction({
+                kicker: 'Delete invoice',
+                title: `Delete ${invoice?.title || 'invoice'}?`,
+                body: 'This removes the invoice and any related payment records tied to it.',
+                confirmLabel: 'Delete Invoice',
+                tone: 'danger'
+            });
+
+            if (!invoice || !confirmed) {
                 return;
             }
 
@@ -909,7 +978,15 @@ async function initAdminWorkspacePage(supabase, userContext) {
             }
 
             const message = state.messages.find((item) => item.id === deleteTrigger.dataset.deleteMessage);
-            if (!message || !window.confirm('Delete this message?')) {
+            const confirmed = message && await confirmWorkspaceAction({
+                kicker: 'Delete message',
+                title: 'Delete this message?',
+                body: 'This removes the selected message from the project thread.',
+                confirmLabel: 'Delete Message',
+                tone: 'danger'
+            });
+
+            if (!message || !confirmed) {
                 return;
             }
 
@@ -1577,33 +1654,35 @@ function renderClientWorkspace(state, supabase) {
     byId('workspaceProjectSelect').innerHTML = state.projects.map((project) => `
         <option value="${escapeHtml(project.id)}" ${project.id === selectedProject.id ? 'selected' : ''}>${escapeHtml(project.name)}</option>
     `).join('');
+    byId('workspaceQuickActions').innerHTML = buildClientQuickActionsMarkup(openInvoices.length > 0);
 
     byId('workspaceOverviewMetrics').innerHTML = `
         <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="workspace-overview">
             <span>Current phase</span>
             <strong>${escapeHtml(selectedProject.current_phase || 'Project delivery')}</strong>
+            <em>${escapeHtml(humanizeStatus(selectedProject.status || 'active'))}</em>
         </button>
         <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="workspace-milestones">
             <span>Milestones complete</span>
             <strong>${completedMilestones.length} of ${detail.milestones.length || 0}</strong>
+            <em>${escapeHtml(nextMilestone?.title || 'No next milestone')}</em>
         </button>
         <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="workspace-billing">
             <span>Open invoices</span>
             <strong>${openInvoices.length ? formatCurrency(sumBy(openInvoices, 'amount')) : 'All current'}</strong>
+            <em>${openInvoices.length ? `${openInvoices.length} pending` : 'No balance due'}</em>
         </button>
         <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="workspace-updates">
             <span>Collected to date</span>
             <strong>${formatCurrency(totalCollected)}</strong>
+            <em>${paidInvoices.length} invoice${paidInvoices.length === 1 ? '' : 's'} closed</em>
         </button>
     `;
 
-    byId('overviewSummaryTitle').textContent = selectedProject.current_phase || selectedProject.name;
-    byId('overviewSummaryText').textContent = selectedProject.description || 'Your private workspace keeps delivery, billing, and communication organized in one place.';
-    byId('overviewActionsList').innerHTML = [
-        nextMilestone ? `Next milestone: ${nextMilestone.title}${nextMilestone.due_at ? ` on ${formatDate(nextMilestone.due_at)}` : ''}` : 'No milestone is currently queued.',
-        selectedProject.target_launch_date ? `Launch target: ${formatDate(selectedProject.target_launch_date)}` : 'Launch target will appear here when scheduled.',
-        openInvoices.length ? `${openInvoices.length} invoice${openInvoices.length === 1 ? '' : 's'} currently need review.` : 'There are no outstanding invoices right now.'
-    ].map((item) => `<li>${escapeHtml(item)}</li>`).join('');
+    byId('workspaceProjectSummaryPanel').innerHTML = buildClientSummaryPanelMarkup(selectedProject, nextMilestone, detail.documents.length, detail.messages.length);
+    byId('workspaceBillingSnapshot').innerHTML = buildClientBillingSnapshotMarkup(openInvoices, totalCollected);
+    byId('workspaceRecentUpdatePanel').innerHTML = buildClientRecentUpdatePanelMarkup(detail.updates, detail.profilesById);
+    byId('workspaceCoordinationPanel').innerHTML = buildClientCoordinationPanelMarkup(selectedProject, nextMilestone, openInvoices.length);
 
     byId('workspaceMilestoneList').innerHTML = detail.milestones.length
         ? detail.milestones.map((milestone) => `
@@ -1723,19 +1802,142 @@ function renderClientWorkspaceEmptyState(profile, client) {
         status: 'pending'
     });
     byId('workspaceProjectSelect').innerHTML = '<option value="">No projects assigned</option>';
+    byId('workspaceQuickActions').innerHTML = buildClientQuickActionsMarkup(false);
     byId('workspaceOverviewMetrics').innerHTML = renderEmptyState('No active project yet', 'Your team has not assigned a project to this portal account yet.');
-    byId('overviewSummaryTitle').textContent = 'We are preparing your workspace.';
-    byId('overviewSummaryText').textContent = 'As soon as your project is assigned, milestones, files, invoices, and project messages will appear here.';
-    byId('overviewActionsList').innerHTML = `
-        <li>Contact ${escapeHtml(SUPPORT_EMAIL)} if you need urgent access help.</li>
-        <li>Your portal will update automatically once the project is assigned.</li>
-    `;
+    byId('workspaceProjectSummaryPanel').innerHTML = renderEmptyState('We are preparing your workspace', 'As soon as your project is assigned, your summary, milestones, files, invoices, and project updates will appear here.');
+    byId('workspaceBillingSnapshot').innerHTML = renderEmptyState('Billing will appear here', 'Invoice status and payment records populate automatically once the project is active.');
+    byId('workspaceRecentUpdatePanel').innerHTML = renderEmptyState('No updates yet', 'Published project updates will appear here first so you can scan progress quickly.');
+    byId('workspaceCoordinationPanel').innerHTML = renderEmptyState('Coordination panel offline', `Contact ${escapeHtml(SUPPORT_EMAIL)} if you need urgent access support.`);
     byId('workspaceMilestoneList').innerHTML = renderEmptyState('No milestones yet', 'Milestones will appear after the project is configured.');
     byId('workspaceUpdateList').innerHTML = renderEmptyState('No updates yet', 'Project updates will appear after kickoff.');
     byId('workspaceDocumentList').innerHTML = renderEmptyState('No files yet', 'Shared files will appear here.');
     byId('workspaceInvoiceList').innerHTML = renderEmptyState('No invoices yet', 'Billing records will appear here.');
     byId('workspaceMessageThread').innerHTML = renderEmptyState('No messages yet', 'Project communication will appear here once the workspace is active.');
     fillProfileForm(profile);
+}
+
+function buildClientQuickActionsMarkup(hasOpenInvoices) {
+    return `
+        <button type="button" class="workspace-quick-action workspace-quick-action-primary" data-open-workspace-tab="workspace-messages" data-focus-target="workspaceMessageInput">
+            <span>Message Team</span>
+            <strong>Send a project note instantly</strong>
+        </button>
+        <button type="button" class="workspace-quick-action" data-open-workspace-tab="workspace-documents" data-focus-target="workspaceDocumentCategory">
+            <span>Upload File</span>
+            <strong>Share approvals or reference assets</strong>
+        </button>
+        <button type="button" class="workspace-quick-action" data-open-workspace-tab="workspace-billing">
+            <span>${hasOpenInvoices ? 'Review Invoice' : 'Billing'}</span>
+            <strong>${hasOpenInvoices ? 'Open the current payment view' : 'See billing history'}</strong>
+        </button>
+        <button type="button" class="workspace-quick-action" data-open-workspace-tab="workspace-account" data-focus-target="workspaceProfileName">
+            <span>Account</span>
+            <strong>Keep contact details current</strong>
+        </button>
+    `;
+}
+
+function buildClientSummaryPanelMarkup(project, nextMilestone, documentCount, messageCount) {
+    return `
+        <div class="workspace-panel-head">
+            <div>
+                <span class="workspace-panel-kicker">Project Summary</span>
+                <h3>${escapeHtml(project.current_phase || project.name)}</h3>
+            </div>
+            <span class="workspace-pill ${statusPillClass(project.status || 'active')}">${escapeHtml(humanizeStatus(project.status || 'active'))}</span>
+        </div>
+        <p>${escapeHtml(project.description || 'Your private workspace keeps delivery, billing, and communication organized in one place.')}</p>
+        <div class="ops-context-grid client-context-grid">
+            <article class="ops-context-stat">
+                <span>Launch target</span>
+                <strong>${escapeHtml(project.target_launch_date ? formatDate(project.target_launch_date) : 'Not scheduled')}</strong>
+            </article>
+            <article class="ops-context-stat">
+                <span>Files shared</span>
+                <strong>${documentCount}</strong>
+            </article>
+            <article class="ops-context-stat">
+                <span>Messages</span>
+                <strong>${messageCount}</strong>
+            </article>
+        </div>
+        <div class="ops-context-list">
+            <div>
+                <span>Next milestone</span>
+                <strong>${escapeHtml(nextMilestone?.title || 'No milestone is currently queued')}</strong>
+            </div>
+            <div>
+                <span>Service line</span>
+                <strong>${escapeHtml(project.service_line || 'Premium website system')}</strong>
+            </div>
+        </div>
+    `;
+}
+
+function buildClientBillingSnapshotMarkup(openInvoices, totalCollected) {
+    const nextInvoice = openInvoices[0] || null;
+    return `
+        <div class="workspace-panel-head">
+            <div>
+                <span class="workspace-panel-kicker">Billing Snapshot</span>
+                <h3>${openInvoices.length ? 'Payment attention needed' : 'Billing is current'}</h3>
+            </div>
+        </div>
+        <div class="ops-dashboard-list">
+            <article class="ops-dashboard-list-item">
+                <strong>${openInvoices.length ? formatCurrency(sumBy(openInvoices, 'amount')) : 'No balance due'}</strong>
+                <span>Outstanding total</span>
+            </article>
+            <article class="ops-dashboard-list-item">
+                <strong>${formatCurrency(totalCollected)}</strong>
+                <span>Collected to date</span>
+            </article>
+            <article class="ops-dashboard-list-item">
+                <strong>${escapeHtml(nextInvoice?.title || 'No active invoice')}</strong>
+                <span>${escapeHtml(nextInvoice?.due_at ? `Due ${formatDate(nextInvoice.due_at)}` : 'Everything is current')}</span>
+            </article>
+        </div>
+    `;
+}
+
+function buildClientRecentUpdatePanelMarkup(updates, profilesById) {
+    const recentUpdates = updates.slice(0, 3);
+    return `
+        <div class="workspace-panel-head">
+            <div>
+                <span class="workspace-panel-kicker">Recent Updates</span>
+                <h3>${recentUpdates.length ? 'Latest project notes' : 'No updates yet'}</h3>
+            </div>
+        </div>
+        ${recentUpdates.length
+            ? `<div class="ops-dashboard-list">${recentUpdates.map((update) => {
+                const author = profilesById[update.author_id];
+                return `
+                    <article class="ops-dashboard-list-item">
+                        <strong>${escapeHtml(update.title)}</strong>
+                        <span>${escapeHtml(author?.full_name || 'Architech')} • ${escapeHtml(formatDateTime(update.published_at))}</span>
+                        <em>${escapeHtml(truncate(update.body, 110))}</em>
+                    </article>
+                `;
+            }).join('')}</div>`
+            : renderEmptyState('No updates published', 'Structured project updates from the team will appear here first so you can scan progress quickly.')}
+    `;
+}
+
+function buildClientCoordinationPanelMarkup(project, nextMilestone, openInvoiceCount) {
+    return `
+        <div class="workspace-panel-head">
+            <div>
+                <span class="workspace-panel-kicker">Next Actions</span>
+                <h3>Keep the project moving</h3>
+            </div>
+        </div>
+        <ul class="workspace-list">
+            <li>${escapeHtml(nextMilestone ? `Review ${nextMilestone.title}${nextMilestone.due_at ? ` by ${formatDate(nextMilestone.due_at)}` : ''}.` : 'No milestone action is required right now.')}</li>
+            <li>${escapeHtml(project.target_launch_date ? `Launch target is ${formatDate(project.target_launch_date)}.` : 'Launch target will appear here when scheduled.')}</li>
+            <li>${escapeHtml(openInvoiceCount ? `${openInvoiceCount} invoice${openInvoiceCount === 1 ? '' : 's'} currently need attention.` : 'Billing is current for this project.')}</li>
+        </ul>
+    `;
 }
 
 function renderAdminWorkspace(state) {
@@ -1786,38 +1988,50 @@ function renderAdminWorkspace(state) {
     });
     byId('adminClientSelect').innerHTML = buildOptions(state.clients, state.selectedClientId, 'company_name', 'id', 'Select client');
     byId('adminProjectSelect').innerHTML = buildOptions(getProjectsForSelectedClient(state), state.selectedProjectId, 'name', 'id', 'Select project');
+    byId('adminQuickActions').innerHTML = buildAdminQuickActionsMarkup(selectedProject, consultationFeedAvailable);
 
     byId('adminMetricsGrid').innerHTML = `
         <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="ops-clients">
             <span>Portal clients</span>
             <strong>${state.clients.length}</strong>
+            <em>${state.clients.length ? 'Live client accounts' : 'Ready to onboard'}</em>
         </button>
         <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="ops-projects">
             <span>Active projects</span>
             <strong>${state.projects.length}</strong>
+            <em>${selectedProject ? escapeHtml(selectedProject.name) : 'Select a project'}</em>
         </button>
         <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="ops-finance">
             <span>Outstanding invoices</span>
             <strong>${formatCurrency(sumBy(state.invoices.filter((invoice) => !['paid', 'void'].includes(invoice.status)), 'amount'))}</strong>
+            <em>${state.invoices.filter((invoice) => !['paid', 'void'].includes(invoice.status)).length} open records</em>
         </button>
         <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="ops-deliverables">
             <span>Client-visible files</span>
             <strong>${state.documents.length}</strong>
+            <em>${selectedProjectDocuments.length} in selected project</em>
         </button>
         <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="ops-consultations">
             <span>${consultationFeedAvailable ? 'Upcoming consultations' : 'Consultation calendar'}</span>
             <strong>${consultationFeedAvailable ? upcomingConsultations.length : 'Offline'}</strong>
+            <em>${consultationFeedAvailable ? 'Priority queue' : 'Reconnect feed'}</em>
         </button>
     `;
 
+    byId('adminSelectedProjectPanel').innerHTML = buildAdminContextMarkup(state, selectedProject, selectedProjectMilestones, selectedProjectInvoices, selectedProjectDocuments, selectedProjectMessages);
+    byId('adminUpcomingConsultationsPanel').innerHTML = buildAdminConsultationSnapshotMarkup(upcomingConsultations, consultationFeedAvailable, consultationFeedMessage);
     byId('adminRecentActivity').innerHTML = buildRecentActivityMarkup(state);
+    byId('adminSystemOverview').innerHTML = buildAdminSystemOverviewMarkup(state, selectedProject, selectedProjectUpdates);
     byId('adminConsultationList').innerHTML = consultationFeedAvailable
         ? (state.consultations.length
             ? state.consultations.map((consultation) => `
-            <button type="button" class="workspace-select-card ${consultation.id === state.selectedConsultationId ? 'active' : ''}" data-select-consultation="${escapeHtml(consultation.id)}">
-                <strong>${escapeHtml(consultation.company_name)}</strong>
+            <button type="button" class="workspace-select-card workspace-select-card-rich ${consultation.id === state.selectedConsultationId ? 'active' : ''}" data-select-consultation="${escapeHtml(consultation.id)}">
+                <div class="workspace-select-card-head">
+                    <strong>${escapeHtml(consultation.company_name)}</strong>
+                    <span class="workspace-pill ${statusPillClass(consultation.status || 'new')}">${escapeHtml(humanizeStatus(consultation.status || 'new'))}</span>
+                </div>
                 <span>${escapeHtml(consultation.full_name)} • ${escapeHtml(consultation.preferred_time || 'Pending time')}</span>
-                <span>${escapeHtml(formatConsultationDate(consultation.preferred_date))} • ${escapeHtml(humanizeStatus(consultation.status || 'new'))}</span>
+                <span>${escapeHtml(formatConsultationDate(consultation.preferred_date))} • ${escapeHtml(consultation.requested_service || 'Consultation brief')}</span>
             </button>
         `).join('')
             : renderEmptyState('No consultations yet', 'New consultation requests from the contact page will appear here.'))
@@ -1827,10 +2041,13 @@ function renderAdminWorkspace(state) {
             const profile = state.profiles.find((item) => item.id === client.profile_id);
             const projectCount = state.projects.filter((project) => project.client_id === client.id).length;
             return `
-                <button type="button" class="workspace-select-card ${client.id === state.selectedClientId ? 'active' : ''}" data-select-client="${escapeHtml(client.id)}">
-                    <strong>${escapeHtml(client.company_name)}</strong>
+                <button type="button" class="workspace-select-card workspace-select-card-rich ${client.id === state.selectedClientId ? 'active' : ''}" data-select-client="${escapeHtml(client.id)}">
+                    <div class="workspace-select-card-head">
+                        <strong>${escapeHtml(client.company_name)}</strong>
+                        <span class="workspace-pill ${statusPillClass(client.status || 'active')}">${escapeHtml(humanizeStatus(client.status || 'active'))}</span>
+                    </div>
                     <span>${escapeHtml(profile?.full_name || client.billing_email || 'Client contact')}</span>
-                    <span>${projectCount} project${projectCount === 1 ? '' : 's'}</span>
+                    <span>${projectCount} project${projectCount === 1 ? '' : 's'} • ${escapeHtml(client.billing_email || profile?.email || 'No billing email')}</span>
                 </button>
             `;
         }).join('')
@@ -1980,6 +2197,7 @@ function renderAdminWorkspace(state) {
     byId('adminConsultationId').value = selectedConsultation?.id || '';
     byId('adminConsultationStatus').value = selectedConsultation?.status || 'new';
     byId('adminConsultationNotes').value = selectedConsultation?.notes || '';
+    byId('adminConsultationDelete')?.classList.toggle('is-hidden', !selectedConsultation);
     toggleFormDisabled(byId('adminConsultationForm'), !consultationFeedAvailable);
     byId('adminConsultationDetail').innerHTML = !consultationFeedAvailable
         ? renderEmptyState('Consultation calendar unavailable', consultationFeedMessage)
@@ -2017,19 +2235,165 @@ function buildRecentActivityMarkup(state) {
         .sort((left, right) => new Date(right.at) - new Date(left.at))
         .slice(0, 6);
 
-    return recent.length
-        ? recent.map((item) => `
-            <article class="workspace-data-card workspace-activity-card">
-                <div class="workspace-data-card-head">
-                    <div>
+    return `
+        <div class="workspace-panel-head">
+            <div>
+                <span class="workspace-panel-kicker">Recent Activity</span>
+                <h3>Latest operational movement</h3>
+            </div>
+        </div>
+        ${recent.length
+            ? `<div class="ops-activity-timeline">${recent.map((item) => `
+                <article class="ops-activity-item">
+                    <div class="ops-activity-dot"></div>
+                    <div class="ops-activity-copy">
                         <span>${escapeHtml(item.type)}</span>
-                        <h3>${escapeHtml(item.title)}</h3>
+                        <strong>${escapeHtml(item.title)}</strong>
+                        <em>${escapeHtml(formatDateTime(item.at))}</em>
                     </div>
-                    <span class="workspace-pill">${escapeHtml(formatDateTime(item.at))}</span>
-                </div>
+                </article>
+            `).join('')}</div>`
+            : renderEmptyState('No recent activity', 'Recent invoices, updates, files, and message traffic will appear here.')}
+    `;
+}
+
+function buildAdminQuickActionsMarkup(selectedProject, consultationFeedAvailable) {
+    return `
+        <button type="button" class="workspace-quick-action workspace-quick-action-primary" data-open-workspace-tab="ops-clients" data-focus-target="adminClientFullName">
+            <span>Invite Client</span>
+            <strong>Create account + first project</strong>
+        </button>
+        <button type="button" class="workspace-quick-action" data-open-workspace-tab="ops-projects" data-focus-target="adminProjectName">
+            <span>Create Project</span>
+            <strong>${escapeHtml(selectedProject?.name || 'Add a new delivery stream')}</strong>
+        </button>
+        <button type="button" class="workspace-quick-action" data-open-workspace-tab="ops-projects" data-focus-target="adminMilestoneTitle">
+            <span>Add Milestone</span>
+            <strong>Publish the next checkpoint</strong>
+        </button>
+        <button type="button" class="workspace-quick-action" data-open-workspace-tab="ops-deliverables" data-focus-target="adminDocumentCategory">
+            <span>Upload Document</span>
+            <strong>Share secure client files</strong>
+        </button>
+        <button type="button" class="workspace-quick-action" data-open-workspace-tab="ops-finance" data-focus-target="adminInvoiceTitle">
+            <span>Create Invoice</span>
+            <strong>Billing tied to the active project</strong>
+        </button>
+        <button type="button" class="workspace-quick-action" data-open-workspace-tab="ops-consultations">
+            <span>${consultationFeedAvailable ? 'Review Consultations' : 'Consultation Feed'}</span>
+            <strong>${consultationFeedAvailable ? 'Triage new requests quickly' : 'Reconnect intake pipeline'}</strong>
+        </button>
+    `;
+}
+
+function buildAdminContextMarkup(state, selectedProject, milestones, invoices, documents, messages) {
+    if (!selectedProject) {
+        return renderEmptyState('No project selected', 'Choose a client or project to load delivery context, billing, files, and live activity.');
+    }
+
+    const client = state.clients.find((item) => item.id === selectedProject.client_id);
+    const nextMilestone = milestones.find((item) => !['approved', 'complete'].includes(String(item.status || '').toLowerCase())) || milestones[0];
+    const openInvoices = invoices.filter((item) => !['paid', 'void'].includes(String(item.status || '').toLowerCase()));
+
+    return `
+        <div class="workspace-panel-head">
+            <div>
+                <span class="workspace-panel-kicker">Selected Project</span>
+                <h3>${escapeHtml(selectedProject.name)}</h3>
+            </div>
+            <span class="workspace-pill ${statusPillClass(selectedProject.status || 'active')}">${escapeHtml(humanizeStatus(selectedProject.status || 'active'))}</span>
+        </div>
+        <p>${escapeHtml(selectedProject.description || 'No project summary has been added yet.')}</p>
+        <div class="ops-context-grid">
+            <article class="ops-context-stat">
+                <span>Client</span>
+                <strong>${escapeHtml(client?.company_name || 'No client selected')}</strong>
             </article>
-        `).join('')
-        : renderEmptyState('No recent activity', 'Recent invoices, updates, files, and message traffic will appear here.');
+            <article class="ops-context-stat">
+                <span>Phase</span>
+                <strong>${escapeHtml(selectedProject.current_phase || 'To be defined')}</strong>
+            </article>
+            <article class="ops-context-stat">
+                <span>Launch</span>
+                <strong>${escapeHtml(selectedProject.target_launch_date ? formatDate(selectedProject.target_launch_date) : 'Not scheduled')}</strong>
+            </article>
+        </div>
+        <div class="ops-context-list">
+            <div>
+                <span>Next milestone</span>
+                <strong>${escapeHtml(nextMilestone ? nextMilestone.title : 'No milestone queued')}</strong>
+            </div>
+            <div>
+                <span>Open invoices</span>
+                <strong>${openInvoices.length ? `${openInvoices.length} record${openInvoices.length === 1 ? '' : 's'}` : 'All clear'}</strong>
+            </div>
+            <div>
+                <span>Messages</span>
+                <strong>${messages.length} thread item${messages.length === 1 ? '' : 's'}</strong>
+            </div>
+            <div>
+                <span>Files</span>
+                <strong>${documents.length} asset${documents.length === 1 ? '' : 's'} shared</strong>
+            </div>
+        </div>
+    `;
+}
+
+function buildAdminConsultationSnapshotMarkup(upcomingConsultations, available, unavailableMessage) {
+    if (!available) {
+        return renderEmptyState('Consultation feed unavailable', unavailableMessage || 'The consultation calendar feed is unavailable right now.');
+    }
+
+    const queued = upcomingConsultations.slice(0, 4);
+    return `
+        <div class="workspace-panel-head">
+            <div>
+                <span class="workspace-panel-kicker">Upcoming Consultations</span>
+                <h3>${queued.length ? `${queued.length} scheduled request${queued.length === 1 ? '' : 's'}` : 'No consultations queued'}</h3>
+            </div>
+        </div>
+        ${queued.length
+            ? `<div class="ops-dashboard-list">${queued.map((consultation) => `
+                <article class="ops-dashboard-list-item">
+                    <strong>${escapeHtml(consultation.company_name)}</strong>
+                    <span>${escapeHtml(consultation.full_name)} • ${escapeHtml(formatConsultationDate(consultation.preferred_date))}</span>
+                    <em>${escapeHtml(consultation.preferred_time || 'Pending time')}</em>
+                </article>
+            `).join('')}</div>`
+            : renderEmptyState('No consultations yet', 'New requests from the consultation form will appear here automatically.')}
+    `;
+}
+
+function buildAdminSystemOverviewMarkup(state, selectedProject, selectedProjectUpdates) {
+    const internalNotes = state.messages.filter((message) => message.is_internal).length;
+    const openInvoices = state.invoices.filter((invoice) => !['paid', 'void'].includes(String(invoice.status || '').toLowerCase())).length;
+
+    return `
+        <div class="workspace-panel-head">
+            <div>
+                <span class="workspace-panel-kicker">Operational Snapshot</span>
+                <h3>${escapeHtml(selectedProject?.name || 'Admin suite overview')}</h3>
+            </div>
+        </div>
+        <div class="ops-dashboard-list ops-dashboard-list-tight">
+            <article class="ops-dashboard-list-item">
+                <strong>${state.clients.length} client account${state.clients.length === 1 ? '' : 's'}</strong>
+                <span>Currently provisioned in the live portal</span>
+            </article>
+            <article class="ops-dashboard-list-item">
+                <strong>${selectedProjectUpdates.length} project update${selectedProjectUpdates.length === 1 ? '' : 's'}</strong>
+                <span>Published for the selected project</span>
+            </article>
+            <article class="ops-dashboard-list-item">
+                <strong>${internalNotes} internal note${internalNotes === 1 ? '' : 's'}</strong>
+                <span>Stored privately in the admin message layer</span>
+            </article>
+            <article class="ops-dashboard-list-item">
+                <strong>${openInvoices} billing item${openInvoices === 1 ? '' : 's'}</strong>
+                <span>Still awaiting payment or manual closeout</span>
+            </article>
+        </div>
+    `;
 }
 
 function buildAccessListMarkup(state) {
@@ -2341,9 +2705,11 @@ function activateWorkspaceTab(root, targetId, options = {}) {
     const { updateHash = true } = options;
 
     const buttons = root.querySelectorAll('.workspace-nav-button');
+    const mobileTabs = root.querySelectorAll('.workspace-mobile-tab');
     const views = root.querySelectorAll('.workspace-view');
 
     buttons.forEach((item) => item.classList.toggle('active', item.dataset.workspaceTab === targetId));
+    mobileTabs.forEach((item) => item.classList.toggle('active', item.dataset.openWorkspaceTab === targetId));
     views.forEach((view) => view.classList.toggle('active', view.id === targetId));
 
     if (updateHash) {
@@ -2355,6 +2721,17 @@ function activateWorkspaceTab(root, targetId, options = {}) {
 
 function bindWorkspaceTabs(root) {
     const stateHost = root instanceof HTMLElement ? root : document.body;
+    const handleTabTrigger = (targetId, focusTarget = '') => {
+        activateWorkspaceTab(root, targetId);
+
+        if (focusTarget) {
+            window.requestAnimationFrame(() => byId(focusTarget)?.focus());
+        }
+
+        if (window.innerWidth <= 1100) {
+            byId('workspaceDrawerClose')?.click();
+        }
+    };
 
     root.querySelectorAll('.workspace-nav-button').forEach((button) => {
         if (button.dataset.tabsBound === 'true') {
@@ -2362,12 +2739,7 @@ function bindWorkspaceTabs(root) {
         }
 
         button.dataset.tabsBound = 'true';
-        button.addEventListener('click', () => {
-            activateWorkspaceTab(root, button.dataset.workspaceTab);
-            if (window.innerWidth <= 1100) {
-                byId('workspaceDrawerClose')?.click();
-            }
-        });
+        button.addEventListener('click', () => handleTabTrigger(button.dataset.workspaceTab, button.dataset.focusTarget || ''));
     });
 
     root.querySelectorAll('[data-open-workspace-tab]').forEach((trigger) => {
@@ -2376,12 +2748,7 @@ function bindWorkspaceTabs(root) {
         }
 
         trigger.dataset.tabsBound = 'true';
-        trigger.addEventListener('click', () => {
-            activateWorkspaceTab(root, trigger.dataset.openWorkspaceTab);
-            if (window.innerWidth <= 1100) {
-                byId('workspaceDrawerClose')?.click();
-            }
-        });
+        trigger.addEventListener('click', () => handleTabTrigger(trigger.dataset.openWorkspaceTab, trigger.dataset.focusTarget || ''));
     });
 
     if (stateHost.dataset.workspaceHashBound !== 'true') {
@@ -2970,6 +3337,10 @@ function setAlert(element, message, kind = 'info') {
     if (kind === 'warning') {
         element.classList.add('warning');
     }
+
+    if ((kind === 'success' || kind === 'error') && ['adminAlert', 'workspaceAlert'].includes(element.id)) {
+        showWorkspaceToast(message, kind);
+    }
 }
 
 function clearAlert(element) {
@@ -2980,6 +3351,98 @@ function clearAlert(element) {
     element.textContent = '';
     element.classList.add('is-hidden');
     element.classList.remove('success', 'error', 'warning');
+}
+
+function showWorkspaceToast(message, kind = 'info') {
+    const stack = byId('workspaceToastStack');
+    if (!stack || !message) {
+        return;
+    }
+
+    const toast = document.createElement('article');
+    toast.className = `workspace-toast workspace-toast-${kind}`;
+    toast.innerHTML = `
+        <div class="workspace-toast-copy">
+            <strong>${escapeHtml(kind === 'success' ? 'Saved' : kind === 'error' ? 'Attention' : 'Update')}</strong>
+            <span>${escapeHtml(message)}</span>
+        </div>
+        <button type="button" class="workspace-toast-close" aria-label="Dismiss notification">×</button>
+    `;
+
+    const dismiss = () => {
+        toast.classList.add('is-leaving');
+        window.setTimeout(() => toast.remove(), 220);
+    };
+
+    toast.querySelector('.workspace-toast-close')?.addEventListener('click', dismiss);
+    stack.appendChild(toast);
+    window.setTimeout(() => toast.classList.add('is-visible'), 16);
+    window.setTimeout(dismiss, 4200);
+}
+
+let confirmWorkspaceResolver = null;
+let confirmWorkspaceCleanup = null;
+
+function confirmWorkspaceAction({
+    kicker = 'Confirm action',
+    title = 'Please confirm',
+    body = 'This action cannot be undone.',
+    confirmLabel = 'Confirm',
+    tone = 'danger'
+} = {}) {
+    const modal = byId('workspaceConfirmModal');
+    const confirmButton = byId('workspaceConfirmSubmit');
+    const cancelButton = byId('workspaceConfirmCancel');
+    const closeButton = byId('workspaceConfirmClose');
+    const backdrop = byId('workspaceConfirmBackdrop');
+
+    if (!modal || !confirmButton || !cancelButton || !closeButton || !backdrop) {
+        return Promise.resolve(window.confirm(body));
+    }
+
+    byId('workspaceConfirmKicker').textContent = kicker;
+    byId('workspaceConfirmTitle').textContent = title;
+    byId('workspaceConfirmBody').textContent = body;
+    confirmButton.textContent = confirmLabel;
+    confirmButton.classList.toggle('btn-danger', tone === 'danger');
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+
+    const teardown = (value) => {
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+        confirmButton.classList.remove('btn-danger');
+        if (confirmWorkspaceCleanup) {
+            confirmWorkspaceCleanup();
+            confirmWorkspaceCleanup = null;
+        }
+        if (confirmWorkspaceResolver) {
+            confirmWorkspaceResolver(value);
+            confirmWorkspaceResolver = null;
+        }
+    };
+
+    return new Promise((resolve) => {
+        confirmWorkspaceResolver = resolve;
+
+        const handleConfirm = () => teardown(true);
+        const handleCancel = () => teardown(false);
+        const handleKeydown = (event) => {
+            if (event.key === 'Escape') {
+                handleCancel();
+            }
+        };
+
+        confirmButton.addEventListener('click', handleConfirm, { once: true });
+        cancelButton.addEventListener('click', handleCancel, { once: true });
+        closeButton.addEventListener('click', handleCancel, { once: true });
+        backdrop.addEventListener('click', handleCancel, { once: true });
+        document.addEventListener('keydown', handleKeydown);
+
+        confirmWorkspaceCleanup = () => {
+            document.removeEventListener('keydown', handleKeydown);
+        };
+    });
 }
 
 function setButtonBusy(button, isBusy, label) {

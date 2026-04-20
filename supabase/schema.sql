@@ -176,6 +176,7 @@ create unique index if not exists idx_payment_records_provider_payment_id on pub
 create index if not exists idx_messages_project_id on public.messages(project_id);
 create index if not exists idx_messages_created_at on public.messages(created_at desc);
 create index if not exists idx_consultations_status_date on public.consultations(status, preferred_date, preferred_time);
+create unique index if not exists idx_consultations_active_slot_unique on public.consultations(preferred_date, preferred_time) where status in ('new', 'confirmed');
 
 create or replace function public.set_updated_at()
 returns trigger

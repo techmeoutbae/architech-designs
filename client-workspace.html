@@ -70,11 +70,6 @@
                 <div class="workspace-shell is-hidden" id="clientWorkspaceShell">
                     <aside class="workspace-sidebar" id="workspaceSidebar" aria-label="Portal navigation">
                         <div class="workspace-sidebar-topbar">
-                            <div class="workspace-sidebar-head">
-                                <span class="workspace-sidebar-kicker">Private workspace</span>
-                                <strong>Project navigation</strong>
-                                <p>Move through milestones, files, invoices, and communication without the clutter of the public site.</p>
-                            </div>
                             <button class="workspace-drawer-close" type="button" id="workspaceDrawerClose" aria-label="Close portal navigation">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -97,10 +92,6 @@
                             <button class="workspace-nav-button" type="button" data-workspace-tab="workspace-messages">Messages</button>
                             <button class="workspace-nav-button" type="button" data-workspace-tab="workspace-account">Account</button>
                         </div>
-                        <div class="workspace-side-note">
-                            <span class="workspace-panel-kicker">Live portal only</span>
-                            <p>Real client data stays here. Demo workspace content and prospect preview behavior are fully separated from this route.</p>
-                        </div>
                     </aside>
 
                     <div class="workspace-main">
@@ -118,19 +109,26 @@
                             </div>
                         </div>
                         <div class="workspace-alert is-hidden" id="workspaceAlert" aria-live="polite"></div>
+                        <div class="workspace-top-actions" id="workspaceQuickActions"></div>
+                        <div class="workspace-mobile-tabs" id="workspaceMobileTabs" aria-label="Portal sections">
+                            <button class="workspace-mobile-tab active" type="button" data-open-workspace-tab="workspace-overview">Overview</button>
+                            <button class="workspace-mobile-tab" type="button" data-open-workspace-tab="workspace-milestones">Milestones</button>
+                            <button class="workspace-mobile-tab" type="button" data-open-workspace-tab="workspace-updates">Updates</button>
+                            <button class="workspace-mobile-tab" type="button" data-open-workspace-tab="workspace-documents">Docs</button>
+                            <button class="workspace-mobile-tab" type="button" data-open-workspace-tab="workspace-billing">Billing</button>
+                            <button class="workspace-mobile-tab" type="button" data-open-workspace-tab="workspace-messages">Messages</button>
+                            <button class="workspace-mobile-tab" type="button" data-open-workspace-tab="workspace-account">Account</button>
+                        </div>
 
                     <section class="workspace-view active" id="workspace-overview">
                         <div class="workspace-kpi-grid" id="workspaceOverviewMetrics"></div>
-                        <div class="workspace-panel-grid">
-                            <article class="workspace-panel workspace-panel-highlight">
-                                <span class="workspace-panel-kicker">Project Summary</span>
-                                <h3 id="overviewSummaryTitle">Loading summary...</h3>
-                                <p id="overviewSummaryText">Preparing the latest project snapshot.</p>
-                            </article>
-                            <article class="workspace-panel">
-                                <span class="workspace-panel-kicker">Next Actions</span>
-                                <ul class="workspace-list" id="overviewActionsList"></ul>
-                            </article>
+                        <div class="client-dashboard-grid">
+                            <article class="workspace-panel workspace-panel-highlight client-dashboard-context" id="workspaceProjectSummaryPanel"></article>
+                            <article class="workspace-panel client-dashboard-billing" id="workspaceBillingSnapshot"></article>
+                        </div>
+                        <div class="client-dashboard-grid client-dashboard-grid-secondary">
+                            <article class="workspace-panel client-dashboard-panel" id="workspaceRecentUpdatePanel"></article>
+                            <article class="workspace-panel client-dashboard-panel" id="workspaceCoordinationPanel"></article>
                         </div>
                     </section>
 
@@ -284,6 +282,8 @@
             </div>
         </div>
     </footer>
+
+    <div class="workspace-toast-stack" id="workspaceToastStack" aria-live="polite" aria-atomic="true"></div>
 
     <script src="js/main.js"></script>
     <script src="js/portal-config.js"></script>

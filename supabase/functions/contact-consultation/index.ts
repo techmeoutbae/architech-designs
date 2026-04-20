@@ -3,7 +3,7 @@
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'content-type, apikey',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
 };
 
 function json(body: unknown, status = 200) {
@@ -21,14 +21,6 @@ Deno.serve(async (request: Request) => {
         return new Response(null, { status: 204, headers: corsHeaders });
     }
 
-    if (request.method !== 'POST') {
-        return json({
-            ok: false,
-            code: 'METHOD_NOT_ALLOWED',
-            message: 'Use POST to submit a consultation request.'
-        }, 405);
-    }
-
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || Deno.env.get('SUPABASE_PROJECT_URL');
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
@@ -38,6 +30,64 @@ Deno.serve(async (request: Request) => {
             code: 'CONFIG_MISSING',
             message: 'The secure consultation service is not configured yet.'
         }, 503);
+    }
+
+    if (request.method === 'GET') {
+        const url = new URL(request.url);
+        const start = url.searchParams.get('start') || '';
+        const end = url.searchParams.get('end') || '';
+
+        try {
+            const rows = await restRequest(
+                supabaseUrl,
+                serviceRoleKey,
+                `/rest/v1/consultations?select=preferred_date,preferred_time,status&status=in.(new,confirmed)${start ? `&preferred_date=gte.${encodeURIComponent(start)}` : ''}${end ? `&preferred_date=lte.${encodeURIComponent(end)}` : ''}&order=preferred_date.asc,preferred_time.asc`
+            );
+
+            const bookedSlots = rows.reduce((accumulator, item) => {
+                const date = String(item?.preferred_date || '').trim();
+                const time = String(item?.preferred_time || '').trim();
+
+                if (!date || !time) {
+                    return accumulator;
+                }
+
+                accumulator[date] = accumulator[date] || [];
+                if (!accumulator[date].includes(time)) {
+                    accumulator[date].push(time);
+                }
+
+                return accumulator;
+            }, {} as Record<string, string[]>);
+
+            return json({
+                ok: true,
+                data: { bookedSlots }
+            });
+        } catch (error) {
+            if (isMissingTableError(error, 'consultations')) {
+                return json({
+                    ok: false,
+                    code: 'CONSULTATION_CALENDAR_UNAVAILABLE',
+                    message: 'The consultation calendar is temporarily unavailable.'
+                }, 503);
+            }
+
+            console.error('[contact-consultation] availability failed', error);
+            return json({
+                ok: false,
+                code: 'REQUEST_FAILED',
+                message: error instanceof Error ? error.message : 'Consultation availability could not be loaded.'
+            }, 500);
+        }
+    }
+
+    if (request.method !== 'POST') {
+        return json({
+            ok: false,
+            code: 'METHOD_NOT_ALLOWED',
+            message: 'Use GET to fetch availability or POST to submit a consultation request.'
+        }, 405);
     }
 
     let payload: Record<string, unknown>;
@@ -110,6 +160,14 @@ Deno.serve(async (request: Request) => {
             message: 'Consultation request received and saved to the admin calendar.'
         }, 201);
     } catch (error) {
+        if (isSlotConflictError(error)) {
+            return json({
+                ok: false,
+                code: 'SLOT_UNAVAILABLE',
+                message: 'That consultation slot was just taken. Please choose another time.'
+            }, 409);
+        }
+
         if (isMissingTableError(error, 'consultations')) {
             return json({
                 ok: false,
@@ -193,4 +251,11 @@ function isMissingTableError(error: unknown, table: string) {
         && (message.includes('schema cache') || message.includes('does not exist') || message.includes('not found'))
     ) || message.includes(`relation "${table}" does not exist`)
       || message.includes(`relation "public.${table}" does not exist`);
+}
+
+function isSlotConflictError(error: unknown) {
+    const typed = error as { details?: { code?: string; message?: string; details?: string }; message?: string };
+    const code = String(typed?.details?.code || '').toUpperCase();
+    const message = [typed?.message, typed?.details?.message, typed?.details?.details].filter(Boolean).join(' ').toLowerCase();
+    return code === '23505' || message.includes('idx_consultations_active_slot_unique');
 }

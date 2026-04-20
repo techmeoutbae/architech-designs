@@ -16749,3 +16749,899 @@ p {
 .contact-page .consultation-scheduler-compact summary span {
     opacity: 0.84;
 }
+
+/* ===========================================
+   Admin Portal Premium App Refinement
+   =========================================== */
+
+.ops-page .workspace-app-header {
+    position: sticky;
+    top: 0;
+    z-index: 120;
+    background: linear-gradient(180deg, rgba(9, 22, 36, 0.92) 0%, rgba(14, 30, 49, 0.9) 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 44px rgba(8, 14, 24, 0.2);
+    backdrop-filter: saturate(160%) blur(18px);
+    -webkit-backdrop-filter: saturate(160%) blur(18px);
+}
+
+.ops-page .workspace-app-header-inner {
+    min-height: 78px;
+    gap: 18px;
+}
+
+.ops-page .workspace-app-brand {
+    padding: 8px 14px 8px 8px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ops-page .workspace-app-context {
+    display: grid;
+    gap: 4px;
+}
+
+.ops-page .workspace-app-context-label {
+    color: rgba(255, 255, 255, 0.62);
+}
+
+.ops-page .workspace-app-context strong,
+.ops-page .workspace-app-brand-copy strong,
+.ops-page .workspace-account-copy strong,
+.ops-page .workspace-account-copy span,
+.ops-page .workspace-account-trigger {
+    color: #fff;
+}
+
+.ops-page .workspace-product-main {
+    padding-top: 18px;
+}
+
+.ops-page .workspace-demo-section {
+    margin-top: 0;
+}
+
+.ops-page .workspace-shell {
+    position: relative;
+    border-radius: 34px;
+    background: rgba(255, 255, 255, 0.58);
+}
+
+.ops-page .workspace-sidebar {
+    padding: 18px 18px 20px;
+    gap: 14px;
+}
+
+.ops-page .workspace-sidebar-topbar {
+    margin-bottom: 2px;
+}
+
+.ops-page .workspace-nav {
+    gap: 8px;
+    margin: 0;
+}
+
+.ops-page .workspace-nav-button {
+    min-height: 50px;
+    padding: 12px 14px;
+    border-radius: 18px;
+    font-size: 0.92rem;
+    letter-spacing: 0.01em;
+}
+
+.ops-page .workspace-nav-button:hover,
+.ops-page .workspace-nav-button.active {
+    transform: translateX(2px);
+}
+
+.ops-page .workspace-main {
+    padding: 24px;
+    display: grid;
+    gap: 18px;
+}
+
+.ops-page .workspace-toolbar {
+    margin-bottom: 0;
+    padding: 20px 22px;
+    border-radius: 28px;
+}
+
+.workspace-toolbar-copy-block {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+
+.ops-page .workspace-toolbar h2 {
+    font-size: clamp(1.36rem, 2vw, 1.84rem);
+    line-height: 1.08;
+}
+
+.ops-page .workspace-toolbar-copy,
+.ops-page .workspace-section-copy,
+.ops-page .workspace-form-note {
+    color: var(--text-light);
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+.ops-page .workspace-toolbar-meta {
+    align-items: flex-end;
+}
+
+.ops-page .workspace-alert {
+    margin: 0;
+    border-radius: 18px;
+    padding: 14px 16px;
+}
+
+.workspace-top-actions {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.workspace-quick-action {
+    display: grid;
+    gap: 6px;
+    min-height: 92px;
+    padding: 16px;
+    border-radius: 22px;
+    border: 1px solid rgba(203, 213, 225, 0.92);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(245, 248, 252, 0.98) 100%);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.07);
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease, background 0.24s ease;
+}
+
+.workspace-quick-action span {
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.workspace-quick-action strong {
+    color: var(--primary);
+    font-size: 0.96rem;
+    line-height: 1.35;
+}
+
+.workspace-quick-action:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 22px 46px rgba(15, 23, 42, 0.1);
+    border-color: rgba(47, 110, 165, 0.22);
+}
+
+.workspace-quick-action-primary {
+    background: linear-gradient(135deg, #163453 0%, #21466e 52%, #2f6ea5 100%);
+    border-color: rgba(47, 110, 165, 0.24);
+}
+
+.workspace-quick-action-primary span,
+.workspace-quick-action-primary strong {
+    color: #fff;
+}
+
+.workspace-mobile-tabs {
+    display: none;
+}
+
+.workspace-mobile-tab {
+    min-height: 42px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(203, 213, 225, 0.92);
+    background: rgba(255, 255, 255, 0.86);
+    color: var(--primary);
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.workspace-mobile-tab.active {
+    background: linear-gradient(135deg, #163453 0%, #21466e 100%);
+    border-color: rgba(47, 110, 165, 0.22);
+    color: #fff;
+}
+
+.ops-dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
+    gap: 18px;
+}
+
+.ops-dashboard-grid-secondary {
+    grid-template-columns: minmax(0, 1.06fr) minmax(300px, 0.94fr);
+}
+
+.ops-dashboard-panel,
+.ops-dashboard-context,
+.ops-dashboard-snapshot {
+    min-height: 100%;
+}
+
+.workspace-panel-head,
+.workspace-form-card-head,
+.workspace-select-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.workspace-form-card-head {
+    margin-bottom: 18px;
+}
+
+.workspace-form-card-head.compact {
+    margin-bottom: 14px;
+}
+
+.workspace-form-card-head h3,
+.workspace-panel-head h3 {
+    margin-bottom: 0;
+}
+
+.ops-context-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.ops-context-stat {
+    padding: 14px 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(226, 232, 240, 0.92);
+    background: rgba(248, 250, 252, 0.9);
+}
+
+.ops-context-stat span,
+.ops-context-list span,
+.ops-dashboard-list-item span,
+.ops-dashboard-list-item em,
+.workspace-kpi-card em {
+    display: block;
+    margin-top: 4px;
+    color: var(--text-light);
+    font-size: 0.82rem;
+    font-style: normal;
+    line-height: 1.5;
+}
+
+.workspace-kpi-card em {
+    margin-top: 10px;
+}
+
+.ops-context-stat strong,
+.ops-context-list strong,
+.ops-dashboard-list-item strong {
+    color: var(--primary);
+    font-size: 0.98rem;
+    line-height: 1.35;
+}
+
+.ops-context-list,
+.ops-dashboard-list {
+    display: grid;
+    gap: 12px;
+}
+
+.ops-context-list {
+    margin-top: 16px;
+}
+
+.ops-context-list div,
+.ops-dashboard-list-item {
+    padding: 14px 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    background: rgba(248, 250, 252, 0.92);
+}
+
+.ops-dashboard-list-tight {
+    gap: 10px;
+}
+
+.ops-activity-timeline {
+    display: grid;
+    gap: 12px;
+}
+
+.ops-activity-item {
+    display: grid;
+    grid-template-columns: 14px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+}
+
+.ops-activity-dot {
+    width: 10px;
+    height: 10px;
+    margin-top: 7px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #21466e);
+    box-shadow: 0 0 0 6px rgba(201, 162, 39, 0.12);
+}
+
+.ops-activity-copy {
+    padding: 12px 14px;
+    border-radius: 18px;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    background: rgba(248, 250, 252, 0.92);
+}
+
+.ops-activity-copy span,
+.ops-activity-copy em {
+    display: block;
+    color: var(--text-light);
+    font-size: 0.82rem;
+    font-style: normal;
+}
+
+.ops-activity-copy strong {
+    display: block;
+    margin: 4px 0;
+    color: var(--primary);
+    font-size: 0.96rem;
+}
+
+.ops-page .workspace-kpi-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.ops-page .workspace-kpi-card {
+    min-height: 126px;
+    padding: 18px;
+}
+
+.ops-page .workspace-kpi-card strong {
+    font-size: 1.44rem;
+}
+
+.ops-page .workspace-select-card {
+    padding: 16px 18px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.99) 0%, rgba(245, 248, 252, 0.98) 100%);
+}
+
+.workspace-select-card-rich span:last-child {
+    color: var(--text-light);
+}
+
+.ops-page .workspace-form-layout {
+    align-items: start;
+}
+
+.ops-page .workspace-form-stack {
+    gap: 16px;
+}
+
+.ops-page .workspace-form-card {
+    padding: 20px;
+    border-radius: 24px;
+}
+
+.ops-page .workspace-form-grid {
+    gap: 14px;
+}
+
+.ops-page .workspace-form-grid .form-group label,
+.ops-page .workspace-composer label {
+    margin-bottom: 8px;
+    color: var(--primary);
+    font-size: 0.84rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+.ops-page .workspace-form-card input,
+.ops-page .workspace-form-card select,
+.ops-page .workspace-form-card textarea,
+.ops-page .workspace-composer textarea,
+.ops-page .workspace-select select {
+    min-height: 50px;
+    border-radius: 16px;
+    border: 1px solid rgba(203, 213, 225, 0.92);
+    background: rgba(248, 250, 252, 0.94);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.88);
+}
+
+.ops-page .workspace-form-card textarea,
+.ops-page .workspace-composer textarea {
+    min-height: 118px;
+}
+
+.ops-page .workspace-form-card input:focus,
+.ops-page .workspace-form-card select:focus,
+.ops-page .workspace-form-card textarea:focus,
+.ops-page .workspace-composer textarea:focus,
+.ops-page .workspace-select select:focus {
+    outline: none;
+    border-color: rgba(47, 110, 165, 0.32);
+    box-shadow: 0 0 0 4px rgba(47, 110, 165, 0.12);
+    background: #fff;
+}
+
+.ops-page .workspace-form-actions {
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.ops-page .workspace-card-stack,
+.ops-page .workspace-file-grid,
+.ops-page .invoice-card-grid {
+    gap: 14px;
+}
+
+.ops-page .invoice-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ops-page .workspace-thread {
+    min-height: 260px;
+    max-height: 520px;
+}
+
+.ops-page .workspace-message {
+    max-width: min(84%, 720px);
+}
+
+.ops-page .workspace-message.internal {
+    background: linear-gradient(135deg, rgba(16, 33, 56, 0.08), rgba(47, 110, 165, 0.08));
+}
+
+.workspace-toast-stack {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    display: grid;
+    gap: 10px;
+    z-index: 1500;
+    width: min(360px, calc(100vw - 36px));
+}
+
+.workspace-toast {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(203, 213, 225, 0.92);
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 22px 48px rgba(15, 23, 42, 0.12);
+    transform: translateY(10px);
+    opacity: 0;
+    transition: transform 0.22s ease, opacity 0.22s ease;
+}
+
+.workspace-toast.is-visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.workspace-toast.is-leaving {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.workspace-toast-copy strong {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--primary);
+    font-size: 0.9rem;
+}
+
+.workspace-toast-copy span {
+    color: var(--text-light);
+    font-size: 0.86rem;
+    line-height: 1.55;
+}
+
+.workspace-toast-success {
+    border-color: rgba(16, 185, 129, 0.22);
+}
+
+.workspace-toast-error {
+    border-color: rgba(239, 68, 68, 0.22);
+}
+
+.workspace-toast-close,
+.btn-danger {
+    cursor: pointer;
+}
+
+.workspace-toast-close {
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(16, 33, 56, 0.06);
+    color: var(--primary);
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #9f1d18 0%, #c2410c 100%) !important;
+    color: #fff !important;
+    border-color: transparent !important;
+}
+
+.workspace-modal-card-confirm {
+    max-width: 480px;
+    border-radius: 28px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.995) 0%, rgba(246, 249, 252, 0.99) 100%);
+    box-shadow: 0 28px 72px rgba(15, 23, 42, 0.18);
+}
+
+.workspace-modal-card-confirm h3 {
+    margin-bottom: 12px;
+}
+
+.workspace-modal-card-confirm p {
+    color: var(--text-light);
+    line-height: 1.65;
+}
+
+.ops-page .workspace-empty-state {
+    padding: 28px 24px;
+}
+
+@media (max-width: 1180px) {
+    .workspace-top-actions {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .ops-dashboard-grid,
+    .ops-dashboard-grid-secondary,
+    .ops-context-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ops-page .workspace-kpi-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .ops-page .invoice-card-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 1100px) {
+    .workspace-mobile-tabs {
+        position: sticky;
+        top: 92px;
+        z-index: 40;
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding: 4px 2px 6px;
+        scrollbar-width: none;
+    }
+
+    .workspace-mobile-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .workspace-top-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ops-page .workspace-main {
+        padding: 20px;
+    }
+
+    .ops-page .workspace-toolbar {
+        padding: 18px;
+    }
+
+    .ops-page .workspace-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .ops-page .workspace-app-header-inner {
+        min-height: 66px;
+        gap: 12px;
+    }
+
+    .ops-page .workspace-app-context {
+        display: none;
+    }
+
+    .ops-page .workspace-app-brand {
+        padding: 6px 10px 6px 6px;
+        border-radius: 18px;
+    }
+
+    .workspace-top-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .workspace-quick-action {
+        min-height: 82px;
+        padding: 14px;
+    }
+
+    .ops-page .workspace-toolbar,
+    .ops-page .workspace-form-card,
+    .ops-page .workspace-panel,
+    .ops-page .workspace-kpi-card,
+    .ops-page .workspace-data-card,
+    .ops-page .invoice-card,
+    .ops-page .workspace-file-card,
+    .ops-page .workspace-thread,
+    .ops-page .workspace-composer {
+        border-radius: 22px;
+    }
+
+    .ops-page .workspace-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ops-page .workspace-kpi-card {
+        min-height: 110px;
+    }
+
+    .ops-page .workspace-toolbar h2,
+    .ops-page .workspace-section-head h3,
+    .workspace-panel-head h3,
+    .workspace-form-card-head h3 {
+        font-size: 1.22rem;
+        line-height: 1.18;
+    }
+
+    .ops-page .workspace-toolbar-copy,
+    .ops-page .workspace-section-copy,
+    .ops-page .workspace-form-note,
+    .workspace-toast-copy span {
+        font-size: 0.84rem;
+    }
+
+    .ops-page .workspace-message {
+        max-width: 100%;
+    }
+
+    .workspace-toast-stack {
+        left: 16px;
+        right: 16px;
+        width: auto;
+    }
+}
+
+/* ===========================================
+   Client Portal Premium App Refinement
+   =========================================== */
+
+.client-workspace-page .workspace-app-header {
+    position: sticky;
+    top: 0;
+    z-index: 120;
+    background: linear-gradient(180deg, rgba(9, 22, 36, 0.88) 0%, rgba(16, 31, 51, 0.84) 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: saturate(160%) blur(16px);
+    -webkit-backdrop-filter: saturate(160%) blur(16px);
+}
+
+.client-workspace-page .workspace-app-header-inner {
+    min-height: 76px;
+}
+
+.client-workspace-page .workspace-app-brand {
+    padding: 8px 14px 8px 8px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.client-workspace-page .workspace-app-context strong,
+.client-workspace-page .workspace-app-brand-copy strong,
+.client-workspace-page .workspace-account-copy strong,
+.client-workspace-page .workspace-account-copy span,
+.client-workspace-page .workspace-account-trigger {
+    color: #fff;
+}
+
+.client-workspace-page .workspace-product-main {
+    padding-top: 18px;
+}
+
+.client-workspace-page .workspace-demo-section {
+    margin-top: 0;
+}
+
+.client-workspace-page .workspace-shell {
+    position: relative;
+    border-radius: 34px;
+}
+
+.client-workspace-page .workspace-sidebar {
+    padding: 18px 18px 20px;
+    gap: 14px;
+}
+
+.client-workspace-page .workspace-nav {
+    margin: 0;
+    gap: 8px;
+}
+
+.client-workspace-page .workspace-nav-button {
+    min-height: 50px;
+    padding: 12px 14px;
+    border-radius: 18px;
+    font-size: 0.92rem;
+}
+
+.client-workspace-page .workspace-nav-button:hover,
+.client-workspace-page .workspace-nav-button.active {
+    transform: translateX(2px);
+}
+
+.client-workspace-page .workspace-main {
+    padding: 24px;
+    display: grid;
+    gap: 18px;
+}
+
+.client-workspace-page .workspace-toolbar {
+    margin-bottom: 0;
+    padding: 20px 22px;
+    border-radius: 28px;
+}
+
+.client-workspace-page .workspace-toolbar h2 {
+    font-size: clamp(1.34rem, 2vw, 1.76rem);
+    line-height: 1.08;
+}
+
+.client-dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.14fr) minmax(300px, 0.86fr);
+    gap: 18px;
+}
+
+.client-dashboard-grid-secondary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.client-context-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.client-workspace-page .workspace-top-actions {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.client-workspace-page .workspace-quick-action {
+    min-height: 84px;
+}
+
+.client-workspace-page .workspace-panel,
+.client-workspace-page .workspace-form-card,
+.client-workspace-page .workspace-composer,
+.client-workspace-page .workspace-thread,
+.client-workspace-page .invoice-card,
+.client-workspace-page .workspace-file-card,
+.client-workspace-page .workspace-data-card,
+.client-workspace-page .workspace-kpi-card {
+    border-radius: 24px;
+}
+
+.client-workspace-page .workspace-kpi-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.client-workspace-page .workspace-kpi-card {
+    min-height: 122px;
+    padding: 18px;
+}
+
+.client-workspace-page .workspace-kpi-card strong {
+    font-size: 1.38rem;
+}
+
+.client-workspace-page .workspace-panel-head h3,
+.client-workspace-page .workspace-section-head h3,
+.client-workspace-page .workspace-form-card-head h3 {
+    font-size: 1.22rem;
+}
+
+.client-workspace-page .workspace-thread {
+    min-height: 260px;
+    max-height: 500px;
+}
+
+.client-workspace-page .workspace-message {
+    max-width: min(82%, 720px);
+}
+
+.client-workspace-page .workspace-mobile-tabs {
+    display: none;
+}
+
+@media (max-width: 1180px) {
+    .client-dashboard-grid,
+    .client-dashboard-grid-secondary,
+    .client-context-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .client-workspace-page .workspace-top-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .client-workspace-page .workspace-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 1100px) {
+    .client-workspace-page .workspace-mobile-tabs {
+        position: sticky;
+        top: 92px;
+        z-index: 40;
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding: 4px 2px 6px;
+        scrollbar-width: none;
+    }
+
+    .client-workspace-page .workspace-mobile-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .client-workspace-page .workspace-main {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .client-workspace-page .workspace-app-header-inner {
+        min-height: 66px;
+        gap: 12px;
+    }
+
+    .client-workspace-page .workspace-app-context {
+        display: none;
+    }
+
+    .client-workspace-page .workspace-app-brand {
+        padding: 6px 10px 6px 6px;
+        border-radius: 18px;
+    }
+
+    .client-workspace-page .workspace-top-actions,
+    .client-workspace-page .workspace-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .client-workspace-page .workspace-kpi-card {
+        min-height: 104px;
+    }
+
+    .client-workspace-page .workspace-toolbar,
+    .client-workspace-page .workspace-form-card,
+    .client-workspace-page .workspace-panel,
+    .client-workspace-page .workspace-kpi-card,
+    .client-workspace-page .workspace-file-card,
+    .client-workspace-page .invoice-card,
+    .client-workspace-page .workspace-thread,
+    .client-workspace-page .workspace-composer {
+        border-radius: 22px;
+    }
+
+    .client-workspace-page .workspace-message {
+        max-width: 100%;
+    }
+}

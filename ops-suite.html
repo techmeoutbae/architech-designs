@@ -91,8 +91,8 @@
 
                     <div class="workspace-main">
                         <div class="workspace-toolbar">
-                            <div>
-                                <span class="workspace-toolbar-label">Selected Project</span>
+                            <div class="workspace-toolbar-copy-block">
+                                <span class="workspace-toolbar-label">Admin Control</span>
                                 <h2 id="workspaceProjectTitle">Loading admin data...</h2>
                                 <p class="workspace-toolbar-copy" id="workspaceProjectSynopsis">Create clients, manage project delivery, update billing, and control portal access from one polished internal command layer.</p>
                             </div>
@@ -108,10 +108,28 @@
                             </div>
                         </div>
                         <div class="workspace-alert is-hidden" id="adminAlert" aria-live="polite"></div>
+                        <div class="workspace-top-actions" id="adminQuickActions"></div>
+                        <div class="workspace-mobile-tabs" id="adminMobileTabs" aria-label="Admin sections">
+                            <button class="workspace-mobile-tab active" type="button" data-open-workspace-tab="ops-dashboard">Overview</button>
+                            <button class="workspace-mobile-tab" type="button" data-open-workspace-tab="ops-clients">Clients</button>
+                            <button class="workspace-mobile-tab" type="button" data-open-workspace-tab="ops-projects">Projects</button>
+                            <button class="workspace-mobile-tab" type="button" data-open-workspace-tab="ops-consultations">Consultations</button>
+                            <button class="workspace-mobile-tab" type="button" data-open-workspace-tab="ops-deliverables">Docs</button>
+                            <button class="workspace-mobile-tab" type="button" data-open-workspace-tab="ops-finance">Billing</button>
+                            <button class="workspace-mobile-tab" type="button" data-open-workspace-tab="ops-messages">Messages</button>
+                            <button class="workspace-mobile-tab" type="button" data-open-workspace-tab="ops-access">Access</button>
+                        </div>
 
                     <section class="workspace-view active" id="ops-dashboard">
                         <div class="workspace-kpi-grid" id="adminMetricsGrid"></div>
-                        <div class="workspace-card-stack" id="adminRecentActivity"></div>
+                        <div class="ops-dashboard-grid">
+                            <article class="workspace-panel ops-dashboard-context" id="adminSelectedProjectPanel"></article>
+                            <article class="workspace-panel ops-dashboard-snapshot" id="adminUpcomingConsultationsPanel"></article>
+                        </div>
+                        <div class="ops-dashboard-grid ops-dashboard-grid-secondary">
+                            <article class="workspace-panel ops-dashboard-panel" id="adminRecentActivity"></article>
+                            <article class="workspace-panel ops-dashboard-panel" id="adminSystemOverview"></article>
+                        </div>
                     </section>
 
                     <section class="workspace-view" id="ops-consultations">
@@ -155,6 +173,7 @@
                                     </div>
                                     <div class="workspace-form-actions">
                                         <button type="submit" class="btn btn-primary">Save Consultation</button>
+                                        <button type="button" class="btn btn-outline workspace-action-danger is-hidden" id="adminConsultationDelete">Delete Consultation</button>
                                     </div>
                                 </form>
                             </div>
@@ -166,10 +185,18 @@
                             <div>
                                 <span class="workspace-panel-kicker">Client Accounts</span>
                                 <h3>Create real client access through Supabase-backed onboarding.</h3>
+                                <p class="workspace-section-copy">Invite a client, create their first project, and keep the roster readable at a glance.</p>
                             </div>
                         </div>
                         <div class="workspace-form-layout">
                             <form class="workspace-form-card" id="adminClientForm">
+                                <div class="workspace-form-card-head">
+                                    <div>
+                                        <span class="workspace-panel-kicker">Invite Client</span>
+                                        <h3>Provision a premium client portal account</h3>
+                                    </div>
+                                    <p class="workspace-form-note">Create the client, attach the first project, and send the secure access email in one flow.</p>
+                                </div>
                                 <div class="workspace-form-grid">
                                     <div class="form-group">
                                         <label for="adminClientFullName">Primary Contact</label>
@@ -209,12 +236,19 @@
                             <div>
                                 <span class="workspace-panel-kicker">Projects + Delivery</span>
                                 <h3>Create projects, milestones, and project updates for the selected client.</h3>
+                                <p class="workspace-section-copy">Keep delivery structured, current, and easy to review without moving through a long stacked page.</p>
                             </div>
                         </div>
                         <div class="workspace-form-layout">
                             <div class="workspace-form-stack">
                                 <form class="workspace-form-card" id="adminProjectForm">
-                                    <h3 id="adminProjectFormTitle">Create Project</h3>
+                                    <div class="workspace-form-card-head">
+                                        <div>
+                                            <span class="workspace-panel-kicker">Project Setup</span>
+                                            <h3 id="adminProjectFormTitle">Create Project</h3>
+                                        </div>
+                                        <p class="workspace-form-note">Define the selected client context, current phase, and launch target in a tighter setup pass.</p>
+                                    </div>
                                     <input type="hidden" id="adminProjectId">
                                     <div class="workspace-form-grid">
                                         <div class="form-group">
@@ -249,7 +283,12 @@
                                 </form>
 
                                 <form class="workspace-form-card" id="adminMilestoneForm">
-                                    <h3 id="adminMilestoneFormTitle">Add Milestone</h3>
+                                    <div class="workspace-form-card-head compact">
+                                        <div>
+                                            <span class="workspace-panel-kicker">Milestone</span>
+                                            <h3 id="adminMilestoneFormTitle">Add Milestone</h3>
+                                        </div>
+                                    </div>
                                     <input type="hidden" id="adminMilestoneId">
                                     <div class="workspace-form-grid">
                                         <div class="form-group">
@@ -286,7 +325,12 @@
                                 </form>
 
                                 <form class="workspace-form-card" id="adminUpdateForm">
-                                    <h3 id="adminUpdateFormTitle">Publish Project Update</h3>
+                                    <div class="workspace-form-card-head compact">
+                                        <div>
+                                            <span class="workspace-panel-kicker">Project Update</span>
+                                            <h3 id="adminUpdateFormTitle">Publish Project Update</h3>
+                                        </div>
+                                    </div>
                                     <input type="hidden" id="adminUpdateId">
                                     <div class="workspace-form-grid">
                                         <div class="form-group">
@@ -326,11 +370,17 @@
                             <div>
                                 <span class="workspace-panel-kicker">Documents</span>
                                 <h3>Upload secure client files into private Supabase Storage.</h3>
+                                <p class="workspace-section-copy">Keep approvals, decks, and project assets organized in one secure operational library.</p>
                             </div>
                         </div>
                         <div class="workspace-form-layout">
                             <form class="workspace-form-card" id="adminDocumentForm">
-                                <h3 id="adminDocumentFormTitle">Upload Document</h3>
+                                <div class="workspace-form-card-head compact">
+                                    <div>
+                                        <span class="workspace-panel-kicker">Secure Upload</span>
+                                        <h3 id="adminDocumentFormTitle">Upload Document</h3>
+                                    </div>
+                                </div>
                                 <input type="hidden" id="adminDocumentId">
                                 <div class="workspace-form-grid">
                                     <div class="form-group">
@@ -356,12 +406,18 @@
                             <div>
                                 <span class="workspace-panel-kicker">Billing</span>
                                 <h3>Create invoices and attach payment records to the selected project.</h3>
+                                <p class="workspace-section-copy">Keep invoice generation, status, and recorded payments visible from one tighter finance workspace.</p>
                             </div>
                         </div>
                         <div class="workspace-form-layout">
                             <div class="workspace-form-stack">
                                 <form class="workspace-form-card" id="adminInvoiceForm">
-                                    <h3 id="adminInvoiceFormTitle">Create Invoice</h3>
+                                    <div class="workspace-form-card-head compact">
+                                        <div>
+                                            <span class="workspace-panel-kicker">Invoice</span>
+                                            <h3 id="adminInvoiceFormTitle">Create Invoice</h3>
+                                        </div>
+                                    </div>
                                     <input type="hidden" id="adminInvoiceId">
                                     <div class="workspace-form-grid">
                                         <div class="form-group">
@@ -402,7 +458,12 @@
                                 </form>
 
                                 <form class="workspace-form-card" id="adminPaymentForm">
-                                    <h3>Record Payment</h3>
+                                    <div class="workspace-form-card-head compact">
+                                        <div>
+                                            <span class="workspace-panel-kicker">Payment Record</span>
+                                            <h3>Record Payment</h3>
+                                        </div>
+                                    </div>
                                     <div class="workspace-form-grid">
                                         <div class="form-group">
                                             <label for="adminPaymentInvoice">Invoice</label>
@@ -439,6 +500,7 @@
                             <div>
                                 <span class="workspace-panel-kicker">Project Messaging</span>
                                 <h3>Send client-facing updates or internal notes tied to the selected project.</h3>
+                                <p class="workspace-section-copy">Keep message history readable, scoped to the active project, and easy to update or clean up.</p>
                             </div>
                         </div>
                         <div class="workspace-thread" id="adminMessageThread"></div>
@@ -462,6 +524,7 @@
                             <div>
                                 <span class="workspace-panel-kicker">Portal Access</span>
                                 <h3>Control which client accounts can see which projects.</h3>
+                                <p class="workspace-section-copy">Assign and remove visibility without leaving the selected project/client context.</p>
                             </div>
                         </div>
                         <div class="workspace-form-layout">
@@ -488,6 +551,22 @@
             </div>
         </section>
     </main>
+
+    <div class="workspace-toast-stack" id="workspaceToastStack" aria-live="polite" aria-atomic="true"></div>
+
+    <div class="workspace-modal" id="workspaceConfirmModal" aria-hidden="true">
+        <button class="workspace-modal-backdrop" type="button" id="workspaceConfirmBackdrop" aria-label="Close confirmation dialog"></button>
+        <div class="workspace-modal-card workspace-modal-card-confirm" role="dialog" aria-modal="true" aria-labelledby="workspaceConfirmTitle" aria-describedby="workspaceConfirmBody">
+            <button class="workspace-modal-close" type="button" id="workspaceConfirmClose" aria-label="Close confirmation dialog">×</button>
+            <span class="workspace-panel-kicker" id="workspaceConfirmKicker">Confirm action</span>
+            <h3 id="workspaceConfirmTitle">Please confirm</h3>
+            <p id="workspaceConfirmBody">This action cannot be undone.</p>
+            <div class="workspace-modal-actions">
+                <button type="button" class="btn btn-outline" id="workspaceConfirmCancel">Cancel</button>
+                <button type="button" class="btn btn-primary" id="workspaceConfirmSubmit">Confirm</button>
+            </div>
+        </div>
+    </div>
 
     <footer class="footer">
         <div class="container">

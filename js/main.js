@@ -586,6 +586,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 return `${year}-${month}-${day}`;
             }
 
+            async function fetchConsultationAvailability(start, end) {
+                try {
+                    const response = await fetch(`${SUPABASE_PUBLIC_URL}/functions/v1/contact-consultation?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`, {
+                        method: 'GET',
+                        headers: {
+                            Accept: 'application/json',
+                            apikey: SUPABASE_PUBLIC_ANON_KEY
+                        }
+                    });
+
+                    if (!response.ok) {
+                        return {};
+                    }
+
+                    const body = await response.json();
+                    return body?.data?.bookedSlots || {};
+                } catch (error) {
+                    return {};
+                }
+            }
+
             function initConsultationScheduler(form) {
                 const dayContainer = form.querySelector('[data-consultation-days]');
                 const timeContainer = form.querySelector('[data-consultation-times]');
@@ -647,19 +668,31 @@ document.addEventListener('DOMContentLoaded', function() {
                     ['10:00', '12:00', '14:00', '16:30', '17:00']
                 ];
 
-                const slotsByDay = Object.fromEntries(dayOptions.map((day, index) => {
+                const baseSlotsByDay = Object.fromEntries(dayOptions.map((day, index) => {
                     const value = formatDateValue(day);
                     const allowedSlots = slotPatterns[index % slotPatterns.length];
                     return [value, slotOptions.filter((slot) => allowedSlots.includes(slot.value))];
                 }));
 
+                let bookedSlotsByDay = {};
+
+                function getAvailableDayOptions() {
+                    return dayOptions.filter((day) => getSlotsForDay(formatDateValue(day)).length);
+                }
+
+                function getSlotsForDay(dayValue) {
+                    const baseSlots = baseSlotsByDay[dayValue] || slotOptions;
+                    const bookedLabels = new Set(bookedSlotsByDay[dayValue] || []);
+                    return baseSlots.filter((slot) => !bookedLabels.has(slot.label));
+                }
+
                 function getSlotsForSelectedDay() {
-                    return slotsByDay[schedulerState.selectedDay] || slotOptions;
+                    return getSlotsForDay(schedulerState.selectedDay);
                 }
 
                 const schedulerState = {
                     selectedDay: formatDateValue(dayOptions[0]),
-                    selectedTime: (slotsByDay[formatDateValue(dayOptions[0])] || slotOptions)[0].value
+                    selectedTime: (baseSlotsByDay[formatDateValue(dayOptions[0])] || slotOptions)[0].value
                 };
 
                 if (timezoneLabel) {
@@ -667,9 +700,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 function syncSelection() {
-                    const day = dayOptions.find((entry) => formatDateValue(entry) === schedulerState.selectedDay) || dayOptions[0];
-                    const availableSlots = getSlotsForSelectedDay();
+                    const availableDays = getAvailableDayOptions();
+                    const day = availableDays.find((entry) => formatDateValue(entry) === schedulerState.selectedDay) || availableDays[0] || dayOptions[0];
+                    const availableSlots = getSlotsForDay(formatDateValue(day));
+
+                    if (!availableSlots.length) {
+                        hiddenDate.value = '';
+                        hiddenTime.value = '';
+                        hiddenIso.value = '';
+                        hiddenTimezone.value = timezone;
+                        summary.textContent = 'No consultation times are currently available. Please check back shortly.';
+                        if (summaryInline) {
+                            summaryInline.textContent = 'No available times';
+                        }
+                        if (timeSelect) {
+                            timeSelect.innerHTML = '<option value="">No available times</option>';
+                            timeSelect.disabled = true;
+                        }
+                        if (daySelect) {
+                            daySelect.disabled = availableDays.length === 0;
+                        }
+                        return;
+                    }
+
                     const slot = availableSlots.find((entry) => entry.value === schedulerState.selectedTime) || availableSlots[0];
+                    schedulerState.selectedDay = formatDateValue(day);
                     schedulerState.selectedTime = slot.value;
                     const fullSummary = `${summaryFormatter.format(day)} at ${slot.label}`;
                     const compactSummary = `${dayFormatter.format(day)}, ${dateFormatter.format(day)} at ${slot.label}`;
@@ -689,13 +744,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     if (timeSelect) {
+                        timeSelect.disabled = false;
                         timeSelect.value = schedulerState.selectedTime;
+                    }
+
+                    if (daySelect) {
+                        daySelect.disabled = false;
                     }
                 }
 
                 function renderDays() {
+                    const availableDays = getAvailableDayOptions();
                     if (dayContainer) {
-                        dayContainer.innerHTML = dayOptions.map((day) => {
+                        dayContainer.innerHTML = availableDays.map((day) => {
                             const value = formatDateValue(day);
                             const activeClass = value === schedulerState.selectedDay ? ' is-active' : '';
                             return `
@@ -708,10 +769,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     if (daySelect) {
-                        daySelect.innerHTML = dayOptions.map((day) => {
-                            const value = formatDateValue(day);
-                            return `<option value="${value}">${dayFormatter.format(day)} - ${dateFormatter.format(day)}</option>`;
-                        }).join('');
+                        daySelect.innerHTML = availableDays.length
+                            ? availableDays.map((day) => {
+                                const value = formatDateValue(day);
+                                return `<option value="${value}">${dayFormatter.format(day)} - ${dateFormatter.format(day)}</option>`;
+                            }).join('')
+                            : '<option value="">No available days</option>';
                     }
                 }
 
@@ -733,6 +796,20 @@ document.addEventListener('DOMContentLoaded', function() {
                             <option value="${slot.value}">${slot.label}</option>
                         `).join('');
                     }
+                }
+
+                async function refreshAvailability() {
+                    const start = formatDateValue(dayOptions[0]);
+                    const end = formatDateValue(dayOptions[dayOptions.length - 1]);
+                    bookedSlotsByDay = await fetchConsultationAvailability(start, end);
+                    const availableDays = getAvailableDayOptions();
+                    if (!availableDays.some((day) => formatDateValue(day) === schedulerState.selectedDay)) {
+                        schedulerState.selectedDay = availableDays[0] ? formatDateValue(availableDays[0]) : formatDateValue(dayOptions[0]);
+                    }
+                    schedulerState.selectedTime = getSlotsForSelectedDay()[0]?.value || '';
+                    renderDays();
+                    renderTimes();
+                    syncSelection();
                 }
 
                 function syncSchedulerPresentation() {
@@ -808,6 +885,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 renderTimes();
                 syncSelection();
                 syncSchedulerPresentation();
+                refreshAvailability();
 
                 if (schedulerDetails && !schedulerDetails.dataset.schedulerResizeBound) {
                     schedulerDetails.dataset.schedulerResizeBound = 'true';
@@ -816,9 +894,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 return {
                     isValid: () => Boolean(hiddenDate.value && hiddenTime.value),
+                    refreshAvailability,
                     reset() {
-                        schedulerState.selectedDay = formatDateValue(dayOptions[0]);
-                        schedulerState.selectedTime = getSlotsForSelectedDay()[0].value;
+                        const availableDays = getAvailableDayOptions();
+                        schedulerState.selectedDay = availableDays[0] ? formatDateValue(availableDays[0]) : formatDateValue(dayOptions[0]);
+                        schedulerState.selectedTime = getSlotsForSelectedDay()[0]?.value || '';
                         renderDays();
                         renderTimes();
                         syncSelection();
@@ -952,6 +1032,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (isConsultationForm) {
                             consultationResult = await submitConsultationRequest(contactForm);
                             if (!consultationResult.ok && !consultationResult.skipped && consultationResult.status === 409) {
+                                await consultationScheduler?.refreshAvailability();
                                 submitBtn.textContent = originalText;
                                 submitBtn.disabled = false;
                                 setContactStatus(consultationResult.message || 'That consultation slot was just taken. Choose a different time and try again.', 'error');
@@ -966,6 +1047,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             submitBtn.style.background = 'var(--success)';
                             submitBtn.style.color = 'var(--white)';
                             contactForm.reset();
+                            await consultationScheduler?.refreshAvailability();
                             consultationScheduler?.reset();
                             setContactStatus(
                                 isConsultationForm
