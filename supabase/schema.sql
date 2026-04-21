@@ -146,6 +146,18 @@ create table if not exists public.consultations (
     updated_at timestamptz not null default now()
 );
 
+create table if not exists public.consultation_slot_overrides (
+    id uuid primary key default gen_random_uuid(),
+    slot_date date not null,
+    slot_time text not null,
+    is_available boolean not null default true,
+    note text,
+    created_by uuid references public.profiles(id) on delete set null,
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now(),
+    unique (slot_date, slot_time)
+);
+
 alter table public.invoices add column if not exists stripe_checkout_session_id text;
 alter table public.invoices add column if not exists stripe_payment_intent_id text;
 alter table public.invoices add column if not exists stripe_payment_link_id text;
@@ -177,6 +189,7 @@ create index if not exists idx_messages_project_id on public.messages(project_id
 create index if not exists idx_messages_created_at on public.messages(created_at desc);
 create index if not exists idx_consultations_status_date on public.consultations(status, preferred_date, preferred_time);
 create unique index if not exists idx_consultations_active_slot_unique on public.consultations(preferred_date, preferred_time) where status in ('new', 'confirmed');
+create index if not exists idx_consultation_slot_overrides_slot_date on public.consultation_slot_overrides(slot_date, slot_time);
 
 create or replace function public.set_updated_at()
 returns trigger
@@ -318,6 +331,9 @@ create trigger projects_set_updated_at before update on public.projects for each
 drop trigger if exists consultations_set_updated_at on public.consultations;
 create trigger consultations_set_updated_at before update on public.consultations for each row execute function public.set_updated_at();
 
+drop trigger if exists consultation_slot_overrides_set_updated_at on public.consultation_slot_overrides;
+create trigger consultation_slot_overrides_set_updated_at before update on public.consultation_slot_overrides for each row execute function public.set_updated_at();
+
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created after insert on auth.users for each row execute function public.handle_new_user();
 
@@ -345,6 +361,7 @@ alter table public.invoices enable row level security;
 alter table public.payment_records enable row level security;
 alter table public.messages enable row level security;
 alter table public.consultations enable row level security;
+alter table public.consultation_slot_overrides enable row level security;
 
 drop policy if exists "profiles_select_self_or_admin" on public.profiles;
 drop policy if exists "profiles_insert_self_or_admin" on public.profiles;
@@ -382,6 +399,10 @@ drop policy if exists "consultations_admin_select" on public.consultations;
 drop policy if exists "consultations_admin_insert" on public.consultations;
 drop policy if exists "consultations_admin_update" on public.consultations;
 drop policy if exists "consultations_admin_delete" on public.consultations;
+drop policy if exists "consultation_slot_overrides_admin_select" on public.consultation_slot_overrides;
+drop policy if exists "consultation_slot_overrides_admin_insert" on public.consultation_slot_overrides;
+drop policy if exists "consultation_slot_overrides_admin_update" on public.consultation_slot_overrides;
+drop policy if exists "consultation_slot_overrides_admin_delete" on public.consultation_slot_overrides;
 
 create policy "profiles_select_self_or_admin" on public.profiles for select
 using (auth.uid() = id or public.is_admin());
@@ -511,6 +532,19 @@ using (public.is_admin())
 with check (public.is_admin());
 
 create policy "consultations_admin_delete" on public.consultations for delete
+using (public.is_admin());
+
+create policy "consultation_slot_overrides_admin_select" on public.consultation_slot_overrides for select
+using (public.is_admin());
+
+create policy "consultation_slot_overrides_admin_insert" on public.consultation_slot_overrides for insert
+with check (public.is_admin());
+
+create policy "consultation_slot_overrides_admin_update" on public.consultation_slot_overrides for update
+using (public.is_admin())
+with check (public.is_admin());
+
+create policy "consultation_slot_overrides_admin_delete" on public.consultation_slot_overrides for delete
 using (public.is_admin());
 
 insert into storage.buckets (id, name, public)

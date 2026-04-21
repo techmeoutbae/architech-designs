@@ -593,15 +593,21 @@ async function initAdminWorkspacePage(supabase, userContext) {
         payments: [],
         messages: [],
         consultations: [],
+        consultationSlotOverrides: [],
         availability: {
             consultations: {
+                available: true,
+                message: ''
+            },
+            consultationSlotOverrides: {
                 available: true,
                 message: ''
             }
         },
         selectedClientId: localStorage.getItem(ADMIN_CLIENT_STORAGE_KEY) || '',
         selectedProjectId: localStorage.getItem(ADMIN_PROJECT_STORAGE_KEY) || '',
-        selectedConsultationId: ''
+        selectedConsultationId: '',
+        selectedAvailabilityDate: ''
     };
 
     window.currentUserId = state.profile.id;
@@ -632,10 +638,16 @@ async function initAdminWorkspacePage(supabase, userContext) {
         state.payments = await fetchTable(supabase, 'payment_records', '*', (query) => query.order('paid_at', { ascending: false }));
         state.messages = await fetchTable(supabase, 'messages', '*', (query) => query.order('created_at', { ascending: true }));
         const consultationsResult = await fetchOptionalTable(supabase, 'consultations', '*', (query) => query.order('preferred_date', { ascending: true }).order('preferred_time', { ascending: true }));
+        const slotOverridesResult = await fetchOptionalTable(supabase, 'consultation_slot_overrides', '*', (query) => query.order('slot_date', { ascending: true }).order('slot_time', { ascending: true }));
         state.consultations = consultationsResult.data;
+        state.consultationSlotOverrides = slotOverridesResult.data;
         state.availability.consultations = {
             available: consultationsResult.available,
             message: consultationsResult.message
+        };
+        state.availability.consultationSlotOverrides = {
+            available: slotOverridesResult.available,
+            message: slotOverridesResult.message
         };
 
         if (!state.clients.some((client) => client.id === state.selectedClientId)) {
@@ -652,6 +664,11 @@ async function initAdminWorkspacePage(supabase, userContext) {
         if (!state.consultations.some((consultation) => consultation.id === state.selectedConsultationId)) {
             state.selectedConsultationId = state.consultations[0]?.id || '';
         }
+
+        const availabilityDays = buildConsultationAvailabilityDays();
+        if (!availabilityDays.includes(state.selectedAvailabilityDate)) {
+            state.selectedAvailabilityDate = availabilityDays[0] || '';
+        }
         
         persistAdminSelection(state);
         renderAdminWorkspace(state);
@@ -667,6 +684,7 @@ async function initAdminWorkspacePage(supabase, userContext) {
         });
 
         byId('adminDocumentCancel')?.addEventListener('click', resetAdminDocumentForm);
+        byId('adminClientCancel')?.addEventListener('click', resetAdminClientForm);
         byId('adminProjectCancel')?.addEventListener('click', resetAdminProjectForm);
         byId('adminMilestoneCancel')?.addEventListener('click', resetAdminMilestoneForm);
         byId('adminUpdateCancel')?.addEventListener('click', resetAdminUpdateForm);
@@ -702,6 +720,51 @@ async function initAdminWorkspacePage(supabase, userContext) {
             setAlert(byId('adminAlert'), 'Consultation deleted.', 'success');
         });
 
+        byId('adminAvailabilityDays')?.addEventListener('click', (event) => {
+            const trigger = event.target.closest('[data-availability-date]');
+            if (!trigger) {
+                return;
+            }
+
+            state.selectedAvailabilityDate = trigger.dataset.availabilityDate;
+            renderAdminWorkspace(state);
+        });
+
+        byId('adminAvailabilitySlots')?.addEventListener('click', async (event) => {
+            const trigger = event.target.closest('[data-availability-slot]');
+            if (!trigger) {
+                return;
+            }
+
+            const slotDate = trigger.dataset.slotDate;
+            const slotTime = trigger.dataset.slotTime;
+            const slotBooked = trigger.dataset.slotBooked === 'true';
+            if (!slotDate || !slotTime || slotBooked) {
+                return;
+            }
+
+            const existingOverride = state.consultationSlotOverrides.find((item) => item.slot_date === slotDate && item.slot_time === slotTime);
+            const nextAvailability = existingOverride ? !Boolean(existingOverride.is_available) : false;
+            const payload = {
+                slot_date: slotDate,
+                slot_time: slotTime,
+                is_available: nextAvailability,
+                created_by: state.profile.id
+            };
+
+            const { error } = existingOverride
+                ? await supabase.from('consultation_slot_overrides').update(payload).eq('id', existingOverride.id)
+                : await supabase.from('consultation_slot_overrides').insert(payload);
+
+            if (error) {
+                setAlert(byId('adminAlert'), error.message || 'The consultation availability could not be updated.', 'error');
+                return;
+            }
+
+            await refreshAdminData();
+            setAlert(byId('adminAlert'), nextAvailability ? 'Consultation slot reopened.' : 'Consultation slot blocked.', 'success');
+        });
+
         byId('adminClientSelect')?.addEventListener('change', (event) => {
             state.selectedClientId = event.target.value;
             const visibleProjects = getProjectsForSelectedClient(state);
@@ -718,9 +781,48 @@ async function initAdminWorkspacePage(supabase, userContext) {
             bindAdminRealtimeForSelectedProject();
         });
 
-        byId('adminClientRoster')?.addEventListener('click', (event) => {
+        byId('adminClientRoster')?.addEventListener('click', async (event) => {
             const trigger = event.target.closest('[data-select-client]');
             if (!trigger) {
+                const editTrigger = event.target.closest('[data-edit-client]');
+                if (editTrigger) {
+                    const client = state.clients.find((item) => item.id === editTrigger.dataset.editClient);
+                    const profile = client ? state.profiles.find((item) => item.id === client.profile_id) : null;
+                    populateAdminClientForm(client, profile);
+                    return;
+                }
+
+                const deleteTrigger = event.target.closest('[data-delete-client]');
+                if (!deleteTrigger) {
+                    return;
+                }
+
+                const client = state.clients.find((item) => item.id === deleteTrigger.dataset.deleteClient);
+                if (!client) {
+                    return;
+                }
+
+                const confirmed = await confirmWorkspaceAction({
+                    kicker: 'Delete client',
+                    title: `Delete ${client.company_name}?`,
+                    body: 'This removes the client record and all associated projects from the portal. The auth user will remain unless removed separately.',
+                    confirmLabel: 'Delete Client',
+                    tone: 'danger'
+                });
+
+                if (!confirmed) {
+                    return;
+                }
+
+                const { error } = await supabase.from('clients').delete().eq('id', client.id);
+                if (error) {
+                    setAlert(byId('adminAlert'), error.message || 'The client could not be deleted.', 'error');
+                    return;
+                }
+
+                resetAdminClientForm();
+                await refreshAdminData();
+                setAlert(byId('adminAlert'), 'Client deleted.', 'success');
                 return;
             }
 
@@ -935,6 +1037,36 @@ async function initAdminWorkspacePage(supabase, userContext) {
                 return;
             }
 
+            const paymentDeleteTrigger = event.target.closest('[data-delete-payment]');
+            if (paymentDeleteTrigger) {
+                const payment = state.payments.find((item) => item.id === paymentDeleteTrigger.dataset.deletePayment);
+                if (!payment) {
+                    return;
+                }
+
+                const confirmed = await confirmWorkspaceAction({
+                    kicker: 'Delete payment',
+                    title: 'Delete this payment record?',
+                    body: 'This removes the payment record from the selected invoice history.',
+                    confirmLabel: 'Delete Payment',
+                    tone: 'danger'
+                });
+
+                if (!confirmed) {
+                    return;
+                }
+
+                const { error } = await supabase.from('payment_records').delete().eq('id', payment.id);
+                if (error) {
+                    setAlert(byId('adminAlert'), error.message || 'The payment record could not be deleted.', 'error');
+                    return;
+                }
+
+                await refreshAdminData();
+                setAlert(byId('adminAlert'), 'Payment record deleted.', 'success');
+                return;
+            }
+
             const deleteTrigger = event.target.closest('[data-delete-invoice]');
             if (!deleteTrigger) {
                 return;
@@ -1025,6 +1157,9 @@ async function initAdminWorkspacePage(supabase, userContext) {
             setButtonBusy(submitButton, true, 'Sending Invite');
             setAlert(byId('adminAlert'), 'Provisioning the client account and invite...', 'info');
 
+            const clientId = byId('adminClientId')?.value;
+            const existingClient = clientId ? state.clients.find((item) => item.id === clientId) : null;
+            const existingProfile = existingClient ? state.profiles.find((item) => item.id === existingClient.profile_id) : null;
             const payload = {
                 fullName: byId('adminClientFullName')?.value.trim(),
                 email: byId('adminClientEmail')?.value.trim().toLowerCase(),
@@ -1034,6 +1169,28 @@ async function initAdminWorkspacePage(supabase, userContext) {
                 serviceLine: byId('adminClientServiceLine')?.value || 'Client Portal Engagement',
                 redirectTo: `${SITE_URL}/client-login`
             };
+
+            if (existingClient) {
+                const { error: profileError } = await supabase.from('profiles').update({ full_name: payload.fullName }).eq('id', existingClient.profile_id);
+                if (profileError) {
+                    setAlert(byId('adminAlert'), profileError.message || 'The client profile could not be updated.', 'error');
+                    setButtonBusy(submitButton, false, 'Save Client');
+                    return;
+                }
+
+                const { error: clientError } = await supabase.from('clients').update({ company_name: payload.companyName, billing_email: payload.billingEmail || existingProfile?.email || null }).eq('id', existingClient.id);
+                if (clientError) {
+                    setAlert(byId('adminAlert'), clientError.message || 'The client could not be updated.', 'error');
+                    setButtonBusy(submitButton, false, 'Save Client');
+                    return;
+                }
+
+                resetAdminClientForm();
+                await refreshAdminData();
+                setAlert(byId('adminAlert'), 'Client updated successfully.', 'success');
+                setButtonBusy(submitButton, false, 'Send Invite + Create Client');
+                return;
+            }
 
             const provisioning = await invokeAdminProvisioning(supabase, payload);
             if (!provisioning.ok) {
@@ -1372,10 +1529,14 @@ async function initAdminWorkspacePage(supabase, userContext) {
                 return;
             }
 
+            const existingConsultation = state.consultations.find((item) => item.id === consultationId) || null;
+
             const payload = {
                 status: byId('adminConsultationStatus')?.value || 'new',
                 notes: byId('adminConsultationNotes')?.value.trim() || null,
-                assigned_project_id: byId('adminConsultationProject')?.value || null
+                assigned_project_id: byId('adminConsultationProject')?.value || null,
+                preferred_date: byId('adminConsultationDate')?.value || existingConsultation?.preferred_date || null,
+                preferred_time: byId('adminConsultationTime')?.value.trim() || existingConsultation?.preferred_time || null
             };
 
             const { error } = await supabase.from('consultations').update(payload).eq('id', consultationId);
@@ -1683,6 +1844,10 @@ function renderClientWorkspace(state, supabase) {
     byId('workspaceBillingSnapshot').innerHTML = buildClientBillingSnapshotMarkup(openInvoices, totalCollected);
     byId('workspaceRecentUpdatePanel').innerHTML = buildClientRecentUpdatePanelMarkup(detail.updates, detail.profilesById);
     byId('workspaceCoordinationPanel').innerHTML = buildClientCoordinationPanelMarkup(selectedProject, nextMilestone, openInvoices.length);
+    bindWorkspaceDashboardPanel('workspaceProjectSummaryPanel', 'workspace-milestones');
+    bindWorkspaceDashboardPanel('workspaceBillingSnapshot', 'workspace-billing');
+    bindWorkspaceDashboardPanel('workspaceRecentUpdatePanel', 'workspace-updates');
+    bindWorkspaceDashboardPanel('workspaceCoordinationPanel', 'workspace-messages');
 
     byId('workspaceMilestoneList').innerHTML = detail.milestones.length
         ? detail.milestones.map((milestone) => `
@@ -1784,6 +1949,7 @@ function renderClientWorkspace(state, supabase) {
     byId('workspaceMessageThread').innerHTML = messageMarkup;
 
     fillProfileForm(state.profile);
+    bindWorkspaceTabs(document);
     bindPaymentHandlers(supabase);
 }
 
@@ -1808,12 +1974,17 @@ function renderClientWorkspaceEmptyState(profile, client) {
     byId('workspaceBillingSnapshot').innerHTML = renderEmptyState('Billing will appear here', 'Invoice status and payment records populate automatically once the project is active.');
     byId('workspaceRecentUpdatePanel').innerHTML = renderEmptyState('No updates yet', 'Published project updates will appear here first so you can scan progress quickly.');
     byId('workspaceCoordinationPanel').innerHTML = renderEmptyState('Coordination panel offline', `Contact ${escapeHtml(SUPPORT_EMAIL)} if you need urgent access support.`);
+    bindWorkspaceDashboardPanel('workspaceProjectSummaryPanel', 'workspace-milestones');
+    bindWorkspaceDashboardPanel('workspaceBillingSnapshot', 'workspace-billing');
+    bindWorkspaceDashboardPanel('workspaceRecentUpdatePanel', 'workspace-updates');
+    bindWorkspaceDashboardPanel('workspaceCoordinationPanel', 'workspace-account');
     byId('workspaceMilestoneList').innerHTML = renderEmptyState('No milestones yet', 'Milestones will appear after the project is configured.');
     byId('workspaceUpdateList').innerHTML = renderEmptyState('No updates yet', 'Project updates will appear after kickoff.');
     byId('workspaceDocumentList').innerHTML = renderEmptyState('No files yet', 'Shared files will appear here.');
     byId('workspaceInvoiceList').innerHTML = renderEmptyState('No invoices yet', 'Billing records will appear here.');
     byId('workspaceMessageThread').innerHTML = renderEmptyState('No messages yet', 'Project communication will appear here once the workspace is active.');
     fillProfileForm(profile);
+    bindWorkspaceTabs(document);
 }
 
 function buildClientQuickActionsMarkup(hasOpenInvoices) {
@@ -2022,6 +2193,10 @@ function renderAdminWorkspace(state) {
     byId('adminUpcomingConsultationsPanel').innerHTML = buildAdminConsultationSnapshotMarkup(upcomingConsultations, consultationFeedAvailable, consultationFeedMessage);
     byId('adminRecentActivity').innerHTML = buildRecentActivityMarkup(state);
     byId('adminSystemOverview').innerHTML = buildAdminSystemOverviewMarkup(state, selectedProject, selectedProjectUpdates);
+    bindWorkspaceDashboardPanel('adminSelectedProjectPanel', 'ops-projects');
+    bindWorkspaceDashboardPanel('adminUpcomingConsultationsPanel', 'ops-consultations');
+    bindWorkspaceDashboardPanel('adminRecentActivity', 'ops-messages');
+    bindWorkspaceDashboardPanel('adminSystemOverview', 'ops-finance');
     byId('adminConsultationList').innerHTML = consultationFeedAvailable
         ? (state.consultations.length
             ? state.consultations.map((consultation) => `
@@ -2041,14 +2216,19 @@ function renderAdminWorkspace(state) {
             const profile = state.profiles.find((item) => item.id === client.profile_id);
             const projectCount = state.projects.filter((project) => project.client_id === client.id).length;
             return `
-                <button type="button" class="workspace-select-card workspace-select-card-rich ${client.id === state.selectedClientId ? 'active' : ''}" data-select-client="${escapeHtml(client.id)}">
+                <article class="workspace-select-card workspace-select-card-rich ${client.id === state.selectedClientId ? 'active' : ''}">
+                    <button type="button" class="workspace-select-card-hit" data-select-client="${escapeHtml(client.id)}" aria-label="Open ${escapeHtml(client.company_name)}"></button>
                     <div class="workspace-select-card-head">
                         <strong>${escapeHtml(client.company_name)}</strong>
                         <span class="workspace-pill ${statusPillClass(client.status || 'active')}">${escapeHtml(humanizeStatus(client.status || 'active'))}</span>
                     </div>
                     <span>${escapeHtml(profile?.full_name || client.billing_email || 'Client contact')}</span>
                     <span>${projectCount} project${projectCount === 1 ? '' : 's'} • ${escapeHtml(client.billing_email || profile?.email || 'No billing email')}</span>
-                </button>
+                    <div class="workspace-card-actions">
+                        <button type="button" class="btn btn-outline btn-sm" data-edit-client="${escapeHtml(client.id)}">Edit</button>
+                        <button type="button" class="btn btn-outline btn-sm workspace-action-danger" data-delete-client="${escapeHtml(client.id)}">Delete</button>
+                    </div>
+                </article>
             `;
         }).join('')
         : renderEmptyState('No clients yet', 'Use the invite form to create your first client account.');
@@ -2160,7 +2340,7 @@ function renderAdminWorkspace(state) {
                         <button type="button" class="btn btn-outline btn-sm workspace-action-danger" data-delete-invoice="${escapeHtml(invoice.id)}">Delete</button>
                     </div>
                     ${invoicePaymentUrl ? `<div class="workspace-inline-records"><a class="workspace-pill" href="${escapeHtml(invoicePaymentUrl)}" target="_blank" rel="noopener noreferrer">Open payment link</a></div>` : ''}
-                    ${invoicePayments.length ? `<div class="workspace-inline-records">${invoicePayments.map((payment) => `<span class="workspace-pill success">${escapeHtml(formatCurrency(payment.amount))} ${escapeHtml(payment.method || 'recorded')}</span>`).join('')}</div>` : ''}
+                    ${invoicePayments.length ? `<div class="workspace-inline-records">${invoicePayments.map((payment) => `<button type="button" class="workspace-pill success workspace-pill-action" data-delete-payment="${escapeHtml(payment.id)}">${escapeHtml(formatCurrency(payment.amount))} ${escapeHtml(payment.method || 'recorded')} ×</button>`).join('')}</div>` : ''}
                 </article>
             `;
         }).join('')
@@ -2196,8 +2376,13 @@ function renderAdminWorkspace(state) {
         : '<option value="">Calendar unavailable</option>';
     byId('adminConsultationId').value = selectedConsultation?.id || '';
     byId('adminConsultationStatus').value = selectedConsultation?.status || 'new';
+    byId('adminConsultationDate').value = selectedConsultation?.preferred_date || '';
+    byId('adminConsultationTime').value = selectedConsultation?.preferred_time || '';
     byId('adminConsultationNotes').value = selectedConsultation?.notes || '';
     byId('adminConsultationDelete')?.classList.toggle('is-hidden', !selectedConsultation);
+    byId('adminAvailabilityDays').innerHTML = buildAdminAvailabilityDaysMarkup(state);
+    byId('adminAvailabilitySlots').innerHTML = buildAdminAvailabilitySlotsMarkup(state);
+    byId('adminAvailabilityCard')?.classList.toggle('is-disabled', state.availability.consultationSlotOverrides?.available === false);
     toggleFormDisabled(byId('adminConsultationForm'), !consultationFeedAvailable);
     byId('adminConsultationDetail').innerHTML = !consultationFeedAvailable
         ? renderEmptyState('Consultation calendar unavailable', consultationFeedMessage)
@@ -2222,6 +2407,69 @@ function renderAdminWorkspace(state) {
             </div>
         `
         : renderEmptyState('No consultation selected', 'Choose a consultation request to review the brief, contact details, and preferred time.');
+    bindWorkspaceTabs(document);
+}
+
+function buildConsultationAvailabilityDays() {
+    const days = [];
+    const cursor = new Date();
+    cursor.setHours(0, 0, 0, 0);
+
+    while (days.length < 8) {
+        cursor.setDate(cursor.getDate() + 1);
+        const weekday = cursor.getDay();
+        if (weekday === 0 || weekday === 6) {
+            continue;
+        }
+        days.push(formatDateValue(cursor));
+    }
+
+    return days;
+}
+
+function buildConsultationSlotLabels() {
+    return ['9:30 AM', '10:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:30 PM', '2:00 PM', '3:00 PM', '4:30 PM', '5:00 PM'];
+}
+
+function buildAdminAvailabilityDaysMarkup(state) {
+    const days = buildConsultationAvailabilityDays();
+    return days.map((date) => `
+        <button type="button" class="consultation-admin-day${date === state.selectedAvailabilityDate ? ' active' : ''}" data-availability-date="${escapeHtml(date)}">
+            <strong>${escapeHtml(formatDate(date))}</strong>
+            <span>${escapeHtml(new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(new Date(date)))} </span>
+        </button>
+    `).join('');
+}
+
+function buildAdminAvailabilitySlotsMarkup(state) {
+    if (state.availability.consultationSlotOverrides?.available === false) {
+        return renderEmptyState('Availability manager unavailable', state.availability.consultationSlotOverrides.message || 'Run the updated consultation slot override schema before managing calendar availability here.');
+    }
+
+    if (!state.selectedAvailabilityDate) {
+        return renderEmptyState('No date selected', 'Choose a date to manage consultation slot availability.');
+    }
+
+    const slotLabels = buildConsultationSlotLabels();
+    const bookedSlots = state.consultations
+        .filter((consultation) => ['new', 'confirmed'].includes(String(consultation.status || '').toLowerCase()) && consultation.preferred_date === state.selectedAvailabilityDate)
+        .map((consultation) => consultation.preferred_time);
+
+    const overrides = state.consultationSlotOverrides.filter((item) => item.slot_date === state.selectedAvailabilityDate);
+
+    return slotLabels.map((slotTime) => {
+        const override = overrides.find((item) => item.slot_time === slotTime);
+        const isBooked = bookedSlots.includes(slotTime);
+        const isAvailable = override ? Boolean(override.is_available) : true;
+        const className = isBooked ? 'booked' : isAvailable ? 'available' : 'blocked';
+        const statusLabel = isBooked ? 'Booked' : isAvailable ? 'Available' : 'Blocked';
+        return `
+            <button type="button" class="consultation-admin-slot ${className}" data-availability-slot="true" data-slot-date="${escapeHtml(state.selectedAvailabilityDate)}" data-slot-time="${escapeHtml(slotTime)}" data-slot-booked="${isBooked ? 'true' : 'false'}">
+                <strong>${escapeHtml(slotTime)}</strong>
+                <span>${escapeHtml(statusLabel)}</span>
+            </button>
+        `;
+    }).join('');
 }
 
 function buildRecentActivityMarkup(state) {
@@ -2797,6 +3045,42 @@ function resetAdminDocumentForm() {
     byId('adminDocumentCancel').classList.add('is-hidden');
 }
 
+function resetAdminClientForm() {
+    byId('adminClientForm')?.reset();
+    byId('adminClientId').value = '';
+    byId('adminClientFormTitle').textContent = 'Provision a premium client portal account';
+    byId('adminClientSubmit').textContent = 'Send Invite + Create Client';
+    byId('adminClientSubmit').dataset.defaultLabel = 'Send Invite + Create Client';
+    byId('adminClientCancel').classList.add('is-hidden');
+    toggleFormDisabled(byId('adminClientForm'), false);
+    byId('adminClientEmail')?.removeAttribute('disabled');
+    byId('adminClientProjectName')?.removeAttribute('disabled');
+    byId('adminClientServiceLine')?.removeAttribute('disabled');
+}
+
+function populateAdminClientForm(client, profile) {
+    if (!client) {
+        return;
+    }
+
+    resetAdminClientForm();
+    byId('adminClientId').value = client.id;
+    byId('adminClientFullName').value = profile?.full_name || '';
+    byId('adminClientEmail').value = profile?.email || client.billing_email || '';
+    byId('adminClientCompany').value = client.company_name || '';
+    byId('adminClientBillingEmail').value = client.billing_email || '';
+    byId('adminClientProjectName').value = '';
+    byId('adminClientServiceLine').value = '';
+    byId('adminClientEmail').setAttribute('disabled', 'disabled');
+    byId('adminClientProjectName').setAttribute('disabled', 'disabled');
+    byId('adminClientServiceLine').setAttribute('disabled', 'disabled');
+    byId('adminClientFormTitle').textContent = 'Edit Client';
+    byId('adminClientSubmit').textContent = 'Save Client';
+    byId('adminClientSubmit').dataset.defaultLabel = 'Save Client';
+    byId('adminClientCancel').classList.remove('is-hidden');
+    byId('adminClientForm')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 function resetAdminProjectForm() {
     byId('adminProjectForm')?.reset();
     byId('adminProjectId').value = '';
@@ -2973,6 +3257,16 @@ function renderEmptyState(title, body, actionMarkup = '') {
             ${actionMarkup ? `<div class="workspace-empty-actions">${actionMarkup}</div>` : ''}
         </div>
     `;
+}
+
+function bindWorkspaceDashboardPanel(id, targetTab) {
+    const panel = byId(id);
+    if (!panel || !targetTab) {
+        return;
+    }
+
+    panel.classList.add('workspace-panel-action');
+    panel.dataset.openWorkspaceTab = targetTab;
 }
 
 function resolveConfiguredStripePaymentUrl(config) {
@@ -3516,6 +3810,13 @@ function formatDate(value) {
         day: 'numeric',
         year: 'numeric'
     }).format(new Date(value));
+}
+
+function formatDateValue(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
 }
 
 function formatConsultationDate(value) {

@@ -167,6 +167,14 @@
                                             <select id="adminConsultationProject"></select>
                                         </div>
                                         <div class="form-group">
+                                            <label for="adminConsultationDate">Consultation Date</label>
+                                            <input id="adminConsultationDate" type="date">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="adminConsultationTime">Consultation Time</label>
+                                            <input id="adminConsultationTime" type="text" placeholder="1:30 PM">
+                                        </div>
+                                        <div class="form-group">
                                             <label for="adminConsultationNotes">Internal Notes</label>
                                             <textarea id="adminConsultationNotes" rows="4" placeholder="Add follow-up notes, scope hints, or call outcomes."></textarea>
                                         </div>
@@ -176,6 +184,19 @@
                                         <button type="button" class="btn btn-outline workspace-action-danger is-hidden" id="adminConsultationDelete">Delete Consultation</button>
                                     </div>
                                 </form>
+                                <article class="workspace-form-card" id="adminAvailabilityCard">
+                                    <div class="workspace-form-card-head compact">
+                                        <div>
+                                            <span class="workspace-panel-kicker">Availability Calendar</span>
+                                            <h3>Control consultation slot visibility</h3>
+                                        </div>
+                                        <p class="workspace-form-note">Toggle times on or off for each day. Booked times remain locked.</p>
+                                    </div>
+                                    <div class="consultation-admin-calendar" id="adminAvailabilityCalendar">
+                                        <div class="consultation-admin-days" id="adminAvailabilityDays"></div>
+                                        <div class="consultation-admin-slots" id="adminAvailabilitySlots"></div>
+                                    </div>
+                                </article>
                             </div>
                         </div>
                     </section>
@@ -190,10 +211,11 @@
                         </div>
                         <div class="workspace-form-layout">
                             <form class="workspace-form-card" id="adminClientForm">
+                                <input type="hidden" id="adminClientId">
                                 <div class="workspace-form-card-head">
                                     <div>
                                         <span class="workspace-panel-kicker">Invite Client</span>
-                                        <h3>Provision a premium client portal account</h3>
+                                        <h3 id="adminClientFormTitle">Provision a premium client portal account</h3>
                                     </div>
                                     <p class="workspace-form-note">Create the client, attach the first project, and send the secure access email in one flow.</p>
                                 </div>
@@ -224,7 +246,8 @@
                                     </div>
                                 </div>
                                 <div class="workspace-form-actions">
-                                    <button type="submit" class="btn btn-primary">Send Invite + Create Client</button>
+                                    <button type="submit" class="btn btn-primary" id="adminClientSubmit">Send Invite + Create Client</button>
+                                    <button type="button" class="btn btn-outline is-hidden" id="adminClientCancel">Cancel Edit</button>
                                 </div>
                             </form>
                             <div class="workspace-card-stack" id="adminClientRoster"></div>

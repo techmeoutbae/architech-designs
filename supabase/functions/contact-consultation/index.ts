@@ -38,31 +38,31 @@ Deno.serve(async (request: Request) => {
         const end = url.searchParams.get('end') || '';
 
         try {
-            const rows = await restRequest(
+            const bookedRows = await restRequest(
                 supabaseUrl,
                 serviceRoleKey,
                 `/rest/v1/consultations?select=preferred_date,preferred_time,status&status=in.(new,confirmed)${start ? `&preferred_date=gte.${encodeURIComponent(start)}` : ''}${end ? `&preferred_date=lte.${encodeURIComponent(end)}` : ''}&order=preferred_date.asc,preferred_time.asc`
             );
-
-            const bookedSlots = rows.reduce((accumulator, item) => {
-                const date = String(item?.preferred_date || '').trim();
-                const time = String(item?.preferred_time || '').trim();
-
-                if (!date || !time) {
-                    return accumulator;
+            const overrideRows = await restRequest(
+                supabaseUrl,
+                serviceRoleKey,
+                `/rest/v1/consultation_slot_overrides?select=slot_date,slot_time,is_available${start ? `&slot_date=gte.${encodeURIComponent(start)}` : ''}${end ? `&slot_date=lte.${encodeURIComponent(end)}` : ''}&order=slot_date.asc,slot_time.asc`
+            ).catch((error) => {
+                if (isMissingTableError(error, 'consultation_slot_overrides')) {
+                    return [];
                 }
+                throw error;
+            });
 
-                accumulator[date] = accumulator[date] || [];
-                if (!accumulator[date].includes(time)) {
-                    accumulator[date].push(time);
-                }
-
-                return accumulator;
-            }, {} as Record<string, string[]>);
+            const bookedSlots = collectSlots(bookedRows, 'preferred_date', 'preferred_time');
+            const blockedSlots = collectSlots(overrideRows.filter((item) => item?.is_available === false), 'slot_date', 'slot_time');
 
             return json({
                 ok: true,
-                data: { bookedSlots }
+                data: {
+                    bookedSlots,
+                    blockedSlots
+                }
             });
         } catch (error) {
             if (isMissingTableError(error, 'consultations')) {
@@ -124,9 +124,17 @@ Deno.serve(async (request: Request) => {
     }
 
     try {
-        const existing = await restRequest(supabaseUrl, serviceRoleKey, `/rest/v1/consultations?select=id&preferred_date=eq.${encodeURIComponent(preferredDate)}&preferred_time=eq.${encodeURIComponent(preferredTime)}&status=in.(new,confirmed)&limit=1`);
+        const [existing, overrides] = await Promise.all([
+            restRequest(supabaseUrl, serviceRoleKey, `/rest/v1/consultations?select=id&preferred_date=eq.${encodeURIComponent(preferredDate)}&preferred_time=eq.${encodeURIComponent(preferredTime)}&status=in.(new,confirmed)&limit=1`),
+            restRequest(supabaseUrl, serviceRoleKey, `/rest/v1/consultation_slot_overrides?select=slot_date,slot_time,is_available&slot_date=eq.${encodeURIComponent(preferredDate)}&slot_time=eq.${encodeURIComponent(preferredTime)}&limit=1`).catch((error) => {
+                if (isMissingTableError(error, 'consultation_slot_overrides')) {
+                    return [];
+                }
+                throw error;
+            })
+        ]);
 
-        if (existing.length) {
+        if (existing.length || overrides.some((item) => item?.is_available === false)) {
             return json({
                 ok: false,
                 code: 'SLOT_UNAVAILABLE',
@@ -184,6 +192,23 @@ Deno.serve(async (request: Request) => {
         }, 500);
     }
 });
+
+function collectSlots(rows: Array<Record<string, unknown>>, dateKey: string, timeKey: string) {
+    return rows.reduce((accumulator, item) => {
+        const date = String(item?.[dateKey] || '').trim();
+        const time = String(item?.[timeKey] || '').trim();
+        if (!date || !time) {
+            return accumulator;
+        }
+
+        accumulator[date] = accumulator[date] || [];
+        if (!accumulator[date].includes(time)) {
+            accumulator[date].push(time);
+        }
+
+        return accumulator;
+    }, {} as Record<string, string[]>);
+}
 
 async function restRequest(supabaseUrl: string, serviceRoleKey: string, path: string, options: { method?: string; body?: unknown; headers?: Record<string, string>; prefer?: string } = {}) {
     const url = `${supabaseUrl}${path}`;

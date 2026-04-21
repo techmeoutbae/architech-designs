@@ -601,9 +601,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     const body = await response.json();
-                    return body?.data?.bookedSlots || {};
+                    return {
+                        bookedSlots: body?.data?.bookedSlots || {},
+                        blockedSlots: body?.data?.blockedSlots || {}
+                    };
                 } catch (error) {
-                    return {};
+                    return {
+                        bookedSlots: {},
+                        blockedSlots: {}
+                    };
                 }
             }
 
@@ -675,6 +681,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }));
 
                 let bookedSlotsByDay = {};
+                let blockedSlotsByDay = {};
 
                 function getAvailableDayOptions() {
                     return dayOptions.filter((day) => getSlotsForDay(formatDateValue(day)).length);
@@ -683,7 +690,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 function getSlotsForDay(dayValue) {
                     const baseSlots = baseSlotsByDay[dayValue] || slotOptions;
                     const bookedLabels = new Set(bookedSlotsByDay[dayValue] || []);
-                    return baseSlots.filter((slot) => !bookedLabels.has(slot.label));
+                    const blockedLabels = new Set(blockedSlotsByDay[dayValue] || []);
+                    return baseSlots.filter((slot) => !bookedLabels.has(slot.label) && !blockedLabels.has(slot.label));
                 }
 
                 function getSlotsForSelectedDay() {
@@ -801,7 +809,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 async function refreshAvailability() {
                     const start = formatDateValue(dayOptions[0]);
                     const end = formatDateValue(dayOptions[dayOptions.length - 1]);
-                    bookedSlotsByDay = await fetchConsultationAvailability(start, end);
+                    const availability = await fetchConsultationAvailability(start, end);
+                    bookedSlotsByDay = availability.bookedSlots || {};
+                    blockedSlotsByDay = availability.blockedSlots || {};
                     const availableDays = getAvailableDayOptions();
                     if (!availableDays.some((day) => formatDateValue(day) === schedulerState.selectedDay)) {
                         schedulerState.selectedDay = availableDays[0] ? formatDateValue(availableDays[0]) : formatDateValue(dayOptions[0]);
