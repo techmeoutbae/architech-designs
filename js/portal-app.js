@@ -683,13 +683,13 @@ async function initAdminWorkspacePage(supabase, userContext) {
             redirectTo('client-login.html');
         });
 
-        byId('adminDocumentCancel')?.addEventListener('click', resetAdminDocumentForm);
-        byId('adminClientCancel')?.addEventListener('click', resetAdminClientForm);
-        byId('adminProjectCancel')?.addEventListener('click', resetAdminProjectForm);
-        byId('adminMilestoneCancel')?.addEventListener('click', resetAdminMilestoneForm);
-        byId('adminUpdateCancel')?.addEventListener('click', resetAdminUpdateForm);
-        byId('adminInvoiceCancel')?.addEventListener('click', resetAdminInvoiceForm);
-        byId('adminMessageCancel')?.addEventListener('click', resetAdminMessageForm);
+        byId('adminDocumentCancel')?.addEventListener('click', () => { resetAdminDocumentForm(); hideWorkspacePanel('adminDocumentPanel'); });
+        byId('adminClientCancel')?.addEventListener('click', () => { resetAdminClientForm(); hideWorkspacePanel('adminClientPanel'); });
+        byId('adminProjectCancel')?.addEventListener('click', () => { resetAdminProjectForm(); hideWorkspacePanel('adminProjectPanel'); });
+        byId('adminMilestoneCancel')?.addEventListener('click', () => { resetAdminMilestoneForm(); hideWorkspacePanel('adminMilestonePanel'); });
+        byId('adminUpdateCancel')?.addEventListener('click', () => { resetAdminUpdateForm(); hideWorkspacePanel('adminUpdatePanel'); });
+        byId('adminInvoiceCancel')?.addEventListener('click', () => { resetAdminInvoiceForm(); hideWorkspacePanel('adminInvoicePanel'); });
+        byId('adminMessageCancel')?.addEventListener('click', () => { resetAdminMessageForm(); hideWorkspacePanel('adminMessagePanel'); });
         byId('adminConsultationDelete')?.addEventListener('click', async () => {
             const consultationId = byId('adminConsultationId')?.value;
             const consultation = state.consultations.find((item) => item.id === consultationId);
@@ -728,6 +728,7 @@ async function initAdminWorkspacePage(supabase, userContext) {
 
             state.selectedAvailabilityDate = trigger.dataset.availabilityDate;
             renderAdminWorkspace(state);
+            showWorkspacePanel('adminAvailabilityPanel');
         });
 
         byId('adminAvailabilitySlots')?.addEventListener('click', async (event) => {
@@ -1130,6 +1131,7 @@ async function initAdminWorkspacePage(supabase, userContext) {
 
             resetAdminMessageForm();
             await refreshAdminData();
+            hideWorkspacePanel('adminMessagePanel');
             setAlert(byId('adminAlert'), 'Message deleted.', 'success');
         });
 
@@ -1147,6 +1149,7 @@ async function initAdminWorkspacePage(supabase, userContext) {
             }
 
             await refreshAdminData();
+            hideWorkspacePanel('adminAccessPanel');
             setAlert(byId('adminAlert'), 'Project access removed.', 'success');
         });
 
@@ -1187,6 +1190,7 @@ async function initAdminWorkspacePage(supabase, userContext) {
 
                 resetAdminClientForm();
                 await refreshAdminData();
+                hideWorkspacePanel('adminClientPanel');
                 setAlert(byId('adminAlert'), 'Client updated successfully.', 'success');
                 setButtonBusy(submitButton, false, 'Send Invite + Create Client');
                 return;
@@ -1202,6 +1206,7 @@ async function initAdminWorkspacePage(supabase, userContext) {
 
             form.reset();
             await refreshAdminData();
+            hideWorkspacePanel('adminClientPanel');
             setAlert(byId('adminAlert'), provisioning.message || 'Client account created and invite sent.', 'success');
             setButtonBusy(submitButton, false, 'Send Invite + Create Client');
         });
@@ -1246,6 +1251,7 @@ async function initAdminWorkspacePage(supabase, userContext) {
             state.selectedClientId = payload.client_id;
             state.selectedProjectId = data.id;
             await refreshAdminData();
+            hideWorkspacePanel('adminProjectPanel');
             setAlert(byId('adminAlert'), existingProject ? 'Project updated successfully.' : 'Project created and assigned.', 'success');
         });
 
@@ -1278,6 +1284,7 @@ async function initAdminWorkspacePage(supabase, userContext) {
 
             resetAdminMilestoneForm();
             await refreshAdminData();
+            hideWorkspacePanel('adminMilestonePanel');
             setAlert(byId('adminAlert'), existingMilestone ? 'Milestone updated successfully.' : 'Milestone added to the selected project.', 'success');
         });
 
@@ -1308,6 +1315,7 @@ async function initAdminWorkspacePage(supabase, userContext) {
 
             resetAdminUpdateForm();
             await refreshAdminData();
+            hideWorkspacePanel('adminUpdatePanel');
             setAlert(byId('adminAlert'), existingUpdate ? 'Project update updated successfully.' : 'Project update published.', 'success');
         });
 
@@ -1378,6 +1386,7 @@ async function initAdminWorkspacePage(supabase, userContext) {
 
             resetAdminDocumentForm();
             await refreshAdminData();
+            hideWorkspacePanel('adminDocumentPanel');
             setAlert(byId('adminAlert'), existingDocument ? 'Document updated successfully.' : 'Document uploaded to the client portal.', 'success');
         });
 
@@ -1417,6 +1426,7 @@ async function initAdminWorkspacePage(supabase, userContext) {
 
             resetAdminInvoiceForm();
             await refreshAdminData();
+            hideWorkspacePanel('adminInvoicePanel');
             setAlert(byId('adminAlert'), existingInvoice ? 'Invoice updated successfully.' : 'Invoice created successfully.', 'success');
         });
 
@@ -1452,6 +1462,7 @@ async function initAdminWorkspacePage(supabase, userContext) {
 
             event.currentTarget.reset();
             await refreshAdminData();
+            hideWorkspacePanel('adminPaymentPanel');
             setAlert(byId('adminAlert'), 'Payment recorded successfully.', 'success');
         });
 
@@ -1547,6 +1558,7 @@ async function initAdminWorkspacePage(supabase, userContext) {
 
             state.selectedConsultationId = consultationId;
             await refreshAdminData();
+            hideWorkspacePanel('adminConsultationPanel');
             setAlert(byId('adminAlert'), 'Consultation updated successfully.', 'success');
         });
     }
@@ -1815,7 +1827,7 @@ function renderClientWorkspace(state, supabase) {
     byId('workspaceProjectSelect').innerHTML = state.projects.map((project) => `
         <option value="${escapeHtml(project.id)}" ${project.id === selectedProject.id ? 'selected' : ''}>${escapeHtml(project.name)}</option>
     `).join('');
-    byId('workspaceQuickActions').innerHTML = buildClientQuickActionsMarkup(openInvoices.length > 0);
+    byId('workspaceQuickActions')?.replaceChildren();
 
     byId('workspaceOverviewMetrics').innerHTML = `
         <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="workspace-overview">
@@ -1968,7 +1980,7 @@ function renderClientWorkspaceEmptyState(profile, client) {
         status: 'pending'
     });
     byId('workspaceProjectSelect').innerHTML = '<option value="">No projects assigned</option>';
-    byId('workspaceQuickActions').innerHTML = buildClientQuickActionsMarkup(false);
+    byId('workspaceQuickActions')?.replaceChildren();
     byId('workspaceOverviewMetrics').innerHTML = renderEmptyState('No active project yet', 'Your team has not assigned a project to this portal account yet.');
     byId('workspaceProjectSummaryPanel').innerHTML = renderEmptyState('We are preparing your workspace', 'As soon as your project is assigned, your summary, milestones, files, invoices, and project updates will appear here.');
     byId('workspaceBillingSnapshot').innerHTML = renderEmptyState('Billing will appear here', 'Invoice status and payment records populate automatically once the project is active.');
@@ -2159,7 +2171,7 @@ function renderAdminWorkspace(state) {
     });
     byId('adminClientSelect').innerHTML = buildOptions(state.clients, state.selectedClientId, 'company_name', 'id', 'Select client');
     byId('adminProjectSelect').innerHTML = buildOptions(getProjectsForSelectedClient(state), state.selectedProjectId, 'name', 'id', 'Select project');
-    byId('adminQuickActions').innerHTML = buildAdminQuickActionsMarkup(selectedProject, consultationFeedAvailable);
+    byId('adminQuickActions')?.replaceChildren();
 
     byId('adminMetricsGrid').innerHTML = `
         <button type="button" class="workspace-kpi-card workspace-kpi-card-action" data-open-workspace-tab="ops-clients">
@@ -2931,6 +2943,22 @@ function initWorkspaceChrome() {
         }
     });
 
+    document.addEventListener('click', (event) => {
+        const toggleTrigger = event.target.closest('[data-toggle-panel]');
+        if (!toggleTrigger) {
+            return;
+        }
+
+        const panelName = toggleTrigger.dataset.togglePanel;
+        const panel = document.querySelector(`[data-workspace-panel="${panelName}"]`);
+        if (!panel) {
+            return;
+        }
+
+        const nextOpen = panel.classList.contains('is-hidden');
+        setWorkspacePanelState(panelName, nextOpen);
+    });
+
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
             closeDrawer();
@@ -3078,6 +3106,7 @@ function populateAdminClientForm(client, profile) {
     byId('adminClientSubmit').textContent = 'Save Client';
     byId('adminClientSubmit').dataset.defaultLabel = 'Save Client';
     byId('adminClientCancel').classList.remove('is-hidden');
+    showWorkspacePanel('adminClientPanel');
     byId('adminClientForm')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -3105,6 +3134,7 @@ function populateAdminProjectForm(project) {
     byId('adminProjectFormTitle').textContent = 'Edit Project';
     byId('adminProjectSubmit').textContent = 'Save Project';
     byId('adminProjectCancel').classList.remove('is-hidden');
+    showWorkspacePanel('adminProjectPanel');
     byId('adminProjectForm')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -3131,6 +3161,7 @@ function populateAdminMilestoneForm(milestone) {
     byId('adminMilestoneFormTitle').textContent = 'Edit Milestone';
     byId('adminMilestoneSubmit').textContent = 'Save Milestone';
     byId('adminMilestoneCancel').classList.remove('is-hidden');
+    showWorkspacePanel('adminMilestonePanel');
     byId('adminMilestoneForm')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -3155,6 +3186,7 @@ function populateAdminUpdateForm(update) {
     byId('adminUpdateFormTitle').textContent = 'Edit Project Update';
     byId('adminUpdateSubmit').textContent = 'Save Update';
     byId('adminUpdateCancel').classList.remove('is-hidden');
+    showWorkspacePanel('adminUpdatePanel');
     byId('adminUpdateForm')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -3169,6 +3201,7 @@ function populateAdminDocumentForm(documentRecord) {
     byId('adminDocumentFormTitle').textContent = 'Edit Document';
     byId('adminDocumentSubmit').textContent = 'Save Document';
     byId('adminDocumentCancel').classList.remove('is-hidden');
+    showWorkspacePanel('adminDocumentPanel');
     byId('adminDocumentForm')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -3196,6 +3229,7 @@ function populateAdminInvoiceForm(invoice) {
     byId('adminInvoiceFormTitle').textContent = 'Edit Invoice';
     byId('adminInvoiceSubmit').textContent = 'Save Invoice';
     byId('adminInvoiceCancel').classList.remove('is-hidden');
+    showWorkspacePanel('adminInvoicePanel');
     byId('adminInvoiceForm')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -3217,6 +3251,7 @@ function populateAdminMessageForm(message) {
     byId('adminMessageInternal').checked = Boolean(message.is_internal);
     byId('adminMessageSubmit').textContent = 'Save Message';
     byId('adminMessageCancel').classList.remove('is-hidden');
+    showWorkspacePanel('adminMessagePanel');
     byId('adminMessageForm')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -3267,6 +3302,27 @@ function bindWorkspaceDashboardPanel(id, targetTab) {
 
     panel.classList.add('workspace-panel-action');
     panel.dataset.openWorkspaceTab = targetTab;
+}
+
+function setWorkspacePanelState(panelName, isOpen) {
+    const panel = document.querySelector(`[data-workspace-panel="${panelName}"]`);
+    if (!panel) {
+        return;
+    }
+
+    panel.classList.toggle('is-hidden', !isOpen);
+    document.querySelectorAll(`[data-toggle-panel="${panelName}"]`).forEach((trigger) => {
+        trigger.classList.toggle('active', isOpen);
+        trigger.setAttribute('aria-expanded', String(isOpen));
+    });
+}
+
+function showWorkspacePanel(panelName) {
+    setWorkspacePanelState(panelName, true);
+}
+
+function hideWorkspacePanel(panelName) {
+    setWorkspacePanelState(panelName, false);
 }
 
 function resolveConfiguredStripePaymentUrl(config) {

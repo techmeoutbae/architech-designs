@@ -17676,6 +17676,205 @@ p {
     font-size: 0.9rem;
 }
 
+.workspace-top-actions {
+    display: none !important;
+}
+
+.workspace-toolbar-copy,
+.workspace-section-copy,
+.workspace-form-note {
+    display: none !important;
+}
+
+.ops-page .portal-toolbar-selects,
+.client-workspace-page .portal-toolbar-selects {
+    gap: 8px;
+}
+
+.ops-page .portal-toolbar-selects .workspace-select,
+.client-workspace-page .portal-toolbar-selects .workspace-select {
+    min-width: 138px;
+    max-width: 150px;
+}
+
+.ops-page .portal-toolbar-selects .workspace-select select,
+.client-workspace-page .portal-toolbar-selects .workspace-select select {
+    min-height: 40px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    font-size: 0.84rem;
+}
+
+.workspace-section-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.workspace-panel-drawer,
+.workspace-form-card[data-workspace-panel],
+.workspace-composer[data-workspace-panel] {
+    transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.workspace-form-card[data-workspace-panel].is-hidden,
+.workspace-composer[data-workspace-panel].is-hidden {
+    display: none !important;
+}
+
+.workspace-section-stack {
+    display: grid;
+    gap: 16px;
+}
+
+.workspace-card-stack-sections {
+    gap: 16px;
+}
+
+.workspace-panel-hidden {
+    display: none !important;
+}
+
+.workspace-section-head {
+    align-items: center;
+}
+
+.ops-page .workspace-section-head h3,
+.client-workspace-page .workspace-section-head h3 {
+    font-size: 1.08rem;
+    line-height: 1.18;
+}
+
+.ops-page .workspace-toolbar h2,
+.client-workspace-page .workspace-toolbar h2 {
+    font-size: clamp(1.26rem, 1.7vw, 1.6rem);
+}
+
+.ops-page .workspace-panel,
+.client-workspace-page .workspace-panel,
+.ops-page .workspace-form-card,
+.client-workspace-page .workspace-form-card,
+.ops-page .workspace-thread,
+.client-workspace-page .workspace-thread,
+.ops-page .workspace-data-card,
+.client-workspace-page .workspace-data-card,
+.ops-page .workspace-file-card,
+.client-workspace-page .workspace-file-card,
+.ops-page .invoice-card,
+.client-workspace-page .invoice-card {
+    box-shadow: 0 18px 38px rgba(15, 23, 42, 0.07);
+}
+
+.ops-page .workspace-form-card,
+.client-workspace-page .workspace-form-card {
+    padding: 18px;
+}
+
+.ops-page .workspace-composer,
+.client-workspace-page .workspace-composer {
+    padding: 18px;
+}
+
+.ops-page .workspace-form-actions .btn,
+.client-workspace-page .workspace-form-actions .btn,
+.workspace-section-tools .btn {
+    min-height: 40px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 0.84rem;
+}
+
+.workspace-card-actions .btn,
+.workspace-inline-records .workspace-pill-action {
+    min-height: 36px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+}
+
+.ops-page .workspace-kpi-card,
+.client-workspace-page .workspace-kpi-card {
+    min-height: 112px;
+}
+
+.ops-page .workspace-kpi-card strong,
+.client-workspace-page .workspace-kpi-card strong {
+    font-size: 1.28rem;
+}
+
+.ops-page .workspace-kpi-card em,
+.client-workspace-page .workspace-kpi-card em,
+.ops-context-list span,
+.ops-context-stat span,
+.ops-dashboard-list-item span,
+.ops-dashboard-list-item em {
+    font-size: 0.78rem;
+}
+
+.ops-page .workspace-message,
+.client-workspace-page .workspace-message {
+    padding: 14px 16px;
+}
+
+.workspace-message-meta {
+    gap: 10px;
+}
+
+.workspace-message-meta strong,
+.workspace-message-meta span,
+.workspace-message-action,
+.workspace-select-card strong,
+.workspace-data-card h3,
+.workspace-file-card h3,
+.invoice-card strong,
+.workspace-panel-head h3,
+.workspace-form-card-head h3 {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.ops-page .workspace-nav-button,
+.client-workspace-page .workspace-nav-button,
+.workspace-mobile-tab,
+.workspace-account-trigger,
+.workspace-drawer-toggle,
+.workspace-drawer-close,
+.workspace-toast-close,
+.consultation-admin-day,
+.consultation-admin-slot {
+    min-height: 44px;
+}
+
+@media (max-width: 1100px) {
+    .workspace-section-tools {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .ops-page .portal-toolbar-selects,
+    .client-workspace-page .portal-toolbar-selects {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .workspace-section-tools .btn,
+    .ops-page .workspace-form-actions .btn,
+    .client-workspace-page .workspace-form-actions .btn {
+        min-height: 44px;
+        width: 100%;
+    }
+
+    .ops-page .portal-toolbar-selects .workspace-select,
+    .client-workspace-page .portal-toolbar-selects .workspace-select {
+        min-width: 0;
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
 .portal-toolbar-selects .workspace-select span {
     margin-bottom: 6px;
     font-size: 0.72rem;
