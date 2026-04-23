@@ -1541,13 +1541,20 @@ async function initAdminWorkspacePage(supabase, userContext) {
             }
 
             const existingConsultation = state.consultations.find((item) => item.id === consultationId) || null;
+            const nextDate = byId('adminConsultationDate')?.value || existingConsultation?.preferred_date || null;
+            const nextTime = byId('adminConsultationTime')?.value.trim() || getConsultationTimeValue(existingConsultation);
+            const nextTimeLabel = convertTime24HourToLabel(nextTime);
+            const nextIso = nextDate && nextTime
+                ? new Date(`${nextDate}T${nextTime}:00`).toISOString()
+                : existingConsultation?.preferred_iso || null;
 
             const payload = {
                 status: byId('adminConsultationStatus')?.value || 'new',
                 notes: byId('adminConsultationNotes')?.value.trim() || null,
                 assigned_project_id: byId('adminConsultationProject')?.value || null,
-                preferred_date: byId('adminConsultationDate')?.value || existingConsultation?.preferred_date || null,
-                preferred_time: byId('adminConsultationTime')?.value.trim() || existingConsultation?.preferred_time || null
+                preferred_date: nextDate,
+                preferred_time: nextTimeLabel,
+                preferred_iso: nextIso
             };
 
             const { error } = await supabase.from('consultations').update(payload).eq('id', consultationId);
@@ -2217,8 +2224,8 @@ function renderAdminWorkspace(state) {
                     <strong>${escapeHtml(consultation.company_name)}</strong>
                     <span class="workspace-pill ${statusPillClass(consultation.status || 'new')}">${escapeHtml(humanizeStatus(consultation.status || 'new'))}</span>
                 </div>
-                <span>${escapeHtml(consultation.full_name)} • ${escapeHtml(consultation.preferred_time || 'Pending time')}</span>
-                <span>${escapeHtml(formatConsultationDate(consultation.preferred_date))} • ${escapeHtml(consultation.requested_service || 'Consultation brief')}</span>
+                <span>${escapeHtml(consultation.full_name)} • ${escapeHtml(consultation.preferred_iso ? formatConsultationTime(consultation.preferred_iso) : (consultation.preferred_time || 'Pending time'))}</span>
+                <span>${escapeHtml(formatConsultationDate(consultation.preferred_iso || consultation.preferred_date))} • ${escapeHtml(consultation.requested_service || 'Consultation brief')}</span>
             </button>
         `).join('')
             : renderEmptyState('No consultations yet', 'New consultation requests from the contact page will appear here.'))
@@ -2388,8 +2395,8 @@ function renderAdminWorkspace(state) {
         : '<option value="">Calendar unavailable</option>';
     byId('adminConsultationId').value = selectedConsultation?.id || '';
     byId('adminConsultationStatus').value = selectedConsultation?.status || 'new';
-    byId('adminConsultationDate').value = selectedConsultation?.preferred_date || '';
-    byId('adminConsultationTime').value = selectedConsultation?.preferred_time || '';
+    byId('adminConsultationDate').value = getConsultationDateValue(selectedConsultation);
+    byId('adminConsultationTime').value = getConsultationTimeValue(selectedConsultation);
     byId('adminConsultationNotes').value = selectedConsultation?.notes || '';
     byId('adminConsultationDelete')?.classList.toggle('is-hidden', !selectedConsultation);
     byId('adminAvailabilityDays').innerHTML = buildAdminAvailabilityDaysMarkup(state);
@@ -2405,7 +2412,7 @@ function renderAdminWorkspace(state) {
                     <span>${escapeHtml(humanizeStatus(selectedConsultation.status || 'new'))}</span>
                     <h3>${escapeHtml(selectedConsultation.full_name)}</h3>
                 </div>
-                <span class="workspace-pill ${statusPillClass(selectedConsultation.status || 'new')}">${escapeHtml(formatConsultationDate(selectedConsultation.preferred_date))}</span>
+                <span class="workspace-pill ${statusPillClass(selectedConsultation.status || 'new')}">${escapeHtml(formatConsultationDate(selectedConsultation.preferred_iso || selectedConsultation.preferred_date))}</span>
             </div>
             <p>${escapeHtml(selectedConsultation.project_details || 'No project brief was added.')}</p>
             <div class="workspace-inline-records">
@@ -2415,7 +2422,7 @@ function renderAdminWorkspace(state) {
                 ${selectedConsultation.requested_service ? `<span class="workspace-pill">${escapeHtml(selectedConsultation.requested_service)}</span>` : ''}
             </div>
             <div class="workspace-data-card-foot">
-                <strong>${escapeHtml(selectedConsultation.preferred_time || 'Preferred time pending')}</strong>
+                <strong>${escapeHtml(selectedConsultation.preferred_iso ? formatConsultationTime(selectedConsultation.preferred_iso) : (selectedConsultation.preferred_time || 'Preferred time pending'))}</strong>
             </div>
         `
         : renderEmptyState('No consultation selected', 'Choose a consultation request to review the brief, contact details, and preferred time.');
@@ -2616,8 +2623,8 @@ function buildAdminConsultationSnapshotMarkup(upcomingConsultations, available, 
             ? `<div class="ops-dashboard-list">${queued.map((consultation) => `
                 <article class="ops-dashboard-list-item">
                     <strong>${escapeHtml(consultation.company_name)}</strong>
-                    <span>${escapeHtml(consultation.full_name)} • ${escapeHtml(formatConsultationDate(consultation.preferred_date))}</span>
-                    <em>${escapeHtml(consultation.preferred_time || 'Pending time')}</em>
+                    <span>${escapeHtml(consultation.full_name)} • ${escapeHtml(formatConsultationDate(consultation.preferred_iso || consultation.preferred_date))}</span>
+                    <em>${escapeHtml(consultation.preferred_iso ? formatConsultationTime(consultation.preferred_iso) : (consultation.preferred_time || 'Pending time'))}</em>
                 </article>
             `).join('')}</div>`
             : renderEmptyState('No consultations yet', 'New requests from the consultation form will appear here automatically.')}
@@ -3861,6 +3868,15 @@ function formatDate(value) {
         return 'Date not set';
     }
 
+    if (/^\d{4}-\d{2}-\d{2}$/.test(String(value))) {
+        const [year, month, day] = String(value).split('-').map(Number);
+        return new Intl.DateTimeFormat('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        }).format(new Date(year, month - 1, day));
+    }
+
     return new Intl.DateTimeFormat('en-US', {
         month: 'short',
         day: 'numeric',
@@ -3877,6 +3893,84 @@ function formatDateValue(date) {
 
 function formatConsultationDate(value) {
     return formatDate(value);
+}
+
+function formatConsultationTime(value) {
+    if (!value) {
+        return 'Pending time';
+    }
+
+    return new Intl.DateTimeFormat('en-US', {
+        hour: 'numeric',
+        minute: '2-digit'
+    }).format(new Date(value));
+}
+
+function getConsultationDateValue(consultation) {
+    if (consultation?.preferred_iso) {
+        return formatDateValue(new Date(consultation.preferred_iso));
+    }
+
+    return consultation?.preferred_date || '';
+}
+
+function getConsultationTimeValue(consultation) {
+    if (consultation?.preferred_iso) {
+        return new Intl.DateTimeFormat('en-CA', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        }).format(new Date(consultation.preferred_iso));
+    }
+
+    return convertTimeLabelTo24Hour(consultation?.preferred_time || '');
+}
+
+function convertTimeLabelTo24Hour(value) {
+    const normalized = String(value || '').trim();
+    if (!normalized) {
+        return '';
+    }
+
+    const direct = normalized.match(/^(\d{1,2}):(\d{2})$/);
+    if (direct) {
+        return `${direct[1].padStart(2, '0')}:${direct[2]}`;
+    }
+
+    const meridianMatch = normalized.match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/i);
+    if (!meridianMatch) {
+        return normalized;
+    }
+
+    let hours = Number(meridianMatch[1]);
+    const minutes = meridianMatch[2] || '00';
+    const meridian = meridianMatch[3].toUpperCase();
+
+    if (meridian === 'AM' && hours === 12) {
+        hours = 0;
+    }
+    if (meridian === 'PM' && hours !== 12) {
+        hours += 12;
+    }
+
+    return `${String(hours).padStart(2, '0')}:${minutes}`;
+}
+
+function convertTime24HourToLabel(value) {
+    const normalized = String(value || '').trim();
+    if (!normalized) {
+        return '';
+    }
+
+    const [hoursValue, minutesValue] = normalized.split(':').map(Number);
+    if (Number.isNaN(hoursValue) || Number.isNaN(minutesValue)) {
+        return normalized;
+    }
+
+    return new Intl.DateTimeFormat('en-US', {
+        hour: 'numeric',
+        minute: '2-digit'
+    }).format(new Date(2026, 0, 1, hoursValue, minutesValue));
 }
 
 function formatDateTime(value) {

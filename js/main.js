@@ -736,10 +736,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     schedulerState.selectedTime = slot.value;
                     const fullSummary = `${summaryFormatter.format(day)} at ${slot.label}`;
                     const compactSummary = `${dayFormatter.format(day)}, ${dateFormatter.format(day)} at ${slot.label}`;
+                    const slotIso = new Date(`${schedulerState.selectedDay}T${slot.value}:00`);
 
                     hiddenDate.value = schedulerState.selectedDay;
                     hiddenTime.value = slot.label;
-                    hiddenIso.value = `${schedulerState.selectedDay}T${slot.value}:00`;
+                    hiddenIso.value = Number.isNaN(slotIso.getTime()) ? '' : slotIso.toISOString();
                     hiddenTimezone.value = timezone;
                     summary.textContent = `Requested slot: ${fullSummary} (${timezoneDisplay}).`;
 
